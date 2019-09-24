@@ -106,6 +106,16 @@ void print_stack(Stack* stack){
 	printf("\n"); 
 }
 
+Var extract(Stack* stack, int position){
+	__insert_guard(stack, position); 
+	Var result = stack->__stack[position]; 
+	for(int n = position; n<=stack->size; n++){	
+		stack->__stack[n] = stack->__stack[n+1]; 
+	}
+	pop(stack); 	
+	return result; 
+}
+
 Stack NewStack(DataType type, int set_size)
 {
 	Stack new_stack;
@@ -114,13 +124,7 @@ Stack NewStack(DataType type, int set_size)
 	new_stack.__total_size = set_size;
 	new_stack.size = 0; 
 	new_stack.is_empty = &is_empty;
-	new_stack.push_raw = &push_raw; 
-	new_stack.push = &push;
-	new_stack.pop = &pop; 
-	new_stack.peek = &peek; 
 	new_stack.print = &print_stack; 
-	new_stack.insert_raw = &insert_raw;
-	new_stack.insert = &insert; 
 	return new_stack;
 }
 
