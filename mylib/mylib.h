@@ -34,7 +34,7 @@ typedef struct Stack{
         int size; //number of elements inserted
         int __total_size;//total size
         Var* __stack; //the actual structure
-        int (*is_empty)(Stack);
+        int (*is_empty)(Stack*);
         void (*print)(Stack*);
 } Stack;
 void push_raw(Stack*, void*); 
@@ -53,12 +53,15 @@ typedef struct Queue{
 	void (*print)(Queue*); 
 	void (*is_empty)(Queue*); 
 } Queue;  
-Var pop_back(Queue* ); 
-Var pop_front(Queue* ); 
-void push_back(Queue* ); 
-void push_front(Queue* ); 
-Var front(Queue* ); 
-Var back(Queue* ); 
+void pop_back(Queue* ); 
+void pop_front(Queue* ); 
+void push_back(Queue* , Var); 
+void push_back_raw(Queue*, void*); 
+void push_front(Queue* , Var); 
+void push_front_raw(Queue*, void*); 
+Var peek_front(Queue* ); 
+Var peek_back(Queue* ); 
+//void __debug_print(Queue*); 
 
 Stack NewStack(DataType, int);
 Queue NewQueue(DataType, int); 

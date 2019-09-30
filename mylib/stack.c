@@ -5,8 +5,8 @@
 #include "mylib.h"
 
 
-int is_empty(Stack stack){
-	return stack.size == 0; 
+int is_empty(Stack* stack){
+	return stack->size == 0; 
 }
 
 void __push_alloc(Stack* stack){
@@ -17,7 +17,7 @@ void __push_alloc(Stack* stack){
 	}
 }
 
-void push_raw(Stack* stack, void* item){//Advanced Feature:might truncate if not typed correctly
+void push_raw(Stack* stack, void* item){//Advanced Feature:might truncate if element pushed is of incorrect type
 	Var new_item; 
 	switch(stack->__type){
 		case TypeInt: new_item.data.iVal = *(int*) item; break; 
@@ -39,14 +39,14 @@ void push(Stack* stack, Var item){
 
 Var peek(Stack* stack){
 	Var top; 
-	if(!is_empty(*stack)){
+	if(!is_empty(stack)){
 		top = stack->__stack[stack->size-1]; 
 	}
 	return top;
 }	
 
 void pop(Stack* stack){
-	if (!is_empty(*stack)){	
+	if (!is_empty(stack)){	
 		stack->size--; 
 		if (stack->size < stack->__total_size/2){
 			stack->__total_size /= 2; 
@@ -55,34 +55,46 @@ void pop(Stack* stack){
 	}
 }
 
-void __insert_guard(Stack* stack, int position){
-	if (position > stack->size || position < 0){
+void __guard(Stack* stack, int position){
+	if (position > stack->size-1 || position < 0 || is_empty(stack)){
 		fprintf(stderr, "That position is outside the bounds of the structure"); 
 		exit(117);
 	}
 }
-void __insert_swap(Stack* stack, int position){
+void __swap(Stack* stack, int position){
 	Var aux = peek(stack); 
-	for(int n = stack->size; n>=position; n--){
+	for(int n = stack->size-1; n>=position; n--){
 		stack->__stack[n] = stack->__stack[n-1];	
 	}
 	stack->__stack[position] = aux; 
 }
 
-void insert_raw(Stack* stack, void* item, int position){
-	__insert_guard(stack, position);
+void insert_raw(Stack* stack, void* item, int position){//Advanced feature: might truncate if element inserted is of incorrect type
+	if (is_empty(stack)){
+		push_raw(stack, item); 
+		return; 
+	}
+	__guard(stack, position);
 	push_raw(stack, item); 
-	__insert_swap(stack, position); 
+	__swap(stack, position); 
 }
 
 void insert(Stack* stack, Var item, int position){
-	__insert_guard(stack, position); 
+	if (is_empty(stack)){
+		push(stack, item); 
+		return; 
+	}
+	__guard(stack, position); 
 	push(stack, item); 
-	__insert_swap(stack, position); 
+	__swap(stack, position); 
 }
 
 
 void print_stack(Stack* stack){
+	if (is_empty(stack)){
+		printf("[]\n"); 
+		return; 
+	}
 	for(int n = 0; n< stack->size; n++){
 		Var item  = stack->__stack[n]; 
 		switch(item.type){
@@ -107,9 +119,9 @@ void print_stack(Stack* stack){
 }
 
 Var extract(Stack* stack, int position){
-	__insert_guard(stack, position); 
+	__guard(stack, position); 
 	Var result = stack->__stack[position]; 
-	for(int n = position; n<=stack->size; n++){	
+	for(int n = position; n<stack->size-1; n++){	
 		stack->__stack[n] = stack->__stack[n+1]; 
 	}
 	pop(stack); 	

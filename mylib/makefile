@@ -1,4 +1,4 @@
-OBJECTS = stack.o var.o 
+OBJECTS = stack.o var.o queue.o 
 
 all: mylib.a
 
