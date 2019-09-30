@@ -123,3 +123,8 @@ Queue NewQueue(DataType type, int size){
 	new_queue.print = &print; 
 	return new_queue; 
 }
+
+void DestroyQueue(Queue* queue){ 
+	DestroyStack(&(queue->__back)); 
+	DestroyStack(&(queue->__front)); 
+}

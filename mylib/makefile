@@ -1,5 +1,4 @@
-OBJECTS = stack.o var.o queue.o 
-
+OBJECTS = stack.o var.o queue.o leak_detector.o
 all: mylib.a
 
 mylib.a: $(OBJECTS)
@@ -10,6 +9,8 @@ mylib.a: $(OBJECTS)
 
 clean: 
 	rm *.o -f
+	cd ./leak_detector && make clean
 
 reset: 
 	rm *.o mylib.a -f
+	cd ./leak_detector && make reset

@@ -4,6 +4,7 @@
  
 
 int main(){ 
-	
+	Queue q1 = NewQueue(TypeInt, 4); 	
+	DestroyQueue(&q1); 
 	return 0; 
 }
