@@ -34,3 +34,42 @@ Var NewVarC(char val){
         r.type = TypeChar;
         return r;
 }
+
+Var* NewVarArrayI(int* array, int size){
+	Var* r = (Var*)calloc(sizeof(Var), size);  
+	for(int n = 0; n<size; n++){
+		r[n] = NewVarI(array[n]); 
+	}
+	return r; 
+}
+
+Var* NewVarArrayF(float* array, int size){
+	Var* r = (Var*)malloc(sizeof(Var)*size);  
+	for(int n = 0; n<size; n++){
+		r[n] = NewVarF(array[n]); 
+	}
+	return r; 
+}
+
+Var* NewVarArrayD(double* array, int size){
+	Var* r = (Var*)malloc(sizeof(Var)*size);  
+	for(int n = 0; n<size; n++){
+		r[n] = NewVarD(array[n]); 
+	}
+	return r; 
+}
+
+Var* NewVarArrayS(char** array, int size){
+	Var* r = (Var*)malloc(sizeof(Var)*size);  
+	for(int n = 0; n<size; n++){
+		r[n] = NewVarS(array[n]); 
+	}
+	return r; 
+}
+Var* NewVarArrayC(char* array, int size){
+	Var* r = (Var*)malloc(sizeof(Var)*size);  
+	for(int n = 0; n<size; n++){
+		r[n] = NewVarC(array[n]); 
+	}
+	return r; 
+}

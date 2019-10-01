@@ -92,9 +92,10 @@ void insert(Stack* stack, Var item, int position){
 
 void print_stack(Stack* stack){
 	if (is_empty(stack)){
-		printf("[]\n"); 
+		printf("Stack []\n"); 
 		return; 
 	}
+	printf("Stack -"); 
 	for(int n = 0; n< stack->size; n++){
 		Var item  = stack->__stack[n]; 
 		switch(item.type){
@@ -115,7 +116,7 @@ void print_stack(Stack* stack){
 				break; 
 		}
 	}
-	printf("\n"); 
+	printf("->\n"); 
 }
 
 Var extract(Stack* stack, int position){
@@ -138,6 +139,52 @@ Stack NewStack(DataType type, int set_size)
 	new_stack.is_empty = &is_empty;
 	new_stack.print = &print_stack; 
 	return new_stack;
+}
+
+Stack NewStackFromArrayRaw(DataType type, void* array, int size){
+	Stack new_stack = NewStack(type, size); 
+	Var* varray; 
+	switch(type){
+		case TypeInt: 
+			varray = NewVarArrayI((int*)array, size);
+			for(int n = 0; n<size; n++){
+				push(&new_stack, varray[n]); 
+			}
+			break; 
+		case TypeFloat: 
+			varray = NewVarArrayF((float*)array, size);
+			for(int n =0; n<size; n++){
+				push(&new_stack, varray[n]); 
+			}
+			break;
+		case TypeDouble: 
+			varray = NewVarArrayD((double*)array, size);
+			for(int n =0; n<size; n++){
+				push(&new_stack, varray[n]); 
+			}
+		       	break;
+		case TypeString: 
+			varray = NewVarArrayS((char**)array, size);
+			for(int n =0; n<size; n++){
+				push(&new_stack, varray[n]); 
+			}
+			break; 
+		case TypeChar: 
+			varray = NewVarArrayC((char*)array, size);
+			for(int n =0; n<size; n++){
+				push(&new_stack, varray[n]); 
+			}
+			break; 
+	}	
+	return new_stack; 
+}
+
+Stack NewStackFromArray(Var* array, int size){
+	Stack new_stack = NewStack(TypeInt, size); 
+	for(int n = 0; n<size; n++){
+		push(&new_stack, array[n]); 
+	}
+	return new_stack; 
 }
 
 void DestroyStack(Stack* stack){
