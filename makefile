@@ -1,14 +1,15 @@
 LIB = ./mylib
 LIBPATH = ./mylib/
+
 REBUILDABLES = \
 	       *.o \
 	       *.stackdump
 all: main.exe
 
-main.exe: main.o mylib.a
-	gcc -o main.exe main.o $(LIBPATH)mylib.a
+main.exe: main.o jedi.a
+	gcc -o main.exe main.o -L$(LIBPATH) -ljedi -lglut -lGLEW -lGL -lGLU -lgdi32
 
-mylib.a: 
+jedi.a: 
 	cd $(LIB) && make
 
 main.o: main.c 
@@ -16,8 +17,8 @@ main.o: main.c
 
 clean: 
 	rm $(REBUILDABLES) -f
-	cd $(LIB) && make clean 
+	cd $(LIB) && make clean
 reset: 
 	rm $(REBUILDABLES) main.exe -f
-	cd $(LIB) && make reset 
+	cd $(LIB) && make reset
 	

@@ -1,5 +1,5 @@
-#ifndef MYLIB_H
-#define MYLIB_H
+#ifndef JEDI_H
+#define JEDI_H
 
 typedef enum DataType{
         TypeInt,

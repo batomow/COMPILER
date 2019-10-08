@@ -2,7 +2,7 @@
 #include <stdlib.h> 
 #include <stdio.h> 
 #include <math.h> 
-#include "mylib.h"
+#include "jedi.h"
 
 
 int is_empty(Stack* stack){

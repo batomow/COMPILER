@@ -1,6 +1,6 @@
 #include <stdio.h> 
 #include <stdlib.h> 
-#include "mylib.h"
+#include "jedi.h"
 
 Var NewVarI(int val){
         Var r;
