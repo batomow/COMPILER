@@ -1,5 +1,6 @@
 LIB = ./mylib
 LIBPATH = ./mylib/
+CYGWIN = C:/cygwin/lib/
 
 REBUILDABLES = \
 	       *.o \
@@ -7,7 +8,7 @@ REBUILDABLES = \
 all: main.exe
 
 main.exe: main.o jedi.a
-	gcc -o main.exe main.o -L$(LIBPATH) -ljedi -lglut -lGLEW -lGL -lGLU -lgdi32
+	gcc -o main.exe main.o -L$(LIBPATH) -L$(CYGWIN) -ljedi -lGL -lGLEW -lglfw3 -lgdi32
 
 jedi.a: 
 	cd $(LIB) && make
