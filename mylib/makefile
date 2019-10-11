@@ -1,16 +1,14 @@
 OBJECTS = stack.o var.o queue.o
-all: mylib.a
+all: libjedi.a
 
-mylib.a: $(OBJECTS)
-	ar rsv mylib.a $(OBJECTS) 
+libjedi.a: $(OBJECTS)
+	ar rsv libjedi.a $(OBJECTS) 
 
 %.o: %.c
 	gcc -Wall -g -c $< -o $@
 
 clean: 
 	rm *.o -f
-	cd ./leak_detector && make clean
 
 reset: 
-	rm *.o mylib.a -f
-	cd ./leak_detector && make reset
+	rm *.o *.a -f

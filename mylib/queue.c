@@ -1,7 +1,7 @@
 #include <stdio.h> 
 #include <stdlib.h> 
 #include <math.h> 
-#include "mylib.h"
+#include "jedi.h"
 
 void __reverse(Stack* src, Stack* target){
 	Var aux; 
