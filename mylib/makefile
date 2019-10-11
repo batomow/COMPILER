@@ -9,8 +9,6 @@ libjedi.a: $(OBJECTS)
 
 clean: 
 	rm *.o -f
-	cd ./leak_detector && make clean
 
 reset: 
 	rm *.o *.a -f
-	cd ./leak_detector && make reset
