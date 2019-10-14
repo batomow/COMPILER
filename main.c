@@ -4,7 +4,7 @@
 #include <GL/gl.h>
 #include <GLFW/glfw3.h> 
 
-int main(int argc, char** argv){ 
+int OpenWindow(){
     GLFWwindow* window;
     
     /* Initialize the library */
@@ -47,5 +47,16 @@ int main(int argc, char** argv){
     }
     
     glfwTerminate();
-    return 0;
+    return 0; 
+
+}
+
+
+int main(int argc, char** argv){ 
+
+    int err = OpenWindow(); 
+    if (err)
+        return err; 
+    return 0; 
+     
 }
