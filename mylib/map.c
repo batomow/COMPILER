@@ -1,7 +1,9 @@
 #include <stdlib.h> 
 #include <stdio.h> 
 #include "mylib.h"
-#define ASCIISIZE 127
+#define MOD 2971215073
+#define POW 127
+
 
 unsigned int __hash(Var value, int size){
 	
