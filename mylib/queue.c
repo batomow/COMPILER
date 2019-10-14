@@ -112,7 +112,10 @@ void __debug_print(Queue* queue){
 	printf("->\n"); 	
 }
 
-
+int queue_is_empty(Queue* queue){
+	Stack *front = &(queue->__front), *back = &(queue->__back); 
+	return (front->is_empty(front) && back->is_empty(back));
+}
 
 Queue NewQueue(DataType type, int size){ 
 	int back_size = size/2; 
@@ -121,6 +124,7 @@ Queue NewQueue(DataType type, int size){
 	new_queue.__front = NewStack(type, front_size); 
 	new_queue.__back = NewStack(type, back_size); 
 	new_queue.print = &print; 
+	new_queue.is_empty = &queue_is_empty;
 	return new_queue; 
 }
 

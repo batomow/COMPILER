@@ -26,6 +26,11 @@ Var NewVarF(float);
 Var NewVarD(double);
 Var NewVarS(char*);
 Var NewVarC(char);
+Var* NewVarArrayI(int*, int); 
+Var* NewVarArrayF(float*, int); 
+Var* NewVarArrayD(double*, int); 
+Var* NewVarArrayS(char**, int); 
+Var* NewVarArrayC(char*, int); 
 
 
 typedef struct Stack Stack;
@@ -51,7 +56,7 @@ typedef struct Queue{
 	Stack __back; 
 	int size; 
 	void (*print)(Queue*); 
-	void (*is_empty)(Queue*); 
+	int (*is_empty)(Queue*); 
 } Queue;  
 void pop_back(Queue* ); 
 void pop_front(Queue* ); 
@@ -64,9 +69,45 @@ Var peek_back(Queue* );
 //void __debug_print(Queue*); 
 
 Stack NewStack(DataType, int);
+Stack NewStackFromArrayRaw(DataType, void*, int); 
+Stack NewStackFromArray(Var* , int); 
 Queue NewQueue(DataType, int); 
 
 void DestroyStack(Stack* ); 
 void DestroyQueue(Queue* ); 
+
+//---------------------------------------dictionary stuff -------------//
+
+typedef struct KeyValuePair{
+	Var key; 
+	Var Value; 
+} KeyValuePair; 
+KeyValuePair NewKeyValuePair(Var, Var); 
+
+typedef struct __DE __DE; 
+typedef struct __DE{
+	KeyValuePair data; 
+	__DE* next; 
+} __DE; 
+__DE __NewDE(KeyValuePair, KeyValuePair); 
+
+typedef struct Dictionary Dictionary;
+typedef struct Dictionary{
+	__DE* __dict;
+	int size; 
+	int __total_size; 
+	int (*is_empty)(Dictionary*); 
+	void (*print)(Dictionary*); 
+} Dictionary; 
+void add(Dictionary*, Var, Var); 
+void add_raw(Dictionary*, void*, void*); 
+void add_pair(Dictionary*, KeyValuePair); 
+int has_key(Dictionary*, Var); 
+Var* get_keys(Dictionary*); 
+Var* get_values(Dictionary*); 
+Var lookup(Dictionary*, Var); 
+
+Dictionary NewDictionary(DataType, int ); 
+void DestroyDictionary(Dictionary*); 
 
 #endif
