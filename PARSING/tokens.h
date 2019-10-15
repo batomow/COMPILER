@@ -2,8 +2,11 @@
 #define CBRAK 101
 #define OPARE 102
 #define CPARE 103
-#define COMMA 104
-#define ARROW 105
+#define OCURL 104
+#define CCURL 105
+#define COMMA 106
+#define ARROW 107
+#define COLON 108
 #define EQ 200
 #define EQQ 201
 #define GT 202

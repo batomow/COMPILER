@@ -3,14 +3,18 @@
 %}
 
 %%
-\/\/.*$                         { /* do nothing */}
-\/\*.*?\*\/                     { /* do nothing */}
 "["                             return OBRAK;
 "]"                             return CBRAK;
 "("                             return OPARE;
 ")"                             return CPARE;
 ","                             return COMMA;
+\'[a-z]\'                       return CHAR;
+\"(\\.|[^"\\])*\"               return STRING;
+[-+]?[0-9]*?i                   return INT;
+[-+]?[0-9]*\.?[0-9]?f           return FLOAT;
+[-+]?[0-9]*\.?[0-9]?d           return DOUBLE;
 "->"                            return ARROW;
+:                               return COLON; 
 "=="                            return EQQ;
 ">="                            return GTEQ;
 "<="                            return LTEQ;
@@ -49,11 +53,10 @@ meditate                        return MEDITATE;
 [a-zA-Z][a-zA-Z0-9]*\.fs        return FID;
 [a-zA-Z][a-zA-Z0-9]*\.holo      return MID;
 [a-zA-Z][a-zA-Z0-9]*            return ID;
-\'[a-z]\'                       return CHAR;
-\"(\\.|[^"\\])*\"               return STRING;
-[-+]?[0-9]*?i                   return INT;
-[-+]?[0-9]*\.?[0-9]?f           return FLOAT;
-[-+]?[0-9]*\.?[0-9]?d           return DOUBLE;
+\/\/.*$                         {}
+\/\*.*?\*\/                     {} 
+.                               {}
+
 
 %%
 

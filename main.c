@@ -101,9 +101,15 @@ int main(){
         printf("%u\n", hash); 
     }*/
     int ntoken = yylex();
+    int counter = 0; 
     while(ntoken){
-        printf("%d\n", ntoken); 
+        printf("%d  ", ntoken); 
         ntoken = yylex(); 
+        counter++; 
+        if(counter >= 15){
+            printf("\n"); 
+            counter = 0; 
+        }
     }
     return 0; 
 }
