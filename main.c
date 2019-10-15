@@ -5,6 +5,7 @@
 #include <GLEW/glew.h>
 #include <GL/gl.h>
 #include <GLFW/glfw3.h> 
+#include <tokens.h> 
 
 int OpenWindow(){
     GLFWwindow* window;
@@ -81,20 +82,28 @@ char** showBitsWord(char* word, int size){
     return result; 
 }
 
+extern int yylex();
+extern int yylineno;
+extern char* yytext; 
 int main(){ 
-    char* big_test[9];
-        big_test[0] = "holas";
-        big_test[1] = "adios";
-        big_test[2] = "apple";
-        big_test[3] = "corns";
-        big_test[4] = "water";
-        big_test[5] = "cheto";
-        big_test[6] = "dedos";
-        big_test[7] = "casas";
-        big_test[8] = "tomat";
+    /*char* big_test[9];
+        big_test[0] = "apple";
+        big_test[1] = "paple";
+        big_test[2] = "lappe";
+        big_test[3] = "plape";
+        big_test[4] = "aeppl";
+        big_test[5] = "lppea";
+        big_test[6] = "pplea";
+        big_test[7] = "palep";
+        big_test[8] = "zzzxx";
     for(int n = 0; n<9; n++){
         unsigned int hash = testHash(big_test[n]); 
         printf("%u\n", hash); 
+    }*/
+    int ntoken = yylex();
+    while(ntoken){
+        printf("%d\n", ntoken); 
+        ntoken = yylex(); 
     }
     return 0; 
 }
