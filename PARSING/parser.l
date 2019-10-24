@@ -57,7 +57,6 @@ meditate                        return MEDITATE;
 \/\*.*?\*\/                     {} 
 .                               {}
 
-
 %%
 
 int yywrap(void){

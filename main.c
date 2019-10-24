@@ -6,6 +6,7 @@
 #include <GL/gl.h>
 #include <GLFW/glfw3.h> 
 #include <tokens.h> 
+#define PRIME 57
 
 int OpenWindow(){
     GLFWwindow* window;
@@ -55,12 +56,20 @@ int OpenWindow(){
 }
 
 unsigned int testHash(char* word){
-    unsigned int hash; 
+    unsigned int hash = 0; 
     for(hash = 0; *word != '\0'; word++){
        hash = hash << 1; 
        hash = hash^(*word); 
     }
     return hash;  
+}
+
+unsigned int testHash2(char* word){
+    unsigned int hash = 0; 
+    for(unsigned int hash = 0, pow = 0; *word != '\0'; word++, pow++){
+        printf("%d\t%d", (int)(*word), (pow); 
+    }
+    return hash; 
 }
 
 char* showBitsLetter(char letter){
@@ -86,7 +95,7 @@ extern int yylex();
 extern int yylineno;
 extern char* yytext; 
 int main(){ 
-    /*char* big_test[9];
+    char* big_test[9];
         big_test[0] = "apple";
         big_test[1] = "paple";
         big_test[2] = "lappe";
@@ -97,10 +106,10 @@ int main(){
         big_test[7] = "palep";
         big_test[8] = "zzzxx";
     for(int n = 0; n<9; n++){
-        unsigned int hash = testHash(big_test[n]); 
+        unsigned int hash = testHash2(big_test[n]); 
         printf("%u\n", hash); 
-    }*/
-    int ntoken = yylex();
+    }
+    /*int ntoken = yylex();
     int counter = 0; 
     while(ntoken){
         printf("%d  ", ntoken); 
@@ -110,6 +119,6 @@ int main(){
             printf("\n"); 
             counter = 0; 
         }
-    }
+    }*/
     return 0; 
 }
