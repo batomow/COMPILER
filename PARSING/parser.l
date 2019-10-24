@@ -2,60 +2,75 @@
 #include "tokens.h"
 %}
 
+Digit			[0-9]
+Letter			[a-zA-Z_]
+Hex				[a-fA-F0-9]
+EOL				\n\r
+
 %%
-"["                             return OBRAK;
-"]"                             return CBRAK;
-"("                             return OPARE;
-")"                             return CPARE;
-","                             return COMMA;
-\'[a-z]\'                       return CHAR;
-\"(\\.|[^"\\])*\"               return STRING;
-[-+]?[0-9]*?i                   return INT;
-[-+]?[0-9]*\.?[0-9]?f           return FLOAT;
-[-+]?[0-9]*\.?[0-9]?d           return DOUBLE;
-"->"                            return ARROW;
-:                               return COLON; 
-"=="                            return EQQ;
-">="                            return GTEQ;
-"<="                            return LTEQ;
-"!="                            return NTEQ;
-"="                             return EQ;
-">"                             return GT;
-"<"                             return LT;
-"!"                             return NT;
-"+"                             return SUM;
-"-"                             return RES;
-"*"                             return MUL;
-"/"                             return DIV;
-"^^"                            return SQR;
-"^"                             return POW;
-"&&"                            return AND;
-"||"                            return OR;
-"\r"                            return CR;
-"\n"                            return LF;
-[ \t]                           return TWS;
-MAINSCENE                       return MSCN;
-SCENES                          return SCNS;
-deploy                          return DPLY;
-if                              return IF;
-elif                            return ELIF;
-else                            return ELSE;
-for                             return FOR;
-while                           return WHILE;
-var                             return VAR;
-mat                             return MAT;
-mat4                            return MAT4;
-map                             return MAP;
-order                           return ORDER;
-"execute order"                 return XRDER;
-meditate                        return MEDITATE;
-(lie|truth)                     return BOOL;
-[a-zA-Z][a-zA-Z0-9]*\.fs        return FID;
-[a-zA-Z][a-zA-Z0-9]*\.holo      return MID;
-[a-zA-Z][a-zA-Z0-9]*            return ID;
-\/\/.*$                         {}
-\/\*.*?\*\/                     {} 
-.                               {}
+\/\/.*\n								{ printf(yytext); /* single line comment: do nothing */ }
+\/\*(.|\n)*\*\/						{ printf(yytext); /* multiline comment: do nothing */ }
+
+"\r"								{ return CR; }
+"\n"								{ return LF; }
+
+"MAINSCENE"							{ return RES_MSCN; }
+"SCENES"							{ return RES_SCNS; }
+"deploy"							{ return RES_DPLY; }
+"if"								{ return LOG_IF; }
+"elif"								{ return LOG_ELIF; }
+"else"								{ return LOG_ELSE; }
+"for"								{ return LOG_FOR; }
+"while"								{ return LOG_WHILE; }
+"var"								{ return V_VAR; }
+"mat"								{ return V_MAT; }
+"mat4"								{ return V_MAT4; }
+"map"								{ return V_MAP; }
+"order"								{ return RES_ORDER; }
+"execute order"						{ return RES_XRDER; }
+"meditate"							{ return RES_MEDIT; }
+"return"							{ return RES_RETRN; }
+
+(lie|truth)							{ return V_BOOL; /* bool */ }
+
+[a-z][a-zA-Z0-9]*            		{ return V_ID; }
+[a-zA-Z][a-zA-Z0-9]*\.fs        	{ return F_ID; }
+[a-zA-Z][a-zA-Z0-9]*\.holo      	{ return M_ID; }
+
+\'[a-zA-Z0-9]\'						{ return V_CHAR; /* char */ }
+[-+]?[0-9]+i						{ return V_INT; /* int */ }
+[-+]?[0-9]+\.?[0-9]*f?				{ return V_FLOAT; /* float */ }
+[-+]?[0-9]+\.?[0-9]*d				{ return V_DOUBLE; /* double */ }
+\"(\\.|[^"\\])*\"					{ return V_STRING; /* string */ }
+
+"["									{ return SYM_OBRAC; }
+"]"									{ return SYM_CBRAC; }
+"("									{ return SYM_OPARE; }
+")"									{ return SYM_CPARE; }
+"{"									{ return SYM_OCURL; }
+"}"									{ return SYM_CCURL; }
+","									{ return SYM_COMMA; }
+"->"								{ return SYM_ARROW; }
+":"									{ return SYM_COLON; }
+
+"=="								{ return MTH_DEQUA; }
+">="								{ return MTH_GTEQ; }
+"<="								{ return MTH_LTEQ; }
+"!="								{ return MTH_NOTEQ; }
+"="									{ return MTH_SEQUA; }
+">"									{ return MTH_GT; }
+"<"									{ return MTH_LT; }
+"!"									{ return MTH_NOT; }
+"+"									{ return MTH_PLUS; }
+"-"									{ return MTH_MINUS; }
+"*"									{ return MTH_ASTRK; }
+"/"									{ return MTH_DIVIS; }
+"^^"								{ return MTH_ROOT; }
+"^"									{ return MTH_POWER; }
+"&&"								{ return MTH_AND; }
+"||"								{ return MTH_OR; }
+
+.									{ /* do nothing */}
 
 %%
 
