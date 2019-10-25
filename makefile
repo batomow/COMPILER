@@ -24,7 +24,9 @@ main.o: main.c
 clean: 
 	rm $(REBUILDABLES) -f
 	cd $(LIB) && make clean && cd ..
+	cd $(PARS) && make clean && cd .. 
 reset: 
 	rm $(REBUILDABLES) main.exe -f
 	cd $(LIB) && make reset && cd .. 
+	cd $(PARS) && make reset && cd .. 
 	

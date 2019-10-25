@@ -94,6 +94,7 @@ char** showBitsWord(char* word, int size){
 extern int yylex();
 extern int yylineno;
 extern char* yytext; 
+
 int main(){ 
     int ntoken = yylex();
     int counter = 0; 
@@ -101,8 +102,8 @@ int main(){
         printf("%d  ", ntoken); 
         ntoken = yylex(); 
         counter++; 
-        if(counter >= 15){
-            printf("\n"); 
+        if(counter >= 10){
+            printf(" line: %d\n", yylineno); 
             counter = 0; 
         }
     }
