@@ -80,7 +80,7 @@ void DestroyQueue(Queue* );
 
 typedef struct KeyValuePair{
 	Var key; 
-	Var Value; 
+	Var value; 
 } KeyValuePair; 
 KeyValuePair NewKeyValuePair(Var, Var); 
 

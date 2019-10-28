@@ -39,9 +39,11 @@
 #define RES_MSCN 400	// MAINSCENE
 #define RES_SCNS 401	// SCENES
 #define RES_DPLY 402	// deploy
-#define V_ID 403		// Variable Id
+#define ID 403		// Variable Id
 #define F_ID 404		// File Id (followed by .fs)
 #define M_ID 405		// Module Id (followed by .holo)
+#define RES_CSCN 407    //CURRENT SCENE
+#define RES_NSCN 408    //NEXT SCENE
 
 /* Logical structures reserved keywords */
 #define LOG_IF 500		// if reserved for if structure
@@ -51,20 +53,28 @@
 #define LOG_WHILE 504	// while reserved for while structure
 
 /* Data types and var reserved word */
-#define V_VAR 600		// var reserved word
+#define VAR 600		// var reserved word
 #define V_CHAR 601		// Constant of type char
 #define V_STRING 602	// Constant of type string
-#define V_FLOAT 602		// Constant of type float
-#define V_INT 603		// Constant of type int
-#define V_DOUBLE 604	// Constant of type Double
-#define V_BOOL 605		// Constant of type boolean (truth|lie)
-#define V_MAT 606		// mat reserved word
-#define V_MAT4 607		// mat4 reserved word
-#define V_MAP 607		// map reserved word
+#define V_FLOAT 603		// Constant of type float
+#define V_INT 604		// Constant of type int
+#define V_DOUBLE 605	// Constant of type Double
+#define V_BOOL 606		// Constant of type boolean (truth|lie)
+#define V_MAT 607		// mat reserved word
+#define V_MAT4 608		// mat4 reserved word
+#define V_MAP 609		// map reserved word
+#define V_VECTOR 610    //reserved word vector
+#define ENUM 611        //reserved word sacred texts
 
 /* Orders reserved words */
 #define RES_ORDER 700	// order reserved word
 #define RES_XRDER 701	// execute order reserved words
 #define RES_MEDIT 702	// meditate reserved word
 #define RES_RETRN 703	// return reserved word
+#define STATION 704 //reserved word station
+#define ELEMENT 705 //reserved word element
+
+//comments
+#define COMMENT 800
+#define MCOMMENT 801
 
