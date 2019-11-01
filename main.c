@@ -6,7 +6,6 @@
 #include <GL/gl.h>
 #include <GLFW/glfw3.h> 
 #include <tokens.h> 
-#define PRIME 57
 
 int OpenWindow(){
     GLFWwindow* window;
@@ -63,14 +62,6 @@ unsigned int testHash(char* word){
     }
     return hash;  
 }
-
-/*unsigned int testHash2(char* word){
-    unsigned int hash = 0; 
-    for(unsigned int hash = 0, pow = 0; *word != '\0'; word++, pow++){
-        printf("%d\t%d", (int)(*word), (pow); 
-    }
-    return hash; 
-}*/
 
 char* showBitsLetter(char letter){
     char* result = (char*)calloc(sizeof(char), 9); 
