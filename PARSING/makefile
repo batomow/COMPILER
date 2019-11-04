@@ -1,17 +1,23 @@
-all: 
-	clear
-	bison -vd parser.y
-	flex scanner.l
-	gcc -o parser.exe parser.tab.c lex.yy.c
+all: parser.exe
 
-lex.yy.o: lex.yy.c
-	gcc -c lex.yy.c -o lex.yy.o	
+parser.exe: parser.o scanner.o
+	gcc -o parser.exe parser.o scanner.o
 
-lex.yy.c: parser.l
-	flex parser.l
+scanner.o: lex.yy.c
+	gcc -c lex.yy.c -o scanner.o
+
+lex.yy.c:
+	flex scanner.l  
+
+parser.o: parser.tab.c
+	gcc -c parser.tab.c -o parser.o
+
+parser.tab.c: 
+	bison -d parser.y
 
 clean: 
-	rm lex.yy.o -f
-
+	rm *.o -rf 
+	rm *.c -rf
+	rm *.h -rf
 reset: 
-	make clean 
+	make clean && rm *.exe -rf
