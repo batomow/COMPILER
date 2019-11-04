@@ -82,7 +82,6 @@ Var lookup(Dictionary* D, Var key){
     int hash = __hash(key, D->size); 
     KeyValuePair* iter = &D->__dict[hash]; 
     if(iter->next){
-        printf("%s %s\n", iter->key.data.sVal, key.data.sVal); 
         if(EqualVars(iter->key, key))
             return iter->value;
         iter = iter->next;

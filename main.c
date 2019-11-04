@@ -30,9 +30,8 @@ int main(){
     add(&test, NewVarI(8), NewVarS("Juan")); 
     KeyValuePair maria9 = NewKeyValuePair(NewVarI(9), NewVarS("Maria")); 
     add_pair(&test, maria9); 
-//    test.print(&test); 
-    Var lastname = lookup(&test, NewVarS("Carlos")); 
+    test.print(&test); 
+    Var lastname = lookup(&test, NewVarS("Cristhel")); 
     printf("%s\n", lastname.data.sVal); 
-    printf("%d\n", strcmp(NewVarS("Carlos").data.sVal, "Carlos")); 
     return 0; 
 }

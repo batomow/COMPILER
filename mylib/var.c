@@ -88,12 +88,13 @@ char* VarToString(Var var){
 }
 
 int EqualVars(Var a, Var b){
+    int result = 0; 
     switch(a.type){
-        case TypeInt: return a.data.iVal == b.data.iVal; 
-        case TypeFloat: return a.data.fVal == b.data.fVal; 
-        case TypeDouble: return a.data.dVal == b.data.dVal; 
-        case TypeChar: return a.data.cVal == b.data.cVal; 
-        case TypeString: return strcmp(a.data.sVal, b.data.sVal);
-
+        case TypeInt: result =  a.data.iVal == b.data.iVal; 
+        case TypeFloat: result =  a.data.fVal == b.data.fVal; 
+        case TypeDouble: result =  a.data.dVal == b.data.dVal; 
+        case TypeChar: result =  a.data.cVal == b.data.cVal; 
+        case TypeString: result = strcmp(a.data.sVal, b.data.sVal) == 0 ? 1 : 0;
     }
+    return result; 
 }
