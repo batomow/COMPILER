@@ -25,6 +25,7 @@ void push_raw(Stack* stack, void* item){//Advanced Feature:might truncate if ele
 		case TypeDouble: new_item.data.dVal = *(double*)item; break;
 		case TypeString: new_item.data.sVal = *(char**)item; break; 
 		case TypeChar: new_item.data.cVal = *(char*)item; break; 
+                default: break; 
 	}
 	new_item.type = stack->__type; 	
 	__push_alloc(stack); 
@@ -96,26 +97,13 @@ void print_stack(Stack* stack){
 		return; 
 	}
 	printf("Stack -"); 
+        char* aux; 
 	for(int n = 0; n< stack->size; n++){
 		Var item  = stack->__stack[n]; 
-		switch(item.type){
-			case TypeInt: 
-				printf("[%d]", item.data.iVal); 
-				break; 
-			case TypeFloat: 
-				printf("[%0.4f]", item.data.fVal); 
-				break; 
-			case TypeDouble: 
-				printf("[%0.4f]", item.data.dVal); 
-				break; 
-			case TypeString: 
-				printf("[%s]", item.data.sVal); 
-				break; 
-			case TypeChar:
-				printf("[%c]", item.data.cVal); 
-				break; 
-		}
+                aux = VarToString(item); 
+                printf("[%s]", aux); 
 	}
+        free(aux); 
 	printf("->\n"); 
 }
 
@@ -175,6 +163,7 @@ Stack NewStackFromArrayRaw(DataType type, void* array, int size){
 				push(&new_stack, varray[n]); 
 			}
 			break; 
+                default: break; 
 	}	
 	return new_stack; 
 }

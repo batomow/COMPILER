@@ -36,6 +36,12 @@ Var NewVarC(char val){
         return r;
 }
 
+Var NullVar(){
+    Var r; 
+    r.type = TypeNull; 
+    return r; 
+}
+
 Var* NewVarArrayI(int* array, int size){
 	Var* r = (Var*)calloc(sizeof(Var), size);  
 	for(int n = 0; n<size; n++){
@@ -82,7 +88,8 @@ char* VarToString(Var var){
         case TypeDouble: sprintf(result, "%0.4f", var.data.dVal); break;  
         case TypeInt: sprintf(result, "%d", var.data.iVal); break;  
         case TypeChar: sprintf(result, "%c", var.data.cVal); break;  
-        case TypeString: return var.data.sVal; 
+        case TypeString: return var.data.sVal; break; 
+        case TypeNull: result = "(null)"; 
     }
     return result; 
 }

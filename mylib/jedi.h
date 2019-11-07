@@ -12,7 +12,8 @@ typedef enum DataType{
         TypeFloat,
         TypeChar,
         TypeString,
-        TypeDouble
+        TypeDouble, 
+        TypeNull
 } DataType;
 
 
@@ -32,11 +33,13 @@ Var NewVarF(float);
 Var NewVarD(double);
 Var NewVarS(char*);
 Var NewVarC(char);
+Var NullVar(); 
 Var* NewVarArrayI(int*, int); 
 Var* NewVarArrayF(float*, int); 
 Var* NewVarArrayD(double*, int); 
 Var* NewVarArrayS(char**, int); 
 Var* NewVarArrayC(char*, int); 
+
 char* VarToString(Var); 
 
 //------------- Stack Stuff ---------------------//

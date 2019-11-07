@@ -6,19 +6,14 @@
 
 
 
-
-// hash(s) = s[0] + s[1]p + s[2]p^2 ... + s[3]p^(n-1) % mod M
-unsigned long int HASH(char* word, int size){
-    unsigned long int hash; 
-    unsigned long int P = 3; //some primer number for randomness//
-    unsigned long int pos = 0; 
-    for(char* s = word; *s != '\0'; s++){
-        hash += (*s)*(pow(P, pos));
-        pos++; 
-    }printf("prehash: %lu\t", hash); 
+unsigned long HASH(char* word, int size){
+    unsigned long hash = 5391; 
+    int c; 
+    while((c = *word++)){
+        hash = ((hash<<5)+hash) + c; 
+    }
     return hash % size; 
 }
-
 
 Dictionary NewDictionary(int size){
     Dictionary D; 
@@ -90,8 +85,8 @@ void printDict(Dictionary* d){
 }
 
 int add(Dictionary* d, char* key, Var value){
-    int hash = HASH(key, d->size); 
-    printf("%d \t", hash); 
+    unsigned long int hash = HASH(key, d->size); 
+    printf("%lu \t", hash); 
     kvp* iter = &(d->__dict[hash]);
     while(iter->isSet){
         if(strcmp(key, iter->key) == 0)
@@ -102,13 +97,33 @@ int add(Dictionary* d, char* key, Var value){
     return 1; 
 }
 
+Var lookup(Dictionary* d, char* key){
+    unsigned long int hash = HASH(key, d->size); 
+    kvp* iter = &(d->__dict[hash]); 
+    while(iter->isSet){
+        if(strcmp(key, iter->key) == 0)
+            return iter->value;
+        iter = iter->next;
+    }
+    return NewVarS("Not found"); 
+}
+
 int main(){ 
     Dictionary test = NewDictionary(10); 
     add(&test, "Carlos", NewVarS("Miranda")); 
     add(&test, "Cristhel", NewVarS("Rubio")); 
     add(&test, "Nicolas", NewVarS("-------")); 
     add(&test, "Ian", NewVarS("Granados")); 
+    add(&test, "TOM", NewVarS("........")); 
+    add(&test, "solrac", NewVarS("--------")); 
     printDict(&test); 
+    char* key = "Ian"; 
+    Var lastname = lookup(&test, key); 
+    char* aux; 
+    aux = VarToString(lastname); 
+    printf("%s: %s\n", key, aux);
+    free(aux); 
     DestroyDictionary(&test); 
+    
     return 0; 
 }
