@@ -76,25 +76,13 @@ Var* NewVarArrayC(char* array, int size){
 }
 
 char* VarToString(Var var){
-    char* result = (char*)calloc(12, sizeof(char));
+    char* result = (char*)calloc(21, sizeof(char));
     switch(var.type){
         case TypeFloat: sprintf(result, "%0.4f", var.data.fVal); break;  
         case TypeDouble: sprintf(result, "%0.4f", var.data.dVal); break;  
         case TypeInt: sprintf(result, "%d", var.data.iVal); break;  
         case TypeChar: sprintf(result, "%c", var.data.cVal); break;  
         case TypeString: return var.data.sVal; 
-    }
-    return result; 
-}
-
-int EqualVars(Var a, Var b){
-    int result = 0; 
-    switch(a.type){
-        case TypeInt: result =  a.data.iVal == b.data.iVal; 
-        case TypeFloat: result =  a.data.fVal == b.data.fVal; 
-        case TypeDouble: result =  a.data.dVal == b.data.dVal; 
-        case TypeChar: result =  a.data.cVal == b.data.cVal; 
-        case TypeString: result = strcmp(a.data.sVal, b.data.sVal) == 0 ? 1 : 0;
     }
     return result; 
 }

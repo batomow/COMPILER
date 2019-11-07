@@ -132,7 +132,7 @@ Var extract(Stack* stack, int position){
 Stack NewStack(DataType type, int set_size)
 {
 	Stack new_stack;
-	new_stack.__stack= calloc(set_size, sizeof(Var));
+	new_stack.__stack= malloc(sizeof(Var)*set_size); 
 	new_stack.__type = type;
 	new_stack.__total_size = set_size;
 	new_stack.size = 0; 

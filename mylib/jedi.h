@@ -1,5 +1,11 @@
 #ifndef JEDI_H
 #define JEDI_H
+#include <setjmp.h> 
+#define TRY do{ jmp_buf ex_buf__; if ( !setjmp(ex_buf__)) {
+#define CATCH } else { 
+#define ETRY }} while (0)
+#define THROW longjmp(ex_buf__, 1)
+
 
 typedef enum DataType{
         TypeInt,
@@ -32,7 +38,6 @@ Var* NewVarArrayD(double*, int);
 Var* NewVarArrayS(char**, int); 
 Var* NewVarArrayC(char*, int); 
 char* VarToString(Var); 
-int EqualVars(Var, Var); 
 
 //------------- Stack Stuff ---------------------//
 typedef struct Stack Stack;
@@ -79,29 +84,31 @@ void DestroyStack(Stack* );
 void DestroyQueue(Queue* ); 
 
 //---------------------------------------dictionary stuff -------------//
-typedef struct KeyValuePair KeyValuePair; 
+typedef struct KeyValuePair kvp; 
 typedef struct KeyValuePair{
-    Var key; 
+    char* key; 
     Var value; 
-    KeyValuePair *next; 
-    KeyValuePair *prev; 
-} KeyValuePair; 
-KeyValuePair NewKeyValuePair(Var, Var); 
+    kvp* next; 
+    int isSet; 
+}kvp; 
+kvp NewKeyValuePair(); 
+void setkvp(kvp*, char*, Var); 
+
 
 typedef struct Dictionary Dictionary;
 typedef struct Dictionary{
-	KeyValuePair* __dict; 
+	kvp* __dict; 
 	int size; 
 	int (*is_empty)(Dictionary*); 
 	void (*print)(Dictionary*); 
 } Dictionary; 
 
-void add(Dictionary*, Var, Var); 
-void add_pair(Dictionary*, KeyValuePair); 
-int has_key(Dictionary*, Var); 
-Var* get_keys(Dictionary*); 
+int add(Dictionary*, char*, Var); 
+void add_pair(Dictionary*, kvp); 
+int has_key(Dictionary*, char*); 
+char** get_keys(Dictionary*); 
 Var* get_values(Dictionary*); 
-Var lookup(Dictionary*, Var); 
+Var lookup(Dictionary*, char*); 
 
 Dictionary NewDictionary(int ); 
 void DestroyDictionary(Dictionary*); 
