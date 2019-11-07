@@ -8,7 +8,7 @@ deploy another.holo
 //multiple var declarations
 
 var intExample = 23
-var doubleExample = 3.0d
+var doubleExample = 3.0d |
 var floatExam = 5.32
 var floatExample = 5.32f
 var stringExample = "string"
@@ -29,7 +29,7 @@ var anotherInt = ifName[0]
 mat newMat[4][12]
 mat otherMat[][] = [
 	[1, 2 ,3],
-	[4, 5, 6],
+	[4, 5, 6,
 	[7, 8, 9]
 ]
 newMat[0][2] = "algo"
@@ -88,5 +88,10 @@ order testFunction(var arg1, var arg2) {
 		} 
 
 	}
+
+	while (x > 5) {
+		vision(x)
+	}
+
 	return lie
 }

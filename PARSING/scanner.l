@@ -84,7 +84,7 @@ EOL			\n\r
 "||"				{ printf("|| "); return MTH_OR; }
 
 [ \t\v\f]			{ /* do nothing */}
-.				{ yyerror("Invalid character"); return OTHER;}
+.				{ yyerror("Invalid character"); return *yytext;}
 
 %%
 
