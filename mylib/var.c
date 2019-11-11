@@ -1,5 +1,6 @@
 #include <stdio.h> 
 #include <stdlib.h> 
+#include <string.h> 
 #include "jedi.h"
 
 Var NewVarI(int val){
@@ -33,6 +34,12 @@ Var NewVarC(char val){
         r.data.cVal = val;
         r.type = TypeChar;
         return r;
+}
+
+Var NullVar(){
+    Var r; 
+    r.type = TypeNull; 
+    return r; 
 }
 
 Var* NewVarArrayI(int* array, int size){
@@ -72,4 +79,17 @@ Var* NewVarArrayC(char* array, int size){
 		r[n] = NewVarC(array[n]); 
 	}
 	return r; 
+}
+
+char* VarToString(Var var){
+    char* result = (char*)calloc(21, sizeof(char));
+    switch(var.type){
+        case TypeFloat: sprintf(result, "%0.4f", var.data.fVal); break;  
+        case TypeDouble: sprintf(result, "%0.4f", var.data.dVal); break;  
+        case TypeInt: sprintf(result, "%d", var.data.iVal); break;  
+        case TypeChar: sprintf(result, "%c", var.data.cVal); break;  
+        case TypeString: return var.data.sVal; break; 
+        case TypeNull: result = "(null)"; 
+    }
+    return result; 
 }
