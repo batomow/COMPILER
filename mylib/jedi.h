@@ -40,7 +40,7 @@ Var* NewVarArrayD(double*, int);
 Var* NewVarArrayS(char**, int); 
 Var* NewVarArrayC(char*, int); 
 
-char* VarToString(Var); 
+char* VarToString(Var); //free return value
 
 //------------- Stack Stuff ---------------------//
 typedef struct Stack Stack;
@@ -106,12 +106,12 @@ typedef struct Dictionary{
 	void (*print)(Dictionary*); 
 } Dictionary; 
 
-int add(Dictionary*, char*, Var); 
-void add_pair(Dictionary*, kvp); 
-int has_key(Dictionary*, char*); 
-char** get_keys(Dictionary*); 
-Var* get_values(Dictionary*); 
-Var lookup(Dictionary*, char*); 
+int add(Dictionary*, char*, Var); //true if sucessfull
+int add_pair(Dictionary*, kvp); //true if sucessfull
+int remove_entry(Dictionary*, char*); //true if successfull 
+char** get_keys(Dictionary*, int*); //dictionary and size, free return value
+Var* get_values(Dictionary*, int*); //dictionary and size, free return value
+Var lookup(Dictionary*, char*); //return NewVarS("Not found") if unsuccessful
 
 Dictionary NewDictionary(int ); 
 void DestroyDictionary(Dictionary*); 
