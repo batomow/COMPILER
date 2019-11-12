@@ -35,6 +35,10 @@ void printDict(Dictionary* d){
     }
 }
 
+int __dict_is_empty(Dictionary* D){
+    D->size >= 1 ? 0 : 1; 
+}
+
 Dictionary NewDictionary(int size){
     Dictionary D; 
     TRY{
@@ -50,6 +54,7 @@ Dictionary NewDictionary(int size){
     for(int n = 0; n<D.size; n++)
         D.__dict[n] = NewKeyValuePair(); 
     D.print = &printDict; 
+    D.isEmpty = &__dict_is_empty; 
     return D; 
 }
 
@@ -57,6 +62,8 @@ kvp NewKeyValuePair(){
     struct KeyValuePair result; 
     result.next = NULL; 
     result.isSet = 0; 
+    result.key = ""; 
+    result.value = NullVar(); 
     return result; 
 }
 

@@ -97,7 +97,6 @@ typedef struct KeyValuePair{
 kvp NewKeyValuePair(); 
 void setkvp(kvp*, char*, Var); 
 
-
 typedef struct Dictionary Dictionary;
 typedef struct Dictionary{
 	kvp* __dict; 
@@ -115,5 +114,42 @@ Var lookup(Dictionary*, char*); //return NewVarS("Not found") if unsuccessful
 
 Dictionary NewDictionary(int ); 
 void DestroyDictionary(Dictionary*); 
+
+typedef struct DIM DIM; 
+typedef struct DIM{
+    int isSet; 
+    int liminf; 
+    int limsup; 
+    int step;  
+    DIM* next; 
+} DIM; 
+DIM NewDIM(); 
+void SetDIM(DIM*, int, int, int); 
+void DestroyDIM(DIM* dim); 
+
+typedef struct VarTableEntry{
+    int isSet; 
+    DataType type;
+    Var data; 
+    int dir; 
+    DIM* dim; 
+} VarTableEntry; 
+VarTableEntry NewVarTableEntry(); 
+void SetVarTableEntry(VarTableEntry*, Var); 
+void PresetVarTableEntry(VarTableEntry*, DataType, int, DIM); 
+void DestroyVarTableEntry(VarTableEntry*); 
+
+typedef struct VarTable VarTable; 
+typedef struct VarTable{
+    int size; 
+    VarTableEntry __dict; 
+    void (*print)(VarTable*); 
+    int (*isEmpty)(VarTable*); 
+}VarTable;
+VarTable NewVarTable(); 
+int presetVar(VarTable*, char*, DataType, int dir, DIM*); 
+int setVar(VarTable*, char*, Var); //set the value 
+VarTableEntry tableLookup(VarTable*, char*); 
+int removeVar(VarTable*, char*); 
 
 #endif
