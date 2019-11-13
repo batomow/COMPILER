@@ -16,8 +16,8 @@ parser.tab.c:
 	bison -d parser.y
 
 clean: 
-	rm *.o -rf 
-	rm *.c -rf
-	rm *.h -rf
+	rm parser.o scanner.o -rf 
+	rm lex.yy.c parser.tab.c -rf
+	rm parser.tab.h -rf
 reset: 
 	make clean && rm *.exe -rf
