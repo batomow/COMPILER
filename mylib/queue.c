@@ -63,52 +63,36 @@ Var peek_back(Queue* queue){
 void print(Queue* queue){
 	Stack *front = &(queue->__front), *back = &(queue->__back); 
 	printf("Queue -"); 
+        char* aux; 
 	for(int n = back->size-1; n>=0; n--){
 		Var item = back->__stack[n]; 	
-		switch(item.type){
-			case TypeInt: printf("[%d]", item.data.iVal); break; 
-			case TypeFloat: printf("[%0.4f]", item.data.fVal); break; 
-			case TypeDouble: printf("[%0.4f]", item.data.dVal); break; 
-			case TypeString: printf("[%s]", item.data.sVal); break; 
-			case TypeChar: printf("[%c]", item.data.cVal); break; 
-		}
+                aux = VarToString(item); 
+                printf("[%s]", aux); 
 	}
 	for(int n = 0; n<front->size; n++){
 		Var item = front->__stack[n]; 	
-		switch(item.type){
-			case TypeInt: printf("[%d]", item.data.iVal); break; 
-			case TypeFloat: printf("[%0.4f]", item.data.fVal); break; 
-			case TypeDouble: printf("[%0.4f]", item.data.dVal); break; 
-			case TypeString: printf("[%s]", item.data.sVal); break; 
-			case TypeChar: printf("[%c]", item.data.cVal); break; 
-		}
+                aux = VarToString(item); 
+                printf("[%s]", aux); 
 	}
+        free(aux); 
 	printf("->\n"); 
 }
 
 void __debug_print(Queue* queue){
 	Stack *front = &(queue->__front), *back = &(queue->__back); 
 	printf("Queue Back -"); 
+        char* aux; 
 	for(int n = back->size-1; n>=0; n--){
 		Var item = back->__stack[n]; 	
-		switch(item.type){
-			case TypeInt: printf("[%d]", item.data.iVal); break; 
-			case TypeFloat: printf("[%0.4f]", item.data.fVal); break; 
-			case TypeDouble: printf("[%0.4f]", item.data.dVal); break; 
-			case TypeString: printf("[%s]", item.data.sVal); break; 
-			case TypeChar: printf("[%c]", item.data.cVal); break; 
-		}
+                aux = VarToString(item); 
+                printf("[%s]", aux); 
 	}printf("->\nQueue Front -"); 
 	for(int n = 0; n<front->size; n++){
 		Var item = front->__stack[n]; 	
-		switch(item.type){
-			case TypeInt: printf("[%d]", item.data.iVal); break; 
-			case TypeFloat: printf("[%0.4f]", item.data.fVal); break; 
-			case TypeDouble: printf("[%0.4f]", item.data.dVal); break; 
-			case TypeString: printf("[%s]", item.data.sVal); break; 
-			case TypeChar: printf("[%c]", item.data.cVal); break; 
-		}
+                aux = VarToString(item); 
+                printf("[%s]", aux); 
 	}
+        free(aux); 
 	printf("->\n"); 	
 }
 

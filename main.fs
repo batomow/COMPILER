@@ -1,4 +1,4 @@
-// comments
+// some comment
 /*	multiline
 	comments	*/ 
 
@@ -8,56 +8,56 @@ deploy customMadeUtilities.holo
 
 
 /* duck typing, functions may or may not return value */ 
-order function(Var arg) /* function with var argument */ 
-	vision(arg) //print in console arg
+order function(var arg) /* function with var argument */ 
+	vision(arg) //prvar in console arg
 
-order function2(int a, int b) /* function with typed variables */ 
+order function2(var a, var b) /* function with typed variables */ 
 	return a+b 
 
 //global variables 
-int counter = 0
-double percentage = 0.0
-float timer = 0.0
-char flag = ''
-string name = ""
-var doubleExample = 10.2d
-var floatExample = 9.8f
-var arrayExample[] = [1, "words", 'c', 10.2d, 5, 9.8f]
-Vector someGeometricalVector = [10, 5] /* only has x = 10, y = 5 */ 
+var counter = 0
+var percentage = 0.0
+var timer = 0.0d
+var flag = ''
+var name = ""
+var varExample = 10.2d
+var varExample = 9.8f
+var arrayExample[] = ["words", 'c', 10.2d, 5, 9.8f]
+vector someGeometricalvector = [10, 5] /* only has x = 10, y = 5 */ 
 station exampleStation  /* this is how you build structs */ 
 	var speed
-	Vector direction
-	string name
+	vector direction
+	var name
 	element reference
 
 element someElementOnScreen
 
-sacredtexts myStates idle done error /* one liner enum */ 
+sacred texts myStates idle done error /* one liner enum */ 
 
-sacredtexts exampleEnums  /* multiline enum */ 
+sacred texts exampleEnums  /* multiline enum */ 
 	state1
 	state2
 	state3
 
 mystates currentState = idle /* enum type variables */ 
 
-order calculateDistanceToPlane(vector planePointA, vector planePointB, vector pointC)
-	vector unitVector = normalize(planePointB - planePointA)
-	vector N = vector(unitVector.y, -unitVector.x)	/* plane pointing downward */ 
-	float offset = dot(N, planePointA)
-	float distanceToPlane = dot(N, pointC) - D
+order calculateDistanceToPlane(vector planePovarA, vector planePovarB, vector povarC)
+	vector unitvector = normalize(planePovarB - planePovarA)
+	vector N = vector(unitvector.y, -unitvector.x)	/* plane povaring downward */ 
+	var offset = dot(N, planePovarA)
+	var distanceToPlane = dot(N, povarC) - D
 	return distanceToPlane
 	
-order isInsideShape(vector bounds[], point)
-	int size = bounds.size
-	int countCheck = 0
-	for [0, 1, size-1]->x /* find a plane to which the point is infront of `aka positive distance */ 
-		if (execute order calculateDistanceToPlane(bounds[x], bounds[x+1], point)) > 0
+order isInsideShape(vector bounds[], povar)
+	var size = bounds.size
+	var countCheck = 0
+	for [0, 1, size-1]->x /* find a plane to which the povar is infront of `aka positive distance */ 
+		if (execute order calculateDistanceToPlane(bounds[x], bounds[x+1], povar)) > 0
 			return lie
 	return truth
 
 order shapeCollides(vector shape1Bounds[], shape2Bounds[])
-	int size = shape1Bounds.size
+	var size = shape1Bounds.size
 	for [0, 1, size]->x
 		if isInsideShape(shape1Bounds[x], shape2Bounds) == lie
 			return truth
@@ -65,9 +65,9 @@ order shapeCollides(vector shape1Bounds[], shape2Bounds[])
 			
 
 /* main loop functioons */ 
-ENTER(Var args[])
+ENTER(var args[])
 	counter =  args[0]
-	double = args[1] 
+	var = args[1] 
 	timer = args[2]
 	flag = args[3]
 	name = args[4]
@@ -77,7 +77,7 @@ ENTER(Var args[])
 	element newELement = locate(10)
 	move(newElement, vector(10, 0))
 	rotate(newElement, deg2rad(-30))
-	scale(newELement, Vector(10, 10))
+	scale(newELement, vector(10, 10))
 		
 	exampleStation.reference = someElementOnScreen
 	exampleStation.speed = 20.0f
@@ -103,10 +103,10 @@ UPDATE(delta)
 		flag = 'd'
 
 	if currentState != myStates.done
-		Var a = 10 + 2 /* = 12 */ 
-		Var b = 9.2 + 2 /* = 18.4 */ 
-		Var c = 3^3 /* = 27 */ 
-		Var d = 16^^2 /* = 4, this is 16 (square root of) 2 */ 
+		var a = 10 + 2 /* = 12 */ 
+		var b = 9.2 + 2 /* = 18.4 */ 
+		var c = 3^3 /* = 27 */ 
+		var d = 16^^2 /* = 4, this is 16 (square root of) 2 */ 
 		var e = 2*2 /* = 4 */ 
 		e += 2 /* = 6 */ 
 		e -= 2 /* = 4 */ 
