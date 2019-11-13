@@ -27,7 +27,7 @@ void printDict(Dictionary* d){
             for(int i = 0; i<counter; i++)
                 printf("->"); 
             aux = VarToString(iter->value); 
-            printf("|%s|%s]\n", iter->key, aux); 
+            printf("[%s|%s]\n", iter->key, aux); 
             iter = iter->next; 
             counter++; 
         }
@@ -36,7 +36,7 @@ void printDict(Dictionary* d){
 }
 
 int __dict_is_empty(Dictionary* D){
-    D->size >= 1 ? 0 : 1; 
+    return (D->size >= 1 ? 0 : 1);
 }
 
 Dictionary NewDictionary(int size){

@@ -101,7 +101,7 @@ typedef struct Dictionary Dictionary;
 typedef struct Dictionary{
 	kvp* __dict; 
 	int size; 
-	int (*is_empty)(Dictionary*); 
+	int (*isEmpty)(Dictionary*); 
 	void (*print)(Dictionary*); 
 } Dictionary; 
 
@@ -115,41 +115,53 @@ Var lookup(Dictionary*, char*); //return NewVarS("Not found") if unsuccessful
 Dictionary NewDictionary(int ); 
 void DestroyDictionary(Dictionary*); 
 
+typedef enum TableType{
+    TableInt, 
+    TableFloat, 
+    TableChar, 
+    TableString, 
+    TableElement, 
+    TableVector, 
+    TableNull, 
+    TableDouble
+} TableType; 
+
 typedef struct DIM DIM; 
 typedef struct DIM{
     int isSet; 
-    int liminf; 
     int limsup; 
     int step;  
     DIM* next; 
 } DIM; 
 DIM NewDIM(); 
-void SetDIM(DIM*, int, int, int); 
+void SetDIM(DIM*, int, int); 
 void DestroyDIM(DIM* dim); 
 
+typedef struct VarTableEntry VarTableEntry; 
 typedef struct VarTableEntry{
     int isSet; 
-    DataType type;
-    Var data; 
+    char* id; 
+    TableType type;
     int dir; 
     DIM* dim; 
+    VarTableEntry* next; 
 } VarTableEntry; 
 VarTableEntry NewVarTableEntry(); 
-void SetVarTableEntry(VarTableEntry*, Var); 
-void PresetVarTableEntry(VarTableEntry*, DataType, int, DIM); 
+void SetVarTableEntry(VarTableEntry*, char*, TableType, int, DIM); 
 void DestroyVarTableEntry(VarTableEntry*); 
 
 typedef struct VarTable VarTable; 
 typedef struct VarTable{
     int size; 
-    VarTableEntry __dict; 
+    int __current_size; 
+    VarTableEntry* __dict; 
     void (*print)(VarTable*); 
     int (*isEmpty)(VarTable*); 
 }VarTable;
 VarTable NewVarTable(); 
-int presetVar(VarTable*, char*, DataType, int dir, DIM*); 
-int setVar(VarTable*, char*, Var); //set the value 
-VarTableEntry tableLookup(VarTable*, char*); 
-int removeVar(VarTable*, char*); 
+void DestroyTable(VarTable*); 
+int InsertVar(VarTable*, char*, TableType, int, DIM); 
+VarTableEntry TableLookup(VarTable*, char*); 
+int RemoveVar(VarTable*, char*); 
 
 #endif
