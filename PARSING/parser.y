@@ -39,7 +39,6 @@
 
 %token LF 
 %token CR
-%token TWS
 
 %token RES_MSCN
 %token RES_SCNS
@@ -64,17 +63,20 @@
 %token V_HEX
 %token V_ARR
 %token V_MAT
-%token V_MAT4
-%token V_MAP
 %token V_VECTOR
 %token V_ELEM
 
+%token T_BOOL
+%token T_INT
+%token T_FLOAT
+%token T_DOUBLE
+%token T_CHAR
+%token T_STRING
+%token T_HEX
+
 %token RES_ORDER
-%token RES_XRDER
 %token RES_MEDIT
 %token RES_RETRN
-
-%token OTHER
 
 %union{
 	/* TODO: Define data types for vars and ids */
@@ -123,6 +125,10 @@ script:
 	| deploy crlf script
 	| function crlf script
 	| vardec crlf script
+	| arrdec crlf script
+	| matdec crlf script
+	| vectordec crlf script
+	| elementdec crlf script
 	| crlf script
 
 
@@ -140,12 +146,12 @@ deploy:
 	RES_DPLY M_ID
 
 function: 
-	RES_ORDER V_ID SYM_OPARE functionHelper SYM_CPARE optlf SYM_OCURL crlf functionHelper2 SYM_CCURL
+	RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE functionHelper SYM_CPARE optlf SYM_OCURL crlf functionHelper2 SYM_CCURL
 
 functionHelper: 
 	/* empty */
-	| vardec SYM_COMMA functionHelper
-	| vardec
+	| functionHelper4 SYM_COMMA functionHelper
+	| functionHelper4
 
 functionHelper2:
 	stmt crlf functionHelper3
@@ -154,12 +160,24 @@ functionHelper3:
 	/* empty */ 
 	| functionHelper2 
 
+
+functionHelper4:
+	vardec
+	| arrdec
+	| matdec
+	| vectordec
+	| elementdec
+
 stmt: 
 	/* empty */
 	| assign 
 	| expr
 	| logicstruct
 	| vardec
+	| arrdec
+	| matdec
+	| vectordec
+	| elementdec
 	| RES_MEDIT
 	| ret
 
@@ -169,6 +187,7 @@ funcall:
 funcallHelper:
 	/* empty */
 	| expr funcallHelper2
+	| vector funcallHelper2
 
 funcallHelper2:
 	/* empty */
@@ -181,12 +200,7 @@ ret:
 /* ------- VARIABLES GRAMMAR ------- */
 
 vardec: 
-	V_VAR V_ID
-	| arrdec
-	| matdec
-	| mapdec
-	| vectordec
-	| elementdec
+	V_VAR V_ID SYM_COLON vartypes
 
 basictypes:
 	V_CHAR
@@ -197,19 +211,26 @@ basictypes:
 	| V_BOOL
 	| V_HEX
 
-cte: 
-	basictypes
-	| arr
-	| mat
-	| map
-	| vector
+vartypes:
+	T_INT
+	| T_FLOAT
+	| T_DOUBLE
+	| T_CHAR
+	| T_STRING
+	| T_BOOL
+	| T_HEX
+
 
 var_or_cte:
 	V_ID
-	| cte 
+	| basictypes 
 
 assign: 
 	vardec MTH_SEQUA expr
+	| arrdec MTH_SEQUA arr
+	| matdec MTH_SEQUA mat
+	| vectordec MTH_SEQUA vector
+	| elementdec MTH_SEQUA funcall
 	| V_ID MTH_SEQUA expr
 	| structaccess MTH_SEQUA expr
 	| property MTH_SEQUA expr
@@ -217,10 +238,6 @@ assign:
 
 
 /* ------- DATA STRUCTURES GRAMMAR ------- */
-
-int_or_blank:
-	/* empty */
-	| V_INT
 
 structaccess:
 	V_ID SYM_OBRAC expr SYM_CBRAC structIndex
@@ -232,7 +249,7 @@ structIndex:
 /* Array*/
 
 arrdec:
-	V_ARR V_ID SYM_OBRAC int_or_blank SYM_CBRAC
+	V_ARR V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC
 
 arr:
 	SYM_OBRAC arrHelper SYM_CBRAC
@@ -245,7 +262,7 @@ arrHelper:
 /* Matrix */
 
 matdec:
-	V_MAT V_ID SYM_OBRAC int_or_blank SYM_CBRAC SYM_OBRAC int_or_blank SYM_CBRAC
+	V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
 
 mat:
 	SYM_OBRAC optlf matHelper SYM_CBRAC
@@ -253,23 +270,6 @@ mat:
 matHelper:
 	arr SYM_COMMA optlf matHelper
 	| arr optlf
-
-
-/* Map */
-
-mapdec: 
-	V_MAP V_ID
-
-map: 
-	SYM_OCURL optlf mapHelper SYM_CCURL
-
-mapHelper: 
-	basictypes SYM_COLON expr crlf mapHelper2
-	| V_ID SYM_COLON expr crlf mapHelper2
-
-mapHelper2:
-	/* empty */
-	| mapHelper
 
 
 /* Geometric vector */

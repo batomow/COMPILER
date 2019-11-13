@@ -32,14 +32,18 @@ EOL			\n\r
 "var"				{ printf("var "); return V_VAR; }
 "array"				{ printf("arr "); return V_ARR; }
 "mat"				{ printf("mat "); return V_MAT; }
-"mat4"				{ printf("mat4 "); return V_MAT4; } 
-"map"				{ printf("map "); return V_MAP; }
 "vector"			{ printf("vector "); return V_VECTOR; }
 "element"			{ printf("element "); return V_ELEM; }
 "order"				{ printf("order "); return RES_ORDER; }
-"execute order"			{ printf("xrder "); return RES_XRDER; }
 "meditate"			{ printf("medit "); return RES_MEDIT; }
 "return"			{ printf("retrn "); return RES_RETRN; }
+"bool"				{ printf("bool "); return T_BOOL; }
+"hex"				{ printf("hex "); return T_HEX; }
+"char"				{ printf("char "); return T_CHAR; }
+"int"				{ printf("int "); return T_INT; }
+"float"				{ printf("float "); return T_FLOAT; }
+"double"			{ printf("double "); return T_DOUBLE; }
+"string"			{ printf("string "); return T_STRING; }
 
 (lie|truth)			{ printf("bool "); return V_BOOL; /* bool */ }
 
@@ -51,7 +55,7 @@ EOL			\n\r
 \'[a-zA-Z0-9]\'			{ printf("char "); return V_CHAR; /* char */ }
 [-+]?[0-9]+i?			{ printf("int "); return V_INT; /* int */ }
 [-+]?[0-9]+\.?[0-9]*f?		{ printf("float "); return V_FLOAT; /* float */ }
-[-+]?[0-9]+\.?[0-9]*d		{ printf("double "); printf(""); return V_DOUBLE; /* double */ }
+[-+]?[0-9]+\.?[0-9]*d		{ printf("double "); return V_DOUBLE; /* double */ }
 \"(\\.|[^"\\])*\"		{ printf("string "); return V_STRING; /* string */ }
 
 
