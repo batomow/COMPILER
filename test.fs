@@ -50,6 +50,11 @@ myPlayer.x = 150
 myPlayer.y = 250
 myPlayer.x = myPlayer.y
 
+
+//Expression testing
+var a:int = 5 * 2 + 1 / 2 / 1.0 - 5
+
+
 // functionName definition
 order functionName:double(var arg1:int, var arg2:double) {
 	return arg1 + arg2
