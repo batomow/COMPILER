@@ -8,6 +8,9 @@
  
 	void yyerror(const char *s);
 
+	//General neural points
+	void npFinalCheck();
+
 	//Declarations
 	void np1();
 	void np2();	
@@ -38,6 +41,21 @@
 	void npExpr13();
 	void npExpr14();
 	void npExpr15();
+
+	//Assignments
+	void npAssign0();
+	void npAssign1();
+	void npAssign2();
+	void npAssign3();
+	void npAssign4();
+	void npArrGen1();
+	void npArrGen2();
+
+	//If statement
+	void npIf0();
+	void npIf1();
+	void npIf2();
+	void npIf3();
 %}
 
 %token SYM_OBRAC 
@@ -121,7 +139,7 @@
 
 prog: 
 	config 
-	| script
+	| script { npFinalCheck(); }
 ;
 
 /* ------- CONFIG GRAMMAR ------- */ 
@@ -257,14 +275,14 @@ var_or_cte:
 	| basictypes
 
 assign: 
-	vardec MTH_SEQUA expr
-	| arrdec MTH_SEQUA arr
-	| matdec MTH_SEQUA mat
-	| vectordec MTH_SEQUA vector
-	| elementdec MTH_SEQUA funcall
-	| V_ID MTH_SEQUA expr
-	| structaccess MTH_SEQUA expr
-	| property MTH_SEQUA expr
+	vardec MTH_SEQUA { npAssign0(); } expr { npAssign1(); }
+	| arrdec MTH_SEQUA { npAssign0(); } arr { npAssign2(); }
+	| matdec MTH_SEQUA { npAssign0(); } mat { npAssign2(); }
+	| vectordec MTH_SEQUA { npAssign0(); } vector {npAssign3();}
+	| elementdec MTH_SEQUA { npAssign0(); } funcall {npAssign4();}
+	| V_ID { npExpr1_1(); } MTH_SEQUA { npAssign0(); } expr {npAssign1();}
+	| structaccess MTH_SEQUA { npAssign0(); } expr {npAssign1();}
+	| property MTH_SEQUA { npAssign0(); } expr {npAssign1();}
 
 
 
@@ -283,11 +301,11 @@ arrdec:
 	V_ARR V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC { np2();}
 
 arr:
-	SYM_OBRAC arrHelper SYM_CBRAC
+	SYM_OBRAC arrHelper SYM_CBRAC { npArrGen1(); }
 
 arrHelper: 
-	expr SYM_COMMA arrHelper
-	| expr
+	expr SYM_COMMA { npArrGen2(); } arrHelper
+	| expr { npArrGen2(); }
 
 
 /* Matrix */
@@ -380,18 +398,18 @@ logicstruct:
 	| while
 
 if:
-	LOG_IF ifHelper ifHelper3
+	LOG_IF { npIf0(); } ifHelper ifHelper3 { npIf3(); }
 
 ifHelper:
-	SYM_OPARE expr SYM_CPARE optlf SYM_OCURL crlf newlineCicle SYM_CCURL optlf ifHelper2 
+	SYM_OPARE expr SYM_CPARE { npIf1(); } optlf SYM_OCURL crlf newlineCicle SYM_CCURL optlf ifHelper2 
 
 ifHelper2:
 	/* empty */ 
-	| LOG_ELIF ifHelper
+	| LOG_ELIF { npIf2(); }  ifHelper
 
 ifHelper3:
 	/* empty */ 
-	| LOG_ELSE optlf SYM_OCURL crlf newlineCicle SYM_CCURL 
+	| LOG_ELSE { npIf2(); } optlf SYM_OCURL crlf newlineCicle SYM_CCURL 
 
 for:
 	LOG_FOR forHelper SYM_ARROW V_ID optlf SYM_OCURL crlf newlineCicle SYM_CCURL
@@ -438,11 +456,17 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
+void npFinalCheck(){
+	printf("<FINALCHECK> ");
+	/* revisar que existan las funciones necesarias de un script y cosas asi */
+}
+
 void np1(){
 	printf("<NP1> ");
 	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
 	/* Push de nombre a pila de Operandos */
+	/* Push tipo a pila de Tipos */
 }
 
 void np2(){
@@ -452,6 +476,7 @@ void np2(){
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
 	/* Generar tabla de dimensión */
 	/* Push de nombre a pila de Operandos */
+	/* Push tipo a pila de Tipos */
 }
 
 void np3(){
@@ -460,7 +485,8 @@ void np3(){
 	/* Revisar que el tamaño de ambas dimensiones son mayores a 0 y menores a INT_MAX */
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
 	/* Generar tablas de dimensiónes */
-	/* Push de nombre a pila de Operandos */
+	/* Push de apuntador a primera posicion a pila de Operandos */
+	/* Push tipo a pila de Tipos */
 }
 
 void np4(){
@@ -469,6 +495,7 @@ void np4(){
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
 	/* Recuerda que este vector es un pair, asi que haz las modificaciones necesarias */
 	/* Push de nombre a pila de Operandos */
+	/* Push tipo a pila de Tipos */
 }
 
 void np5(){
@@ -477,12 +504,13 @@ void np5(){
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
 	/* Recuerda que un elemento es una clase de "objeto" asi que no tengo idea como se debe almacenar */
 	/* Push de nombre a pila de Operandos */
+	/* Push tipo a pila de Tipos */
 }
 
 
 void npExpr1_1(){
 	printf("<NP_EXPR_1_1> ");
-	/* Push nombre a pila de operandos */
+	/* Push variable a pila de operandos */
 	/* Push tipo a pila de tipos */
 }
 void npExpr1_2(){
@@ -695,5 +723,137 @@ void npExpr15(){
 	        push tipo de resType a pTipos
 	    Else: 
 	    	Lanzar error de tipos
+	*/
+}
+
+void npAssign0(){
+	printf("<NP_ASSIGN_0> ");
+	/* Push '=' a pila de operadores */
+}
+void npAssign1(){
+	printf("<NP_ASSIGN_1> ");
+	/* 
+	Si (pOperadores.top() == '=')
+		pOperadores.pop()
+		value = pOperandos.pop()
+		value_type = pTipos.pop()
+
+		variable = pOperandos.pop()
+		variable_type = pTipo.pop()
+
+		Si (variable_type == value_type):
+			gen quad(=, value, , variable)
+		else:
+			Error: type mismatch
+	*/
+}
+void npAssign2(){
+	printf("<NP_ASSIGN_2> ");
+	/*
+	Si (pOperadores.top() == '=')
+		pOperadores.pop()
+		tamaño1 = size(*pOprandos.top()) o como le tengas que hacer pa sacar el tamaño de la primera dimensión
+		tamaño2 = 0
+		if (es una matriz):
+			tamaño2 = tamaño de la segunda dimensión
+		
+		primeraCelda = *pOperandos.pop() (Osea, lo que apunta el apuntador que esta en tope)
+		tipo = pTipos.pop()
+
+		i=0 
+		j=0
+		celdaActual = primeraCelda
+		while (filaArrOperandos is not empty):
+			if(filaArrOperandos.top() == ']'):
+				i = 0
+				j++
+				celdaActual = primeraCelda + tamaño1*j
+				filaArrOperandos.pop()
+			else:
+				value = filaArrOperandos.pop()
+				value_type = filaArrTipos.pop()
+				if(value_type == tipo && i < tamaño1 && j < tamaño2):
+					gen quad(=, value, , celdaActual)
+					i++
+					celdaActual++
+				else:
+					ERROR: type mismatch o undefined index
+	*/
+
+}
+void npAssign3(){
+	printf("<NP_ASSIGN_3> ");
+	/*
+	Si (pOperadores.top() == '='):
+		y = pOperandos.pop()
+		y_type = pTipos.pop 
+		x = pOperandos.pop()
+		x_type = pTipos.pop()
+	
+		vector = pOperandos.pop()
+		pTipos.pop() No necesitamos el tipo de vector
+		
+		if(y_type y x_type no son int, float, o double):
+			ERROR: type mismatch
+		
+		gen quad(=, pair(x, y), ,vector) o como vayas a asignar en memoria
+	*/	
+}
+void npAssign4(){
+	printf("<NP_ASSIGN_3> ");
+	/* 
+	Aquí asignas el resultado de la función de generacion de elemento al memory address del elemento.
+	No se como planeas implementar los elements, asi que no se cómo darte instrucciones precisas 
+	*/
+}
+
+void npArrGen1(){
+	printf("<NP_ARRGEN_1> ");
+	/* Meter tope de arreglo (]) a filaArrOperandos (queue) */
+}
+void npArrGen2(){
+	printf("<NP_ARRGEN_2> ");
+	/*
+	tipo = pTipos.pop()
+	Si(pTipos.top() == tipo):
+		filaArrOperandos.push(pOperandos.pop())
+		filaArrTipos.push(tipo)
+	Else:
+		ERROR: type mismatch
+	*/
+}
+
+
+void npIf0(){
+	printf("<NP_IF_0> ");
+	/* Push fondo falso a pila de saltos */
+}
+void npIf1(){
+	printf("<NP_IF_1> ");
+	/*
+	exp_type = pTipos.pop()
+	Si (exp_type es nan o algo no evaluable como truthy value):
+		ERROR type mismatch
+	else:
+		result = pOperadores.pop()
+		gen quad(gotof, result, ,__) El ultimo espacio se va a llenar después
+		pSaltos.push(el numero de cuadruplo donde pusiste el gotof)
+	*/
+}
+void npIf2(){
+	printf("<NP_IF_2> ");
+	/*
+	gen quad(goto, , ,___) El ultimo espacio se va a llenar después
+	false = pSaltos.pop()
+	pSaltos.push(el numero de cuadruplo donde pusiste el goto)
+	fill(false, el numero del cuadruplo después del goto)
+	*/
+}
+void npIf3(){
+	printf("<NP_IF_3> ");
+	/*
+	tofill = pSaltos.pop()
+	while (tofill != fondo falso)
+		fill(tofill, numero siguiente cuadruplo)
 	*/
 }
