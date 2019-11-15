@@ -1,4 +1,4 @@
-OBJECTS = stack.o var.o queue.o map.o
+OBJECTS = stack.o var.o queue.o map.o vartable.o
 all: libjedi.a
 
 libjedi.a: $(OBJECTS)
