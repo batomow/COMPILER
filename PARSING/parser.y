@@ -56,6 +56,11 @@
 	void npIf1();
 	void npIf2();
 	void npIf3();
+
+	// While statement
+	void npWhile1();
+	void npWhile2();
+	void npWhile3();
 %}
 
 %token SYM_OBRAC 
@@ -422,7 +427,7 @@ stepfor:
 	SYM_OBRAC expr SYM_COMMA expr SYM_COMMA expr SYM_CBRAC
 
 while:
-	LOG_WHILE SYM_OPARE expr SYM_CPARE optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+	LOG_WHILE {npWhile1();} SYM_OPARE expr SYM_CPARE {npWhile2();} optlf SYM_OCURL crlf newlineCicle SYM_CCURL {npWhile3();}
 
 newlineCicle:
 	newline newlineCicle
@@ -855,5 +860,32 @@ void npIf3(){
 	tofill = pSaltos.pop()
 	while (tofill != fondo falso)
 		fill(tofill, numero siguiente cuadruplo)
+	*/
+}
+
+
+void npWhile1(){
+	printf("<NP_WHILE_1> ");
+	/* push siguiente numero de cuadruplo a la pila de saltos */
+}
+void npWhile2(){
+	printf("<NP_WHILE_2> ");
+	/* 
+	exp_type = pTipos.pop()
+	Si (exp_type es nan o algo no evaluable como truthy value):
+		ERROR type mismatch
+	else:
+		result = pOperadores.pop()
+		gen quad(gotof, result, ,___) Después se va a completar este cuadruplo
+		pSaltos.push(el numero de cuadruplo donde estaba quad)
+	*/
+}
+void npWhile3(){
+	printf("<NP_WHILE_3> ");
+	/*
+	end = pSaltos.pop()
+	return = pSaltos.pop()
+	gen quad(goto, , , return)
+	fill(end, el siguiente cuadruplo)
 	*/
 }
