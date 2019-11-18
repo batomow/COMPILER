@@ -6,7 +6,6 @@
 #define ETRY }} while (0)
 #define THROW longjmp(ex_buf__, 1)
 
-
 typedef enum DataType{
         TypeInt,
         TypeFloat,
@@ -33,13 +32,12 @@ Var NewVarF(float);
 Var NewVarD(double);
 Var NewVarS(char*);
 Var NewVarC(char);
-Var NullVar(); 
-Var* NewVarArrayI(int*, int); 
-Var* NewVarArrayF(float*, int); 
-Var* NewVarArrayD(double*, int); 
-Var* NewVarArrayS(char**, int); 
-Var* NewVarArrayC(char*, int); 
-
+Var NewVarNull(); //NullVar()
+Var* NewVarArrayI(int*, int);  //needs destroying
+Var* NewVarArrayF(float*, int);  //needs destroying 
+Var* NewVarArrayD(double*, int);  //needs destroying 
+Var* NewVarArrayS(char**, int);  //needs destroying 
+Var* NewVarArrayC(char*, int);  //needs destroying 
 char* VarToString(Var); //free return value
 
 //------------- Stack Stuff ---------------------//
@@ -49,16 +47,19 @@ typedef struct Stack{
         int size; //number of elements inserted
         int __total_size;//total size
         Var* __stack; //the actual structure
-        int (*is_empty)(Stack*);
+        int (*isEmpty)(Stack*);
         void (*print)(Stack*);
 } Stack;
-void push_raw(Stack*, void*); 
 void push(Stack*, Var); 
 void pop(Stack*); 
 Var peek(Stack*); 
-void insert_raw(Stack*, void*, int); 
-void insert(Stack*, Var, int); 
-Var extract(Stack*, int);  
+    //-----array functions-----///
+    void insert(Stack*, Var, int); 
+    Var extract(Stack*, int);  
+    Var access(Stack*, int); 
+Stack NewStack(DataType, int);
+Stack NewStackFromArray(Var* , int); 
+void DestroyStack(Stack* ); 
 
 //------- queue stufff ----------------//
 typedef struct Queue Queue; 
@@ -67,23 +68,15 @@ typedef struct Queue{
 	Stack __back; 
 	int size; 
 	void (*print)(Queue*); 
-	int (*is_empty)(Queue*); 
+	int (*isEmpty)(Queue*); 
 } Queue;  
-void pop_back(Queue* ); 
-void pop_front(Queue* ); 
-void push_back(Queue* , Var); 
-void push_back_raw(Queue*, void*); 
-void push_front(Queue* , Var); 
-void push_front_raw(Queue*, void*); 
-Var peek_front(Queue* ); 
-Var peek_back(Queue* ); 
-
-Stack NewStack(DataType, int);
-Stack NewStackFromArrayRaw(DataType, void*, int); 
-Stack NewStackFromArray(Var* , int); 
+void popBack(Queue* ); 
+void popFront(Queue* ); 
+void pushBack(Queue* , Var); 
+void pushFront(Queue* , Var); 
+Var peekFront(Queue* ); 
+Var peekBack(Queue* ); 
 Queue NewQueue(DataType, int); 
-
-void DestroyStack(Stack* ); 
 void DestroyQueue(Queue* ); 
 
 //---------------------------------------dictionary stuff -------------//
@@ -94,8 +87,6 @@ typedef struct KeyValuePair{
     kvp* next; 
     int isSet; 
 }kvp; 
-kvp NewKeyValuePair(); 
-void setkvp(kvp*, char*, Var); 
 
 typedef struct Dictionary Dictionary;
 typedef struct Dictionary{
@@ -103,18 +94,17 @@ typedef struct Dictionary{
 	int size; 
 	int (*isEmpty)(Dictionary*); 
 	void (*print)(Dictionary*); 
+        int (*add)(Dictionary*, char*, Var);//true if successfull
+        void (*remove)(Dictionary*, char*);
+        Var (*lookup)(Dictionary*, char*); //return NewVarS("Not found") if unsuccessful
 } Dictionary; 
-
-int add(Dictionary*, char*, Var); //true if sucessfull
-int add_pair(Dictionary*, kvp); //true if sucessfull
-int remove_entry(Dictionary*, char*); //true if successfull 
-char** get_keys(Dictionary*, int*); //dictionary and size, free return value
-Var* get_values(Dictionary*, int*); //dictionary and size, free return value
-Var lookup(Dictionary*, char*); //return NewVarS("Not found") if unsuccessful
+char** getKeys(Dictionary*, int*); //dictionary and size, free return value
+Var* getValues(Dictionary*, int*); //dictionary and size, free return value
 
 Dictionary NewDictionary(int ); 
-void DestroyDictionary(Dictionary*); 
+void DestroyDictionary(Dictionary*);
 
+//---------------------------- var table stuff ----------------------///
 typedef enum TableType{
     TableInt, 
     TableFloat, 
@@ -135,33 +125,35 @@ typedef struct DIM{
 } DIM; 
 DIM NewDIM(); 
 void SetDIM(DIM*, int, int); 
+void AddDIM(DIM*, DIM*);  //set size at end of dim
 void DestroyDIM(DIM* dim); 
 
-typedef struct VarTableEntry VarTableEntry; 
+typedef struct VarTableEntry VTE; 
 typedef struct VarTableEntry{
     int isSet; 
     char* id; 
     TableType type;
     int dir; 
     DIM* dim; 
-    VarTableEntry* next; 
-} VarTableEntry; 
-VarTableEntry NewVarTableEntry(); 
-void SetVarTableEntry(VarTableEntry*, char*, TableType, int, DIM); 
-void DestroyVarTableEntry(VarTableEntry*); 
+    VTE* next; 
+} VTE; 
+VTE NewVTE(); 
+void SetVTE(VTE*, char*, TableType, int, DIM); 
+void DestroyVTE(VTE*); 
 
 typedef struct VarTable VarTable; 
 typedef struct VarTable{
     int size; 
     int __current_size; 
-    VarTableEntry* __dict; 
+    VTE* __dict; 
     void (*print)(VarTable*); 
     int (*isEmpty)(VarTable*); 
+    int (*add)(VarTable*, char*, TableType, int, DIM); 
+    void (*remove)(VarTable*, char*); 
+    VTE (*lookup)(VarTable*, char*); 
 }VarTable;
 VarTable NewVarTable(); 
 void DestroyTable(VarTable*); 
-int InsertVar(VarTable*, char*, TableType, int, DIM); 
-VarTableEntry TableLookup(VarTable*, char*); 
-int RemoveVar(VarTable*, char*); 
 
+// ------------------ func table stuff -----------//
 #endif

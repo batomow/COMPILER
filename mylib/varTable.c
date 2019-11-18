@@ -31,6 +31,28 @@ void SetDIM(DIM* dim, int limsup, int step){
 }
 
 
+void __AddDIMRecurring(DIM* iter, DIM* newdim, int* size, int* m){
+    if(iter->isSet){
+        *size *= iter->limsup;  //multiplicatoria
+        __AddDIMRecurring(iter->next, newdim, size, m); 
+    } else{
+        *size *= newdim->limsup; 
+        SetDIM(iter, newdim->limsup, *size); //store size at end of dim
+        *m = newdim->limsup; 
+        return; 
+    }
+    iter->step = *m; 
+    *m *= iter->limsup; 
+}
+
+void AddDIM(DIM* base, DIM* newdim){
+    int size = 1, m = 0; 
+    if(base->isSet){
+        __AddDIMRecurring(base, newdim, &size, &m); 
+    }
+}
+
+
 void DestroyDIM(DIM* dim){
     if(dim->isSet){
         DestroyDIM(dim->next); 
@@ -41,8 +63,8 @@ void DestroyDIM(DIM* dim){
     }
 }
 
-VarTableEntry NewVarTableEntry(){
-    VarTableEntry r; 
+VTE NewVTE(){
+    VTE r; 
     r.type = TableNull; 
     r.isSet = 0; 
     r.dir = 0; 
@@ -50,20 +72,20 @@ VarTableEntry NewVarTableEntry(){
     return r; 
 }
 
-void SetVarTableEntry(VarTableEntry* vte, char* id, TableType type, int dir, DIM dim){
+void SetVTE(VTE* vte, char* id, TableType type, int dir, DIM dim){
     vte->isSet = 1; 
     vte->type = type; 
     vte->id = id; 
     vte->dir = dir; 
     vte->dim = calloc(1, sizeof(DIM)); 
     *(vte->dim) = dim;  
-    vte->next = calloc(1, sizeof(VarTableEntry));  //allocate memory
-    *(vte->next) =  NewVarTableEntry();  //set whats in that memory 
+    vte->next = calloc(1, sizeof(VTE));  //allocate memory
+    *(vte->next) =  NewVTE();  //set whats in that memory 
 }
 
-void DestroyVarTableEntry(VarTableEntry* vte){
+void DestroyVTE(VTE* vte){
     if(vte->isSet){
-        DestroyVarTableEntry(vte->next); 
+        DestroyVTE(vte->next); 
         DestroyDIM(vte->dim); 
     }
     vte->isSet = 0; 
@@ -88,19 +110,29 @@ char* __enum2String(TableType tt){
     }
 }
 
-int __dim2String(DIM dim){
-    if(!dim.isSet)
-        return 0; 
-    if(dim.next->isSet)
-        return (dim.limsup)*(dim.next->limsup);
-    return dim.limsup; 
+void __DIMToStringRecurring(DIM* dim, char* result){
+    if(dim->isSet){
+        char* aux = (char*)calloc(21, sizeof(char)); 
+        sprintf(aux, "->[0|%d|m:%d]", dim->limsup, dim->step); 
+        strcat(result, aux); 
+        free(aux); 
+        __DIMToStringRecurring(dim->next, result); 
+    }
+}
+
+char* __DIMToString(DIM* dim){
+    char* result  = (char*)calloc(140, sizeof(char)); 
+    if(dim->isSet)
+        __DIMToStringRecurring(dim, result); 
+    return result; 
+
 }
 
 void __print_var_table(VarTable* t){
     if (t->isEmpty(t))
         return; 
     printf("\n"); 
-    VarTableEntry* iter; 
+    VTE* iter; 
     int counter = 0; 
     for(int n = 0; n<t->size; n++){
         iter = (t->__dict+n); 
@@ -110,61 +142,82 @@ void __print_var_table(VarTable* t){
         while(iter->isSet){
             for(int i = 0; i<counter; i++)
                 printf("->"); 
-            printf("[%d|%s|%s|%d|%d]\n", n, iter->id, __enum2String(iter->type), iter->dir, __dim2String(*(iter->dim))); 
+            printf("[%d|%s|%s|%d| o-]%s\n", n, iter->id, __enum2String(iter->type), iter->dir, __DIMToString(iter->dim)); 
             iter = iter->next; 
             counter++; 
         }
     }
 }
 
-VarTable NewVarTable(int size){
-    VarTable D; 
-    TRY{
-        D.__dict = calloc(size, sizeof(VarTableEntry)); 
-        if (D.__dict == NULL)
-            THROW; 
-        D.size = size; 
-    }CATCH{
-        printf("size exceded available memory, halving size\n"); 
-        D.__dict = calloc(size/2, sizeof(VarTableEntry)); 
-        D.size = size/2; 
-    }ETRY;  
-    for(int n = 0; n<D.size; n++)
-        D.__dict[n] = NewVarTableEntry();  
-    D.print = &__print_var_table; 
-    D.isEmpty = &__is_table_empty; 
-    D.__current_size = 0; 
-    return D; 
-}
 
-VarTableEntry TableLookup(VarTable* table, char* id){
+VTE __vartable_lookup(VarTable* table, char* id){
     int hash  = __hash(id, table->size); 
-    VarTableEntry* iter = &(table->__dict[hash]); 
+    VTE* iter = &(table->__dict[hash]); 
     while(iter->isSet){
         if (strcmp(iter->id, id) == 0)
             return *iter; 
         iter = iter->next; 
     }
-    return NewVarTableEntry(); 
+    return NewVTE(); 
 }
 
-int InsertVar(VarTable* table, char* id, TableType type, int dir, DIM dim){
+int __vartable_add(VarTable* table, char* id, TableType type, int dir, DIM dim){
     int hash = __hash(id, table->size); 
-    VarTableEntry* iter = &(table->__dict[hash]); 
+    VTE* iter = &(table->__dict[hash]); 
     while(iter->isSet){
         if (strcmp(iter->id, id) == 0)
             return 0; 
         iter = iter->next; 
     }
-    SetVarTableEntry(iter, id, type, dir, dim); 
+    SetVTE(iter, id, type, dir, dim); 
     table->__current_size++; 
     return 1; 
+}
+
+void __vartable_remove(VarTable* table, char* id){
+    int hash = __hash(id, table->size); 
+    VTE* iter = &(table->__dict[hash]); 
+    VTE* prev_iter = iter;  
+    while(iter->isSet){
+        if(strcmp(id, iter->id) == 0){
+            if(iter->next){
+                prev_iter->next = iter->next; 
+            }
+            iter->isSet = 0; 
+            free(iter);
+            return; 
+        }
+        prev_iter = iter; 
+        iter = iter->next; 
+    }
 }
 
 void DestroyTable(VarTable* table){
     for(int n = 0; n<table->size; n++)
         if(table->__dict[n].isSet){
-            DestroyVarTableEntry(&(table->__dict[n])); 
+            DestroyVTE(&(table->__dict[n])); 
         }
 }
 
+VarTable NewVarTable(int size){
+    VarTable D; 
+    TRY{
+        D.__dict = calloc(size, sizeof(VTE)); 
+        if (D.__dict == NULL)
+            THROW; 
+        D.size = size; 
+    }CATCH{
+        printf("size exceded available memory, halving size\n"); 
+        D.__dict = calloc(size/2, sizeof(VTE)); 
+        D.size = size/2; 
+    }ETRY;  
+    for(int n = 0; n<D.size; n++)
+        D.__dict[n] = NewVTE();  
+    D.print = &__print_var_table; 
+    D.isEmpty = &__is_table_empty; 
+    D.__current_size = 0; 
+    D.add = &__vartable_add; 
+    D.remove = &__vartable_remove; 
+    D.lookup = &__vartable_lookup; 
+    return D; 
+}

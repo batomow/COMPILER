@@ -36,7 +36,7 @@ Var NewVarC(char val){
         return r;
 }
 
-Var NullVar(){
+Var NewVarNull(){
     Var r; 
     r.type = TypeNull; 
     return r; 
