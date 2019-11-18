@@ -11,6 +11,7 @@ all: main.exe
 
 #main.exe: main.o jedi.a
 #	gcc main.o -o main.exe -L$(LIBPATH) -L$(GL) -L$(GLEW) -L$(GLFW) -ljedi -lopengl32 -lglew32 -lglfw3 -lgdi32
+
 main.exe: main.o jedi.a
 	gcc main.o -o main.exe -L$(LIBPATH) -ljedi
 
