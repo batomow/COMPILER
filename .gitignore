@@ -30,8 +30,7 @@
 *.so.*
 *.dylib
 
-# Executables
-GL/GLEW/*.exe
+*.exe
 *.out
 *.app
 *.i*86
