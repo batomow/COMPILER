@@ -16,7 +16,7 @@ jedi.a:
 	cd $(LIB) && make && cd .$(PARS) && make
 
 main.o: main.c 
-	gcc -Wall -g -c -I$(LIB) -I$(GL) -I$(PARS) main.c -o main.o 
+	gcc -Wall -Werror -g -c -I$(LIB) -I$(GL) -I$(PARS) main.c -o main.o 
 
 clean: 
 	rm $(REBUILDABLES) -f
