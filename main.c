@@ -27,7 +27,7 @@ int main(){
     VarTable vt = NewVarTable(10);
     test(&vt); 
     vt.print(&vt);
-    char* id = "Nicolas"; 
+    char* id = "Carlos"; 
     VTE res = vt.lookup(&vt, id); 
     res.isSet ? printf("found\n") : printf("Not found\n"); 
     char* aux = res.dim->toString(res.dim); 

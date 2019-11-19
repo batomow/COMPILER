@@ -114,7 +114,6 @@ void DestroyVTE(VTE* vte){
         vte->isSet = 0; 
     }
     free(vte); 
-    
 }
 
 int __is_table_empty(VarTable* t){
@@ -187,19 +186,23 @@ int __vartable_add(VarTable* table, char* id, TableType type, int dir, DIM* dim)
 void __vartable_remove(VarTable* table, char* id){
     int hash = __hash(id, table->size); 
     VTE* iter = (table->__dict+hash); 
-    VTE* prev_iter = NULL; 
-    while(iter->isSet){
-        prev_iter = iter; 
-        if(strcmp(id, prev_iter->id) == 0){//find the element
-            iter = iter->next; 
-            break; 
+    while(iter->isSet){ 
+        if(strcmp(id, iter->id) == 0){
+            DestroyDIM(iter->dim); 
+            while(iter->next->isSet){
+                iter->id = iter->next->id; 
+                iter->type = iter->next->type; 
+                iter->dir = iter->next->dir; 
+                iter->dim = iter->next->dim; 
+                iter = iter->next; 
+            }
+            DestroyDIM(iter->dim); 
+            free(iter->next); 
+            *iter = NewVTE(); 
+            return; 
         }
-        iter = iter->next; 
+        iter = iter->next;
     }
-    if(prev_iter){//only do stuff if atleast one element was set
-       DestroyDIM(prev_iter); //delete the dim since its safe to do so
-    }
-         
 }
 
 void DestroyVarTable(VarTable* table){
