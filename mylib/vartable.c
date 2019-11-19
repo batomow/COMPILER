@@ -13,12 +13,32 @@ unsigned long __hash(char* word, int size){
     return hash % size; 
 }
 
+void __DIMToStringRecurring(DIM* dim, char* result){
+    if(dim->isSet){
+        char* aux = (char*)calloc(21, sizeof(char)); 
+        sprintf(aux, "->[0|%d|m:%d]", dim->limsup, dim->step); 
+        strcat(result, aux); 
+        free(aux); 
+        __DIMToStringRecurring(dim->next, result); 
+    }
+}
+
+char* __DIMToString(DIM* dim){ //needs deallocation
+    char* result  = (char*)calloc(140, sizeof(char)); 
+    if(dim->isSet)
+        __DIMToStringRecurring(dim, result); 
+    return result; 
+
+}
+
 DIM NewDIM(){
     DIM r; 
     r.isSet = 0; 
     r.limsup = 0; 
     r.step = 0; 
     r.next = NULL; 
+    r.toString = &__DIMToString; 
+    r.size = 0; 
     return r; 
 }
 
@@ -28,6 +48,7 @@ void SetDIM(DIM* dim, int limsup, int step){
     dim->step = step; 
     dim->next = calloc(1, sizeof(DIM));//allocate memory 
     *(dim->next) = NewDIM(); //set whats in memory
+    dim->size = limsup; //defaults to limsup
 }
 
 
@@ -37,7 +58,7 @@ void __AddDIMRecurring(DIM* iter, DIM* newdim, int* size, int* m){
         __AddDIMRecurring(iter->next, newdim, size, m); 
     } else{
         *size *= newdim->limsup; 
-        SetDIM(iter, newdim->limsup, *size); //store size at end of dim
+        SetDIM(iter, newdim->limsup, 1);//last dim 
         *m = newdim->limsup; 
         return; 
     }
@@ -49,17 +70,20 @@ void AddDIM(DIM* base, DIM* newdim){
     int size = 1, m = 0; 
     if(base->isSet){
         __AddDIMRecurring(base, newdim, &size, &m); 
+        base->size = size;//recalculate the size 
     }
 }
 
 
 void DestroyDIM(DIM* dim){
-    if(dim->isSet){
-        DestroyDIM(dim->next); 
-        dim->isSet = 0; 
-        dim->limsup = 0; 
-        dim->step = 0; 
-        free(dim);
+    if(dim) {
+        if(dim->isSet){
+            DestroyDIM(dim->next); 
+            dim->isSet = 0; 
+            dim->limsup = 0; 
+            dim->step = 0; 
+        }
+        free(dim); 
     }
 }
 
@@ -69,31 +93,32 @@ VTE NewVTE(){
     r.isSet = 0; 
     r.dir = 0; 
     r.dim = NULL; 
+    r.next = NULL; 
     return r; 
 }
 
-void SetVTE(VTE* vte, char* id, TableType type, int dir, DIM dim){
+void SetVTE(VTE* vte, char* id, TableType type, int dir, DIM* dim){
     vte->isSet = 1; 
     vte->type = type; 
     vte->id = id; 
     vte->dir = dir; 
-    vte->dim = calloc(1, sizeof(DIM)); 
-    *(vte->dim) = dim;  
+    vte->dim = dim; 
     vte->next = calloc(1, sizeof(VTE));  //allocate memory
     *(vte->next) =  NewVTE();  //set whats in that memory 
 }
 
 void DestroyVTE(VTE* vte){
+    DestroyDIM(vte->dim); 
     if(vte->isSet){
-        DestroyVTE(vte->next); 
-        DestroyDIM(vte->dim); 
+        DestroyVTE(vte->next);  
+        vte->isSet = 0; 
     }
-    vte->isSet = 0; 
     free(vte); 
+    
 }
 
 int __is_table_empty(VarTable* t){
-    return (t->__current_size > 0 ? 0 : 1); 
+    return (t->__current_size == 0 ? 1 : 0); 
 }
 
 char* __enum2String(TableType tt){
@@ -110,23 +135,6 @@ char* __enum2String(TableType tt){
     }
 }
 
-void __DIMToStringRecurring(DIM* dim, char* result){
-    if(dim->isSet){
-        char* aux = (char*)calloc(21, sizeof(char)); 
-        sprintf(aux, "->[0|%d|m:%d]", dim->limsup, dim->step); 
-        strcat(result, aux); 
-        free(aux); 
-        __DIMToStringRecurring(dim->next, result); 
-    }
-}
-
-char* __DIMToString(DIM* dim){
-    char* result  = (char*)calloc(140, sizeof(char)); 
-    if(dim->isSet)
-        __DIMToStringRecurring(dim, result); 
-    return result; 
-
-}
 
 void __print_var_table(VarTable* t){
     if (t->isEmpty(t))
@@ -142,7 +150,9 @@ void __print_var_table(VarTable* t){
         while(iter->isSet){
             for(int i = 0; i<counter; i++)
                 printf("->"); 
-            printf("[%d|%s|%s|%d| o-]%s\n", n, iter->id, __enum2String(iter->type), iter->dir, __DIMToString(iter->dim)); 
+            char* aux = iter->dim->toString(iter->dim); 
+            printf("[%d|%s|%s|%d| o-]%s\n", n, iter->id, __enum2String(iter->type), iter->dir, aux); 
+            free(aux); 
             iter = iter->next; 
             counter++; 
         }
@@ -161,9 +171,9 @@ VTE __vartable_lookup(VarTable* table, char* id){
     return NewVTE(); 
 }
 
-int __vartable_add(VarTable* table, char* id, TableType type, int dir, DIM dim){
+int __vartable_add(VarTable* table, char* id, TableType type, int dir, DIM* dim){
     int hash = __hash(id, table->size); 
-    VTE* iter = &(table->__dict[hash]); 
+    VTE* iter = (table->__dict + hash); 
     while(iter->isSet){
         if (strcmp(iter->id, id) == 0)
             return 0; 
@@ -176,27 +186,31 @@ int __vartable_add(VarTable* table, char* id, TableType type, int dir, DIM dim){
 
 void __vartable_remove(VarTable* table, char* id){
     int hash = __hash(id, table->size); 
-    VTE* iter = &(table->__dict[hash]); 
-    VTE* prev_iter = iter;  
+    VTE* iter = (table->__dict+hash); 
+    VTE* prev_iter = NULL; 
     while(iter->isSet){
-        if(strcmp(id, iter->id) == 0){
-            if(iter->next){
-                prev_iter->next = iter->next; 
-            }
-            iter->isSet = 0; 
-            free(iter);
-            return; 
-        }
         prev_iter = iter; 
+        if(strcmp(id, prev_iter->id) == 0){//find the element
+            iter = iter->next; 
+            break; 
+        }
         iter = iter->next; 
     }
+    if(prev_iter){//only do stuff if atleast one element was set
+       DestroyDIM(prev_iter); //delete the dim since its safe to do so
+    }
+         
 }
 
-void DestroyTable(VarTable* table){
-    for(int n = 0; n<table->size; n++)
-        if(table->__dict[n].isSet){
-            DestroyVTE(&(table->__dict[n])); 
+void DestroyVarTable(VarTable* table){
+    VTE* iter = table->__dict; 
+    for(int n = 0; n<table->size; n++){
+        if((iter+n)->isSet){
+            DestroyDIM((iter+n)->dim); 
+            DestroyVTE((iter+n)->next);  
         }
+    }
+    free(table->__dict); 
 }
 
 VarTable NewVarTable(int size){

@@ -115,18 +115,21 @@ typedef enum TableType{
     TableNull, 
     TableDouble
 } TableType; 
-
+//you have to manualy free the DIM if you dont add it to a vartable
+//you cant modify the DIM once assigned
 typedef struct DIM DIM; 
 typedef struct DIM{
     int isSet; 
     int limsup; 
     int step;  
+    char* (*toString)(DIM*); //needs freeing
+    int size; 
     DIM* next; 
 } DIM; 
 DIM NewDIM(); 
 void SetDIM(DIM*, int, int); 
-void AddDIM(DIM*, DIM*);  //set size at end of dim
-void DestroyDIM(DIM* dim); 
+void AddDIM(DIM*, DIM*);  //modifies the first dim linking -> a copy of the second DIM
+void DestroyDIM(DIM* dim); //null protected, assumes first dim is pointer, recomend to call with next as param
 
 typedef struct VarTableEntry VTE; 
 typedef struct VarTableEntry{
@@ -137,9 +140,9 @@ typedef struct VarTableEntry{
     DIM* dim; 
     VTE* next; 
 } VTE; 
-VTE NewVTE(); 
-void SetVTE(VTE*, char*, TableType, int, DIM); 
-void DestroyVTE(VTE*); 
+VTE NewVTE(); //initialized with dim = null and next = null
+void SetVTE(VTE*, char*, TableType, int, DIM*); //automatically calloc next = NewDIM(); 
+void DestroyVTE(VTE*);//destroys all  
 
 typedef struct VarTable VarTable; 
 typedef struct VarTable{
@@ -148,12 +151,12 @@ typedef struct VarTable{
     VTE* __dict; 
     void (*print)(VarTable*); 
     int (*isEmpty)(VarTable*); 
-    int (*add)(VarTable*, char*, TableType, int, DIM); 
+    int (*add)(VarTable*, char*, TableType, int, DIM*); 
     void (*remove)(VarTable*, char*); 
     VTE (*lookup)(VarTable*, char*); 
 }VarTable;
 VarTable NewVarTable(); 
-void DestroyTable(VarTable*); 
+void DestroyVarTable(VarTable*); 
 
 // ------------------ func table stuff -----------//
 #endif
