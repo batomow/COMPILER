@@ -196,9 +196,10 @@ void __vartable_remove(VarTable* table, char* id){
                 iter->dim = iter->next->dim; 
                 iter = iter->next; 
             }
-            DestroyDIM(iter->dim); 
+            iter->dim = NULL; 
+            iter->isSet = 0; 
+            iter->id = "deleted";
             free(iter->next); 
-            *iter = NewVTE(); 
             return; 
         }
         iter = iter->next;
