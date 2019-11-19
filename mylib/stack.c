@@ -42,9 +42,9 @@ void pop(Stack* stack){
 }
 
 void __guard(Stack* stack, int position){
-	if (position > stack->size-1 || position < 0 || isEmpty(stack)){
-		fprintf(stderr, "That position is outside the bounds of the structure"); 
-		exit(117);
+	if (position > stack->size-1 || position < 0){
+		fprintf(stderr, "That position (%d) is outside the bounds of the structure [0,%d]\nexit code 117\n", position, stack->size-1); 
+		exit(117);//should destroy stack? 
 	}
 }
 
@@ -53,10 +53,10 @@ void insert(Stack* stack, Var item, int position){
 		push(stack, item); 
 		return; 
 	}
-	__guard(stack, position); 
 	push(stack, item); 
+	__guard(stack, position); 
 	Var aux = peek(stack); 
-	for(int n = stack->size-1; n>=position; n--){
+	for(int n = stack->size-1; n>position; n--){
 		stack->__stack[n] = stack->__stack[n-1];	
 	}
 	stack->__stack[position] = aux; 
@@ -69,13 +69,12 @@ void print_stack(Stack* stack){
 		return; 
 	}
 	printf("Stack -"); 
-        char* aux; 
 	for(int n = 0; n< stack->size; n++){
 		Var item  = stack->__stack[n]; 
-                aux = VarToString(item); 
-                printf("[%s]", aux); 
+        char* aux = VarToString(item); 
+        printf("[%s]", aux); 
+       	free(aux); 
 	}
-        free(aux); 
 	printf("->\n"); 
 }
 
@@ -117,8 +116,7 @@ Stack NewStackFromArray(Var* array, int size){
 }
 
 void DestroyStack(Stack* stack){
-	for(int n = 0; n < stack->size; n++){
-		pop(stack); 
-	}
 	free(stack->__stack); 
+	stack->size = 0; 
+	stack->__total_size = 0; 
 }

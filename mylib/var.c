@@ -88,8 +88,8 @@ char* VarToString(Var var){
         case TypeDouble: sprintf(result, "%0.4f", var.data.dVal); break;  
         case TypeInt: sprintf(result, "%d", var.data.iVal); break;  
         case TypeChar: sprintf(result, "%c", var.data.cVal); break;  
-        case TypeString: return var.data.sVal; break; 
-        case TypeNull: result = "(null)"; 
+        case TypeString: sprintf(result, "%s", var.data.sVal); break; 
+        case TypeNull: sprintf(result, "(null)"); 
     }
     return result; 
 }
