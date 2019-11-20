@@ -40,6 +40,20 @@ Var* NewVarArrayS(char**, int);  //needs destroying
 Var* NewVarArrayC(char*, int);  //needs destroying 
 char* VarToString(Var); //free return value
 
+//element
+typedef struct Vector{
+    Var a;
+    Var b;
+} Vector; 
+Vector NewVector(Var, Var); 
+
+typedef struct Element{    
+    Vector position;  
+    Vector size; 
+    int color; 
+} Element; 
+Element NewElement(Vector, Vector, int); 
+
 //------------- Stack Stuff ---------------------//
 typedef struct Stack Stack;
 typedef struct Stack{
@@ -113,7 +127,7 @@ typedef enum TableType{
     TableElement, 
     TableVector, 
     TableNull, 
-    TableDouble
+    TableDouble,
 } TableType; 
 //you have to manualy free the DIM if you dont add it to a vartable
 //you cant modify the DIM once assigned
@@ -123,7 +137,7 @@ typedef struct DIM{
     int limsup; 
     int step;  
     char* (*toString)(DIM*); //needs freeing
-    int size; 
+    int size; //the total size of the multiple dimensions
     DIM* next; 
 } DIM; 
 DIM NewDIM(); 
@@ -159,4 +173,56 @@ VarTable NewVarTable();
 void DestroyVarTable(VarTable*); 
 
 // ------------------ func table stuff -----------//
+
+typedef struct FuncTableEntry FTE; 
+typedef struct FuncTableEntry {
+    int isSet; 
+    char* moduleid; 
+    TableType returntype;  
+    int quadlinenum; 
+    VarTable* params; 
+    VarTable* vars;  
+    int size; 
+    FTE* next;//llinked list;   
+}FTE; 
+FTE NewFTE(); 
+void SetFTE(FTE*, char*, TableType, int); 
+void UpdateTotalSize(FTE*); 
+void DestroyFTE(FTE*); 
+
+typedef struct FuncTable{
+    FTE* __dict;     
+    int size; 
+    int (*add)(char*, TableType, int); //id, return type, quad line
+    void (*update)(); 
+    FTE* (lookup);  
+} FuncTable; 
+
+
+typedef enum OP{
+    SUM, 
+    RES, 
+    ROOT, 
+    DIV,
+    MULT, 
+    POW, 
+    GOTO, 
+    GOTOF, 
+    GOTOV,
+    GOSUB, 
+    ASSIGN, 
+    PRINT, 
+    READ, 
+    LT, 
+    GT, 
+    LTE, 
+    GTE, 
+    AND, 
+    OR, 
+    EEQ, 
+    NEQ,
+    ENDPROC,
+    ENDPROG 
+} OP; 
+
 #endif

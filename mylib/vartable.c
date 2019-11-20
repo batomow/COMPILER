@@ -38,7 +38,7 @@ DIM NewDIM(){
     r.step = 0; 
     r.next = NULL; 
     r.toString = &__DIMToString; 
-    r.size = 0; 
+    r.size = 1; 
     return r; 
 }
 
@@ -207,11 +207,13 @@ void __vartable_remove(VarTable* table, char* id){
 }
 
 void DestroyVarTable(VarTable* table){
-    VTE* iter = table->__dict; 
-    for(int n = 0; n<table->size; n++){
-        if((iter+n)->isSet){
-            DestroyDIM((iter+n)->dim); 
-            DestroyVTE((iter+n)->next);  
+    if(table->isEmpty){
+        VTE* iter = table->__dict; 
+        for(int n = 0; n<table->size; n++){
+            if((iter+n)->isSet){
+                DestroyDIM((iter+n)->dim); 
+                DestroyVTE((iter+n)->next);  
+            }
         }
     }
     free(table->__dict); 

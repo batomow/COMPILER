@@ -1,5 +1,5 @@
 
-OBJECTS = stack.o var.o queue.o map.o vartable.o
+OBJECTS = stack.o var.o queue.o map.o vartable.o functable.o
 
 all: libjedi.a
 
