@@ -159,15 +159,16 @@ void __print_var_table(VarTable* t){
 }
 
 
-VTE __vartable_lookup(VarTable* table, char* id){
+VTE* __vartable_lookup(VarTable* table, char* id){
     int hash  = __hash(id, table->size); 
     VTE* iter = &(table->__dict[hash]); 
     while(iter->isSet){
         if (strcmp(iter->id, id) == 0)
-            return *iter; 
+            return iter; 
         iter = iter->next; 
     }
-    return NewVTE(); 
+    iter = calloc(1, sizeof(VTE)); *iter = NewVTE(); 
+    return iter;  
 }
 
 int __vartable_add(VarTable* table, char* id, TableType type, int dir, DIM* dim){
@@ -207,13 +208,12 @@ void __vartable_remove(VarTable* table, char* id){
 }
 
 void DestroyVarTable(VarTable* table){
-    if(table->isEmpty){
-        VTE* iter = table->__dict; 
-        for(int n = 0; n<table->size; n++){
-            if((iter+n)->isSet){
-                DestroyDIM((iter+n)->dim); 
-                DestroyVTE((iter+n)->next);  
-            }
+    printf("hey\n");
+    VTE* iter = table->__dict; 
+    for(int n = 0; n<table->size; n++){
+        if((iter+n)->isSet){
+            DestroyDIM((iter+n)->dim); 
+            DestroyVTE((iter+n)->next);  
         }
     }
     free(table->__dict); 

@@ -167,7 +167,7 @@ typedef struct VarTable{
     int (*isEmpty)(VarTable*); 
     int (*add)(VarTable*, char*, TableType, int, DIM*); 
     void (*remove)(VarTable*, char*); 
-    VTE (*lookup)(VarTable*, char*); 
+    VTE* (*lookup)(VarTable*, char*); 
 }VarTable;
 VarTable NewVarTable(); 
 void DestroyVarTable(VarTable*); 
@@ -182,7 +182,7 @@ typedef struct FuncTableEntry {
     int quadlinenum; 
     VarTable* params; 
     VarTable* vars;  
-    int size; 
+    int bytesize; 
     FTE* next;//llinked list;   
 }FTE; 
 FTE NewFTE(); 
@@ -190,14 +190,19 @@ void SetFTE(FTE*, char*, TableType, int);
 void UpdateTotalSize(FTE*); 
 void DestroyFTE(FTE*); 
 
+typedef struct FuncTable FuncTable; 
 typedef struct FuncTable{
     FTE* __dict;     
     int size; 
-    int (*add)(char*, TableType, int); //id, return type, quad line
-    void (*update)(); 
+    int __current_size; 
+    int (*isEmpty)(FuncTable*); 
+    void (*print)(FuncTable*); 
+    int (*add)(FuncTable*, char*, TableType, int); //id, return type, quad line
+    void (*updateSize)(FuncTable*); 
     FTE* (lookup);  
 } FuncTable; 
-
+FuncTable NewFuncTable(int); 
+void DestroyFuncTable(FuncTable*); 
 
 typedef enum OP{
     SUM, 
