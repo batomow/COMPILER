@@ -94,9 +94,6 @@
 %token LF 
 %token CR
 
-%token RES_MSCN
-%token RES_SCNS
-%token RES_DPLY
 %token V_ID
 %token F_ID
 %token M_ID
@@ -114,7 +111,6 @@
 %token V_INT
 %token V_DOUBLE
 %token V_BOOL
-%token V_HEX
 %token V_ARR
 %token V_MAT
 %token V_VECTOR
@@ -126,7 +122,6 @@
 %token T_DOUBLE
 %token T_CHAR
 %token T_STRING
-%token T_HEX
 
 %token RES_ORDER
 %token RES_MEDIT
@@ -142,33 +137,8 @@
 
 /* ------- ENTRY POINT ------- */
 
-prog: 
-	config 
-	| script { npFinalCheck(); }
-;
+prog: script { npFinalCheck(); } ;
 
-/* ------- CONFIG GRAMMAR ------- */ 
-
-config: 
-	optlfCicle mainscene optlfCicle scenelist optlfCicle configHelper optlfCicle
-
-configHelper:
-	/* empty */ 
-	| deploy crlf configHelper
-
-mainscene: 
-	RES_MSCN F_ID crlf 
-
-scenelist: 
-	RES_SCNS SYM_OBRAC scenelistHelper SYM_CBRAC crlf 
-
-scenelistHelper: 
-	F_ID SYM_COMMA scenelistHelper 
-	| F_ID
-
-optlfCicle:
-	/* empty */
-	| crlf optlfCicle
 
 /* ------- SCRIPT GRAMMAR ------- */
 
@@ -176,7 +146,6 @@ script:
 	/* empty */
 	| assign crlf script 
 	| expr crlf script
-	| deploy crlf script
 	| function crlf script
 	| vardec crlf script
 	| arrdec crlf script
@@ -195,9 +164,6 @@ crlf:
 optlf:
 	/* empty */
 	| crlf
-
-deploy: 
-	RES_DPLY M_ID
 
 function: 
 	RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE functionHelper SYM_CPARE optlf SYM_OCURL crlf functionHelper2 SYM_CCURL
@@ -263,7 +229,6 @@ basictypes:
 	| V_DOUBLE { npExpr1_2(); }
 	| V_INT { npExpr1_2(); }
 	| V_BOOL { npExpr1_2(); }
-	| V_HEX { npExpr1_2(); }
 
 vartypes:
 	T_INT
@@ -272,7 +237,6 @@ vartypes:
 	| T_CHAR
 	| T_STRING
 	| T_BOOL
-	| T_HEX
 
 
 var_or_cte:

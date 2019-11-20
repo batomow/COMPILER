@@ -10,7 +10,6 @@
 
 Digit			[0-9]
 Letter			[a-zA-Z_]
-Hex			[a-fA-F0-9]
 EOL			\n\r
 
 %%
@@ -21,9 +20,6 @@ EOL			\n\r
 "\r"				{ /* printf("CR\n"); */ return CR; /* 301 */ }
 "\n"				{ printf("lf\n"); return LF; /* 300 */ }
 
-"MAINSCENE"			{ printf("MSCN "); return RES_MSCN; }
-"SCENES"			{ printf("SCENES "); return RES_SCNS; }
-"deploy"			{ printf("DPLY "); return RES_DPLY; }
 "if"				{ printf("IF "); return LOG_IF; }
 "elif"				{ printf("ELIF "); return LOG_ELIF; }
 "else"				{ printf("ELSE "); return LOG_ELSE; }
@@ -38,7 +34,6 @@ EOL			\n\r
 "meditate"			{ printf("medit "); return RES_MEDIT; }
 "return"			{ printf("retrn "); return RES_RETRN; }
 "bool"				{ printf("bool "); return T_BOOL; }
-"hex"				{ printf("hex "); return T_HEX; }
 "char"				{ printf("char "); return T_CHAR; }
 "int"				{ printf("int "); return T_INT; }
 "float"				{ printf("float "); return T_FLOAT; }
@@ -51,7 +46,6 @@ EOL			\n\r
 [a-zA-Z][a-zA-Z0-9]*\.fs        { printf("f_id "); return F_ID; }
 [a-zA-Z][a-zA-Z0-9]*\.holo      { printf("M_ID "); return M_ID; }
 
-#{Hex}{6}					{ printf("hex "); return V_HEX; /* hexadecimal color */ }
 \'[a-zA-Z0-9]\'			{ printf("char "); return V_CHAR; /* char */ }
 [-+]?[0-9]+i?			{ printf("int "); return V_INT; /* int */ }
 [-+]?[0-9]+\.?[0-9]*f?		{ printf("float "); return V_FLOAT; /* float */ }
