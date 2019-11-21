@@ -28,7 +28,6 @@ char* __DIMToString(DIM* dim){ //needs deallocation
     if(dim->isSet)
         __DIMToStringRecurring(dim, result); 
     return result; 
-
 }
 
 DIM NewDIM(){
@@ -136,9 +135,10 @@ char* __enum2String(TableType tt){
 
 
 void __print_var_table(VarTable* t){
-    if (t->isEmpty(t))
+    if (t->isEmpty(t)){
+        printf("[empty]\n");     
         return; 
-    printf("\n"); 
+    }
     VTE* iter; 
     int counter = 0; 
     for(int n = 0; n<t->size; n++){
@@ -150,7 +150,7 @@ void __print_var_table(VarTable* t){
             for(int i = 0; i<counter; i++)
                 printf("->"); 
             char* aux = iter->dim->toString(iter->dim); 
-            printf("[%d|%s|%s|%d| o-]%s\n", n, iter->id, __enum2String(iter->type), iter->dir, aux); 
+            printf("\t[%d|%s|%s|%d| o-]%s\n", n, iter->id, __enum2String(iter->type), iter->dir, aux); 
             free(aux); 
             iter = iter->next; 
             counter++; 
@@ -208,7 +208,6 @@ void __vartable_remove(VarTable* table, char* id){
 }
 
 void DestroyVarTable(VarTable* table){
-    printf("hey\n");
     VTE* iter = table->__dict; 
     for(int n = 0; n<table->size; n++){
         if((iter+n)->isSet){

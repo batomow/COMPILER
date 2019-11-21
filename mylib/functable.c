@@ -41,11 +41,11 @@ FTE NewFTE(){
 }
 
 void SetFTE(FTE* fte, char* moduleid, TableType returntype, int quadline){
-    printf("setting fte\n"); 
     fte->isSet = 1; 
     fte->moduleid = moduleid; 
     fte->returntype = returntype; 
-
+    fte->quadlinenum = quadline; 
+    fte->bytesize = 0; 
     fte->params = calloc(1, sizeof(VarTable)); 
     *(fte->params) = NewVarTable(23); 
 
@@ -69,7 +69,9 @@ int getBytes(TableType type, int size){
     }
 }
 
-void UpdateTotalSize(FTE* fte){
+int __update_table_total_size(FuncTable* table, char* funcid){
+    FTE* fte = table->lookup(table, funcid); 
+    printf("lookin up at table: %s\n", fte->moduleid); 
     int totalBytes = 0; 
     VTE* iter; 
     for(int n = 0; n<fte->params->size; n++){
@@ -87,17 +89,16 @@ void UpdateTotalSize(FTE* fte){
         }
     }
     fte->bytesize = totalBytes; 
+    return totalBytes; 
 }
 
 void DestroyFTE(FTE* iter){
     if(iter->isSet){
-       DestroyFTE(iter->next);  
-       DestroyVarTable(iter->params); 
-       DestroyVarTable(iter->vars); 
+        DestroyFTE(iter->next);  
+        DestroyVarTable(iter->params); 
+        DestroyVarTable(iter->vars); 
     }
     iter->isSet = 0; 
-    free(iter->params); 
-    free(iter->vars); 
     free(iter); 
 }
 
@@ -106,7 +107,7 @@ int __is_func_table_empty(FuncTable* ft){
 }
 
 void __print_func_table(FuncTable* ft){
-    if(ft->isEmpty){
+    if(ft->isEmpty(ft)){
         printf("[empty]\n"); 
         return; 
     }
@@ -114,12 +115,13 @@ void __print_func_table(FuncTable* ft){
     for(int n = 0; n<ft->size; n++){
         iter = (ft->__dict+n);
         while(iter->isSet){
-            printf("[Func ID : %s |Return Type: %s |Bytesize: %d | Quadruple Line: %d]\n", iter->moduleid, __enumToString(iter->returntype), iter->bytesize, iter->quadlinenum);   
-            printf("----------------------------------------------------------------------\n"); 
-            printf("------------------------------ Params --------------------------------\n"); 
+            printf("[Hash: %d |FuncID : %s |ReturnType: %s |Bytesize: %d | QuadrupleLine: %d]\n",n, iter->moduleid, __enumToString(iter->returntype), iter->bytesize, iter->quadlinenum);   
+            printf("-----------------------------------------------------------------\n"); 
+            printf("------------------------- Params --------------------------------\n"); 
             iter->params->print(iter->params); 
-            printf("------------------------------- Vars ---------------------------------\n"); 
+            printf("-------------------------- Vars ---------------------------------\n"); 
             iter->vars->print(iter->vars); 
+            printf("-----------------------------------------------------------------\n"); 
             iter = iter->next; 
         }
     }
@@ -139,13 +141,61 @@ int __add_to_func_table(FuncTable* table, char* funcid, TableType returntype, in
     return 1; 
 }
 
+int __add_param_to_func_table(FuncTable* table, char* funcid, char* varid, TableType vartype, int virtualdir, DIM* dim){
+    int hash = __hash3(funcid, table->size); 
+    FTE* func = (table->__dict+hash); 
+    if(!func->isSet){
+        printf("the function is not registerd!\n"); 
+        return 0; 
+    }
+    VarTable* vartable = func->params;
+    return (vartable->add(vartable, varid, vartype, virtualdir, dim));
+} 
+
+int __add_var_to_func_table(FuncTable* table, char* funcid, char* varid, TableType vartype, int virtualdir, DIM* dim){
+    int hash = __hash3(funcid, table->size); 
+    FTE* func = (table->__dict+hash); 
+    if(!func->isSet){
+        printf("the function is not registerd!\n"); 
+        return 0; 
+    }
+    VarTable* vartable = func->vars;
+    return (vartable->add(vartable, varid, vartype, virtualdir, dim));
+} 
+
+FTE* __func_table_lookup(FuncTable* table, char* funcid){
+    int hash = __hash3(funcid, table->size); 
+    FTE* iter = (table->__dict+hash);
+    while(iter->isSet){
+        if(strcmp(funcid, iter->moduleid) == 0){
+            return iter; 
+            iter = iter->next; 
+        }
+    }
+    return iter; 
+}
+
+VTE* __lookup_var(FuncTable* table, char* moduleid, char* varid){
+    int hash = __hash3(moduleid, table->size);  
+    FTE* fte = (table->__dict + hash);
+    return (fte->vars->lookup(fte->vars, varid)); 
+}
+
+VTE* __lookup_param(FuncTable* table, char* moduleid, char* varid){
+    int hash = __hash3(moduleid, table->size);  
+    FTE* fte = (table->__dict + hash);
+    return (fte->params->lookup(fte->params, varid)); 
+}
+
 void DestroyFuncTable(FuncTable* table){
      FTE* iter = (table->__dict);
      for(int n = 0; n<table->size; n++){
          if((iter+n)->isSet){
-             DestroyVarTable((iter+n)->params); 
-             DestroyVarTable((iter+n)->vars); 
-             DestroyFTE((iter+n)->next); 
+            DestroyVarTable((iter+n)->params); 
+            free((iter+n)->params);     
+            DestroyVarTable((iter+n)->vars); 
+            free((iter+n)->vars); 
+            DestroyFTE((iter+n)->next); 
          }
      }
      free(table->__dict); 
@@ -161,7 +211,11 @@ FuncTable NewFuncTable(int size){
     ft.isEmpty = &__is_func_table_empty; 
     ft.print = &__print_func_table;  
     ft.add = &__add_to_func_table; 
-    //update
-    //lookup
+    ft.addVar = &__add_var_to_func_table;
+    ft.addParam = &__add_param_to_func_table;
+    ft.updateSize = &__update_table_total_size; 
+    ft.lookup = &__func_table_lookup; 
+    ft.lookupVar = &__lookup_var; 
+    ft.lookupParam = &__lookup_param; 
     return ft; 
 }

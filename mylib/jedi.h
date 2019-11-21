@@ -187,7 +187,6 @@ typedef struct FuncTableEntry {
 }FTE; 
 FTE NewFTE(); 
 void SetFTE(FTE*, char*, TableType, int); 
-void UpdateTotalSize(FTE*); 
 void DestroyFTE(FTE*); 
 
 typedef struct FuncTable FuncTable; 
@@ -198,8 +197,12 @@ typedef struct FuncTable{
     int (*isEmpty)(FuncTable*); 
     void (*print)(FuncTable*); 
     int (*add)(FuncTable*, char*, TableType, int); //id, return type, quad line
-    void (*updateSize)(FuncTable*); 
-    FTE* (lookup);  
+    int (*addVar)(FuncTable*, char*, char*, TableType, int, DIM*); //set dim later 
+    int (*addParam)(FuncTable*, char*, char*, TableType, int, DIM*); //set dim later
+    int (*updateSize)(FuncTable*, char*); 
+    FTE* (*lookup)(FuncTable*, char*);  
+    VTE* (*lookupVar)(FuncTable*, char*, char*); 
+    VTE* (*lookupParam)(FuncTable*, char*, char*); 
 } FuncTable; 
 FuncTable NewFuncTable(int); 
 void DestroyFuncTable(FuncTable*); 
