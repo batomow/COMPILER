@@ -61,6 +61,12 @@
 	void npWhile1();
 	void npWhile2();
 	void npWhile3();
+
+	// For statement
+	void npFor1();
+	void npFor2();
+	void npFor3();
+	void npFor4();
 %}
 
 %token SYM_OBRAC 
@@ -367,10 +373,10 @@ logicstruct:
 	| while
 
 if:
-	LOG_IF { npIf0(); } ifHelper ifHelper3 { npIf3(); }
+	LOG_IF { npIf0(); } ifHelper ifHelper3 { npIf3(); } 
 
 ifHelper:
-	SYM_OPARE expr SYM_CPARE { npIf1(); } optlf SYM_OCURL crlf newlineCicle SYM_CCURL optlf ifHelper2 
+	SYM_OPARE expr SYM_CPARE { npIf1(); } optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2 
 
 ifHelper2:
 	/* empty */ 
@@ -381,24 +387,25 @@ ifHelper3:
 	| LOG_ELSE { npIf2(); } optlf SYM_OCURL crlf newlineCicle SYM_CCURL 
 
 for:
-	LOG_FOR forHelper SYM_ARROW V_ID optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+	LOG_FOR forHelper SYM_ARROW V_ID {npFor3();} optlf SYM_OCURL crlf newlineCicle  SYM_CCURL {npFor4()}
 
 forHelper:
-	V_ID
+	V_ID {npFor1();}
 	| stepfor
 
 stepfor:
-	SYM_OBRAC expr SYM_COMMA expr SYM_COMMA expr SYM_CBRAC
+	SYM_OBRAC expr SYM_COMMA expr SYM_COMMA expr SYM_CBRAC {npFor2();}
 
 while:
 	LOG_WHILE {npWhile1();} SYM_OPARE expr SYM_CPARE {npWhile2();} optlf SYM_OCURL crlf newlineCicle SYM_CCURL {npWhile3();}
 
 newlineCicle:
-	newline newlineCicle
-	| newline
+	newline
+	| newline newlineCicle
+	
 
 newline:
-	stmt crlf
+	stmt crlf 
 
 ;
 
@@ -851,5 +858,91 @@ void npWhile3(){
 	return = pSaltos.pop()
 	gen quad(goto, , , return)
 	fill(end, el siguiente cuadruplo)
+	*/
+}
+
+
+void npFor1(){
+	printf("<NP_FOR_1> ");
+	/* THIS IS SKETCHY, IDK IF IT WILL WORK */
+	/*
+	Checa si V_ID es un array
+
+	pTipos.push(V_ID.type)
+	start = siguiente temporal disponible
+	gen quad(=,dirBase de V_ID, ,start) //tipo apuntador o algo asi idk
+	pOperandos.push(start)
+
+	limit = siguiente temporal disponible
+	gen quad(=,sizeof(V_ID) + dirBase(V_ID), ,limit) //guardas el valor
+	pOperandos.push(limit)
+
+	pilaForHelper.push("array")
+	*/
+}
+void npFor2(){
+	printf("<NP_FOR_2> ");
+	/* THIS IS SKETCHY, IDK IF IT WILL WORK */
+	/*
+	pilaForHelper.push("step")
+	*/
+}
+void npFor3(){
+	printf("<NP_FOR_3> ");
+	/* THIS IS SKETCHY, IDK IF IT WILL WORK */
+	/*
+	if(pilaForHelper.pop == array)
+		Checas que no exista ya una variable con ese nombre
+		Crea una variable de tipo apuntador con el nombre que pusiste (iter)
+
+		limit = pOperandos.pop
+		start = pOperandos.pop
+
+		init = siguiente temporal
+		gen quad(-, start, 1, init)
+		gen quad(=, init, , iter) inicializa el iterador una posición atrás, namas para poder sumarle uno
+
+		pSaltos.push(siguiente cuadruplo a generar)
+		gen quad(+, iter, 1, iter)
+		res = siguiente temporal disponible
+		gen quad(<, iter, limit, result)
+		pSaltos.push(siguiente cuadruplo a generar)
+		gen quad(gotof, result, , ___)
+
+	elif(pilaForHelper.pop == step)
+		limit = pOperandos.pop
+		limit_type = pTipos.pop()
+		step = pOperandos.pop
+		step_type = pTipos.pop()
+		start = pOperandos.pop
+		start_type = pTipos.pop()
+
+		Checa que sean int, float o double, y que sean del mismo tipo, para no tener cosas raras, sino lanzas error de que no se vale eso
+
+		Checas que no exista ya una variable con ese nombre
+		Crea una variable el nombre que pusiste (iter) de tipo start_type
+		init = siguiente temporal
+		gen quad(-, start, step, init)
+		gen quad(=, init, , iter)
+		pSaltos.push(siguiente cuadruplo a generar)
+		gen quad(+, iter, step, iter)
+		res = siguiente temporal
+		gen quad(<=, iter, limit, res)
+		gen quad(gotof, res, , __)
+		pSaltos.push(cuadruplo donde pusiste el gotof)
+
+	else
+		lanzas error, no se si esto pueda pasar la mera netflix, pero por si acaso
+	*/
+
+}
+void npFor4(){
+	printf("<NP_FOR_1> ");
+	/* THIS IS SKETCHY, IDK IF IT WILL WORK */
+	/*
+	exit = pSaltos.pop
+	return = pSaltos.pop
+	gen quad(goto, , , return)
+	fillquad(exit, siguiente cuadruplo)
 	*/
 }

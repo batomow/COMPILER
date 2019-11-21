@@ -2,9 +2,6 @@
 /*	multiline
 	comments	*/ 
 
-deploy newthing.holo
-deploy another.holo
-
 //multiple var declarations
 
 var intExample:int = 23
@@ -13,8 +10,7 @@ var floatExam:float = 5.32
 var floatExample:float = 5.32f
 var stringExample:string = "string"
 var charExample:char = 'c'
-var boolExample:bool = truth
-var forExample:hex = #3F6D12 /* another comment */
+var boolExample:bool = truth /* another comment */
 
 // TEST DATA STRUCTURES
 
@@ -61,26 +57,28 @@ order functionName:double(var arg1:int, var arg2:double) {
 }
 
 // testFunction definition
-order testFunction:int(var arg1:char, var arg2:hex) {
+order testFunction:int(var arg1:char, var arg2:int) {
 	// if statement
 	if(floatExample > doubleExample) {
 		var a:float = intExample + floatExample
-	}
-	elif (boolExample) {
-		vision(stringExample)
-	}
-	else {
+	} elif (boolExample) {
+		if (isInsideShape(shape1Bounds, shape2Bounds) == lie) {
+			meditate
+		}
+	} else {
 		return truth
 		// do nothing comment
 	}
-
 
 	// for statement
 	for [0, 1, size] -> x {
 		if (isInsideShape(shape1Bounds, shape2Bounds) == lie) {
 			meditate
-		} 
+		}
+	}
 
+	for arrayName -> y {
+		meditate
 	}
 
 	while (x > 5) {
