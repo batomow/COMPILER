@@ -27,7 +27,7 @@ void printDict(Dictionary* d){
             for(int i = 0; i<counter; i++)
                 printf("->"); 
             aux = VarToString(iter->value); 
-            printf("|%s|%s]\n", iter->key, aux); 
+            printf("[%s|%s]\n", iter->key, aux); 
             iter = iter->next; 
             counter++; 
         }
@@ -35,28 +35,17 @@ void printDict(Dictionary* d){
     }
 }
 
-Dictionary NewDictionary(int size){
-    Dictionary D; 
-    TRY{
-        D.__dict = calloc(size, sizeof(struct KeyValuePair)); 
-        if (D.__dict == NULL)
-            THROW; 
-        D.size = size; 
-    }CATCH{
-        printf("size exceded available memory, halving size\n"); 
-        D.__dict = calloc(size/2, sizeof(struct KeyValuePair)); 
-        D.size = size/2; 
-    }ETRY;  
-    for(int n = 0; n<D.size; n++)
-        D.__dict[n] = NewKeyValuePair(); 
-    D.print = &printDict; 
-    return D; 
+int __dict_is_empty(Dictionary* D){
+    return (D->size >= 1 ? 0 : 1);
 }
+
 
 kvp NewKeyValuePair(){
     struct KeyValuePair result; 
     result.next = NULL; 
     result.isSet = 0; 
+    result.key = ""; 
+    result.value = NewVarNull(); 
     return result; 
 }
 
@@ -85,7 +74,7 @@ void DestroyDictionary(Dictionary* d){
 }
 
 
-int add(Dictionary* d, char* key, Var value){
+int __map_add(Dictionary* d, char* key, Var value){
     unsigned long int hash = __hash(key, d->size); 
     kvp* iter = &(d->__dict[hash]);
     while(iter->isSet){
@@ -97,7 +86,7 @@ int add(Dictionary* d, char* key, Var value){
     return 1; 
 }
 
-Var lookup(Dictionary* d, char* key){
+Var __map_lookup(Dictionary* d, char* key){
     unsigned long int hash = __hash(key, d->size); 
     kvp* iter = &(d->__dict[hash]); 
     while(iter->isSet){
@@ -108,7 +97,7 @@ Var lookup(Dictionary* d, char* key){
     return NewVarS("Not found"); 
 }
 
-int remove_entry(Dictionary* d, char* key){
+void __map_remove(Dictionary* d, char* key){
     unsigned long int hash = __hash(key, d->size); 
     kvp* iter = &(d->__dict[hash]); 
     kvp* prev_iter; 
@@ -122,10 +111,9 @@ int remove_entry(Dictionary* d, char* key){
         prev_iter = iter; 
         iter = iter->next;
     }
-    return 0;
 }
     
-char** get_keys(Dictionary* d, int *keySize){
+char** getKeys(Dictionary* d, int *keySize){
     int numKeys = 0, currSize = d->size;  
     char** keys = (char**)calloc(d->size, sizeof(char*)); 
     for(int n = 0; n<d->size; n++){
@@ -146,7 +134,7 @@ char** get_keys(Dictionary* d, int *keySize){
     return keys; 
 }
 
-Var* get_values(Dictionary* d, int *valSize){
+Var* getValues(Dictionary* d, int *valSize){
     int numVals = 0, currSize = d->size;  
     Var* values = (Var*)calloc(d->size, sizeof(Var)); 
     for(int n = 0; n<d->size; n++){
@@ -167,3 +155,24 @@ Var* get_values(Dictionary* d, int *valSize){
     return values; 
 }
 
+Dictionary NewDictionary(int size){
+    Dictionary D; 
+    TRY{
+        D.__dict = calloc(size, sizeof(struct KeyValuePair)); 
+        if (D.__dict == NULL)
+            THROW; 
+        D.size = size; 
+    }CATCH{
+        printf("size exceded available memory, halving size\n"); 
+        D.__dict = calloc(size/2, sizeof(struct KeyValuePair)); 
+        D.size = size/2; 
+    }ETRY;  
+    for(int n = 0; n<D.size; n++)
+        D.__dict[n] = NewKeyValuePair(); 
+    D.print = &printDict; 
+    D.isEmpty = &__dict_is_empty; 
+    D.add = &__map_add; 
+    D.remove = &__map_remove; 
+    D.lookup = &__map_lookup; 
+    return D; 
+}

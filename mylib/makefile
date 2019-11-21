@@ -1,11 +1,13 @@
-OBJECTS = stack.o var.o queue.o map.o
+
+OBJECTS = stack.o var.o queue.o map.o vartable.o functable.o quadruple.o
+
 all: libjedi.a
 
 libjedi.a: $(OBJECTS)
 	ar rsv libjedi.a $(OBJECTS) 
 
 %.o: %.c
-	gcc -Wall -g -c $< -o $@
+	gcc -Wall -g -c $< -o $@ 
 
 clean: 
 	rm *.o -f

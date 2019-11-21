@@ -5,7 +5,7 @@
 #include "jedi.h"
 
 
-int is_empty(Stack* stack){
+int isEmpty(Stack* stack){
 	return stack->size == 0; 
 }
 
@@ -17,21 +17,6 @@ void __push_alloc(Stack* stack){
 	}
 }
 
-void push_raw(Stack* stack, void* item){//Advanced Feature:might truncate if element pushed is of incorrect type
-	Var new_item; 
-	switch(stack->__type){
-		case TypeInt: new_item.data.iVal = *(int*) item; break; 
-		case TypeFloat: new_item.data.fVal = *(float*)item; break; 
-		case TypeDouble: new_item.data.dVal = *(double*)item; break;
-		case TypeString: new_item.data.sVal = *(char**)item; break; 
-		case TypeChar: new_item.data.cVal = *(char*)item; break; 
-                default: break; 
-	}
-	new_item.type = stack->__type; 	
-	__push_alloc(stack); 
-	stack->__stack[stack->size - 1] = new_item; 
-}
-
 void push(Stack* stack, Var item){
 	__push_alloc(stack); 
 	stack->__stack[stack->size - 1] = item;
@@ -40,14 +25,14 @@ void push(Stack* stack, Var item){
 
 Var peek(Stack* stack){
 	Var top; 
-	if(!is_empty(stack)){
+	if(!isEmpty(stack)){
 		top = stack->__stack[stack->size-1]; 
 	}
 	return top;
 }	
 
 void pop(Stack* stack){
-	if (!is_empty(stack)){	
+	if (!isEmpty(stack)){	
 		stack->size--; 
 		if (stack->size < stack->__total_size/2){
 			stack->__total_size /= 2; 
@@ -57,54 +42,46 @@ void pop(Stack* stack){
 }
 
 void __guard(Stack* stack, int position){
-	if (position > stack->size-1 || position < 0 || is_empty(stack)){
-		fprintf(stderr, "That position is outside the bounds of the structure"); 
-		exit(117);
+	if (position > stack->size-1 || position < 0){
+		fprintf(stderr, "That position (%d) is outside the bounds of the structure [0,%d]\nexit code 117\n", position, stack->size-1); 
+		exit(117);//should destroy stack? 
 	}
 }
-void __swap(Stack* stack, int position){
+
+void insert(Stack* stack, Var item, int position){
+	if (isEmpty(stack)){
+		push(stack, item); 
+		return; 
+	}
+	push(stack, item); 
+	__guard(stack, position); 
 	Var aux = peek(stack); 
-	for(int n = stack->size-1; n>=position; n--){
+	for(int n = stack->size-1; n>position; n--){
 		stack->__stack[n] = stack->__stack[n-1];	
 	}
 	stack->__stack[position] = aux; 
 }
 
-void insert_raw(Stack* stack, void* item, int position){//Advanced feature: might truncate if element inserted is of incorrect type
-	if (is_empty(stack)){
-		push_raw(stack, item); 
-		return; 
-	}
-	__guard(stack, position);
-	push_raw(stack, item); 
-	__swap(stack, position); 
-}
-
-void insert(Stack* stack, Var item, int position){
-	if (is_empty(stack)){
-		push(stack, item); 
-		return; 
-	}
-	__guard(stack, position); 
-	push(stack, item); 
-	__swap(stack, position); 
-}
-
 
 void print_stack(Stack* stack){
-	if (is_empty(stack)){
+	if (isEmpty(stack)){
 		printf("Stack []\n"); 
 		return; 
 	}
 	printf("Stack -"); 
-        char* aux; 
 	for(int n = 0; n< stack->size; n++){
 		Var item  = stack->__stack[n]; 
-                aux = VarToString(item); 
-                printf("[%s]", aux); 
+        char* aux = VarToString(item); 
+        printf("[%s]", aux); 
+       	free(aux); 
 	}
-        free(aux); 
 	printf("->\n"); 
+}
+
+Var access(Stack* stack, int position){
+    __guard(stack, position); 
+    Var result = stack->__stack[position]; 
+    return result; 
 }
 
 Var extract(Stack* stack, int position){
@@ -124,49 +101,11 @@ Stack NewStack(DataType type, int set_size)
 	new_stack.__type = type;
 	new_stack.__total_size = set_size;
 	new_stack.size = 0; 
-	new_stack.is_empty = &is_empty;
+	new_stack.isEmpty = &isEmpty;
 	new_stack.print = &print_stack; 
 	return new_stack;
 }
 
-Stack NewStackFromArrayRaw(DataType type, void* array, int size){
-	Stack new_stack = NewStack(type, size); 
-	Var* varray; 
-	switch(type){
-		case TypeInt: 
-			varray = NewVarArrayI((int*)array, size);
-			for(int n = 0; n<size; n++){
-				push(&new_stack, varray[n]); 
-			}
-			break; 
-		case TypeFloat: 
-			varray = NewVarArrayF((float*)array, size);
-			for(int n =0; n<size; n++){
-				push(&new_stack, varray[n]); 
-			}
-			break;
-		case TypeDouble: 
-			varray = NewVarArrayD((double*)array, size);
-			for(int n =0; n<size; n++){
-				push(&new_stack, varray[n]); 
-			}
-		       	break;
-		case TypeString: 
-			varray = NewVarArrayS((char**)array, size);
-			for(int n =0; n<size; n++){
-				push(&new_stack, varray[n]); 
-			}
-			break; 
-		case TypeChar: 
-			varray = NewVarArrayC((char*)array, size);
-			for(int n =0; n<size; n++){
-				push(&new_stack, varray[n]); 
-			}
-			break; 
-                default: break; 
-	}	
-	return new_stack; 
-}
 
 Stack NewStackFromArray(Var* array, int size){
 	Stack new_stack = NewStack(TypeInt, size); 
@@ -177,8 +116,7 @@ Stack NewStackFromArray(Var* array, int size){
 }
 
 void DestroyStack(Stack* stack){
-	for(int n = 0; n < stack->size; n++){
-		pop(stack); 
-	}
 	free(stack->__stack); 
+	stack->size = 0; 
+	stack->__total_size = 0; 
 }

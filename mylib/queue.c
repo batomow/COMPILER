@@ -5,55 +5,53 @@
 
 void __reverse(Stack* src, Stack* target){
 	Var aux; 
-	while(!src->is_empty(src)){
+	while(!src->isEmpty(src)){
 		aux = peek(src); 
 		pop(src); 
 		push(target, aux); 
 	}
 }
 
-void pop_back(Queue* queue){
+void popBack(Queue* queue){
 	Stack *front = &(queue->__front), *back = &(queue->__back); 
-	if (back->is_empty(back) && !front->is_empty(front)){
+	if (back->isEmpty(back) && !front->isEmpty(front)){
 		__reverse(front, back); 
 		pop(back); 
-	}
+	}else{
+        pop(back); 
+    }
 }
-void pop_front(Queue* queue){
+void popFront(Queue* queue){
 	Stack *front = &(queue->__front), *back = &(queue->__back); 
-	if (!back->is_empty(back) && front->is_empty(front)){
+	if (!back->isEmpty(back) && front->isEmpty(front)){
 		__reverse(back, front); 
 		pop(front); 
-	}
+	}else{
+        pop(front); 
+    }
 }
-void push_back(Queue* queue, Var item){
+void pushBack(Queue* queue, Var item){
 	Stack* back = &(queue->__back);
 	push(back, item); 
 } 	
-void push_back_raw(Queue* queue, void* item){
-	Stack* back = &(queue->__back); 
-	push_raw(back, item); 
-}
-void push_front(Queue* queue, Var item){
+
+void pushFront(Queue* queue, Var item){
 	Stack* front = &(queue->__front); 
 	push(front, item); 
 }
-void push_front_raw(Queue* queue, void* item){ 
+
+Var peekFront(Queue* queue){
 	Stack* front = &(queue->__front); 
-	push_raw(front, item); 
-}
-Var peek_front(Queue* queue){
-	Stack* front = &(queue->__front); 
-	if(front->is_empty(front)){
+	if(front->isEmpty(front)){
 		Stack* back = &(queue->__back); 
 		__reverse(back, front); 
 	}
 	Var result = peek(front); 
 	return result; 
 }	
-Var peek_back(Queue* queue){
+Var peekBack(Queue* queue){
 	Stack* back = &(queue->__back); 
-	if(back->is_empty(back)){
+	if(back->isEmpty(back)){
 		Stack* front = &(queue->__front);
 		__reverse(front, back); 
 	}
@@ -63,42 +61,42 @@ Var peek_back(Queue* queue){
 void print(Queue* queue){
 	Stack *front = &(queue->__front), *back = &(queue->__back); 
 	printf("Queue -"); 
-        char* aux; 
 	for(int n = back->size-1; n>=0; n--){
 		Var item = back->__stack[n]; 	
-                aux = VarToString(item); 
-                printf("[%s]", aux); 
+        char* aux = VarToString(item); 
+        printf("[%s]", aux);
+        free(aux); 
 	}
 	for(int n = 0; n<front->size; n++){
 		Var item = front->__stack[n]; 	
-                aux = VarToString(item); 
-                printf("[%s]", aux); 
-	}
+        char* aux = VarToString(item); 
+        printf("[%s]", aux); 
         free(aux); 
+	}
 	printf("->\n"); 
 }
 
 void __debug_print(Queue* queue){
 	Stack *front = &(queue->__front), *back = &(queue->__back); 
 	printf("Queue Back -"); 
-        char* aux; 
 	for(int n = back->size-1; n>=0; n--){
 		Var item = back->__stack[n]; 	
-                aux = VarToString(item); 
-                printf("[%s]", aux); 
+        char* aux = VarToString(item); 
+        printf("[%s]", aux); 
+        free(aux); 
 	}printf("->\nQueue Front -"); 
 	for(int n = 0; n<front->size; n++){
 		Var item = front->__stack[n]; 	
-                aux = VarToString(item); 
-                printf("[%s]", aux); 
-	}
+        char* aux = VarToString(item); 
+        printf("[%s]", aux); 
         free(aux); 
+	}
 	printf("->\n"); 	
 }
 
-int queue_is_empty(Queue* queue){
+int queue_isEmpty(Queue* queue){
 	Stack *front = &(queue->__front), *back = &(queue->__back); 
-	return (front->is_empty(front) && back->is_empty(back));
+	return (front->isEmpty(front) && back->isEmpty(back));
 }
 
 Queue NewQueue(DataType type, int size){ 
@@ -108,7 +106,7 @@ Queue NewQueue(DataType type, int size){
 	new_queue.__front = NewStack(type, front_size); 
 	new_queue.__back = NewStack(type, back_size); 
 	new_queue.print = &print; 
-	new_queue.is_empty = &queue_is_empty;
+	new_queue.isEmpty = &queue_isEmpty;
 	return new_queue; 
 }
 
