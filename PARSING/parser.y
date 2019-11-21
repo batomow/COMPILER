@@ -387,7 +387,7 @@ ifHelper3:
 	| LOG_ELSE { npIf2(); } optlf SYM_OCURL crlf newlineCicle SYM_CCURL 
 
 for:
-	LOG_FOR forHelper SYM_ARROW V_ID {npFor3();} optlf SYM_OCURL crlf newlineCicle  SYM_CCURL {npFor4()}
+	LOG_FOR forHelper SYM_ARROW V_ID {npFor3();} optlf SYM_OCURL crlf newlineCicle  SYM_CCURL {npFor4();}
 
 forHelper:
 	V_ID {npFor1();}
