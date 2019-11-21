@@ -11,5 +11,8 @@ int main(){
     char* aux = QUADToStringHuman(quad);
     printf("%s\n", aux); 
     free(aux); 
+    aux = QUADToStringMachine(quad); 
+    printf("%s\n", aux); 
+    free(aux); 
     return 0; 
 }
