@@ -208,29 +208,49 @@ FuncTable NewFuncTable(int);
 void DestroyFuncTable(FuncTable*); 
 
 typedef enum OP{
-    SUM, 
-    RES, 
-    ROOT, 
-    DIV,
-    MULT, 
-    POW, 
-    GOTO, 
-    GOTOF, 
-    GOTOV,
-    GOSUB, 
-    ASSIGN, 
-    PRINT, 
-    READ, 
-    LT, 
-    GT, 
-    LTE, 
-    GTE, 
-    AND, 
-    OR, 
-    EEQ, 
-    NEQ,
-    ENDPROC,
-    ENDPROG 
+    SUM, //0
+    RES, //1
+    ROOT, //2
+    DIV, //3
+    MULT, //4
+    POW, //5
+    GOTO, //6
+    GOTOF, //7
+    GOTOV,//8
+    GOSUB, //9
+    ASSIGN, //10
+    PRINT, //11
+    READ, //12
+    LT, //13
+    GT, //14
+    LTE, //15
+    GTE, //16
+    AND, //17
+    OR, //18
+    EEQ, //19
+    NEQ,//20
+    ENDPROC,//21
+    ENDPROG //22
 } OP; 
+
+typedef struct Operandum OPDUM; 
+typedef struct Operandum {
+    int isPointer; 
+    char* id; 
+    int virad; 
+    int dereference;  
+    void (*toPointer)(OPDUM*, int);
+} OPDUM; 
+OPDUM NewOPDUM(char*, int, int); 
+
+typedef struct QUADRUPLE {
+    OP op; 
+    OPDUM opdum1;
+    OPDUM opdum2;
+    OPDUM result;
+} QUAD; 
+QUAD NewQUAD(OP, OPDUM, OPDUM, OPDUM); 
+char* QUADToStringHuman(QUAD); //need freeing
+char* QUADToStringMachine(QUAD); //need freeing
 
 #endif
