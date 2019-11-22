@@ -72,16 +72,18 @@
 	void npFor3();
 	void npFor4();
    
+    //todos nuestros tipos se pueden guardar como var 
     int globalsCounter; 
     int localsCounter; 
     int tempsCounter;  
-    int isParam; 
+    int isParam; //true si la variable que se esta parseando es parametro
 
     char currentFuncId[96];  
     VarTable globals; 
     FuncTable functions; 
-    TableType declaringType; 
-    Stack pilaLoca; 
+    TableType currentType; 
+    Stack pilaOpes; 
+    Stack pilaTipos; 
     
     TableType DT2TT(DataType current){
         switch(current){
@@ -458,7 +460,8 @@ int main(int argc, char *argv[]) {
     globals = NewVarTable(127); 
     functions = NewFuncTable(127); 
     strcpy(currentFuncId, ""); 
-    pilaLoca = NewStack(TypeString, 64); 
+    pilaOpes = NewStack(TypeString, 64); 
+    pilaTipos = NewStack(TypeInt, 64); 
     isParam = 0; 
 
 	extern FILE *yyin;
@@ -484,6 +487,10 @@ void npFinalCheck(){
     globals.print(&globals);  
     printf("Aqui van las locales\n"); 
     functions.print(&functions); 
+    DestroyStack(&pilaOpes); 
+    DestroyStack(&pilaTipos); 
+    DestroyVarTable(&globals);
+    DestroyFuncTable(&functions); 
 }
 
 void np1(char* id){
@@ -505,24 +512,24 @@ void np1(char* id){
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
     if(strlen(currentFuncId) > 0){
        if(isParam){
-            success = functions.addParam(&functions, currentFuncId, id, declaringType, localsCounter, dim); 
+            success = functions.addParam(&functions, currentFuncId, id, currentType, localsCounter, dim); 
         }else{
-            success = functions.addVar(&functions, currentFuncId, id, declaringType, localsCounter, dim); 
+            success = functions.addVar(&functions, currentFuncId, id, currentType, localsCounter, dim); 
         }
        if(success)
             localsCounter++; 
     }else{
-       success = globals.add(&globals, id, declaringType, globalsCounter, dim);  
+       success = globals.add(&globals, id, currentType, globalsCounter, dim);  
         if(success)
             globalsCounter++; 
     }
     if (success){
-        Var varloca = NewVarS(id); 
-        varloca.type = declaringType;
-	
+        Var nombre = NewVarS(id); 
+        Var tipo = NewVarI(currentType); 
         /* Push de nombre a pila de Operandos */
+        push(&pilaOpes, nombre); 
 	    /* Push tipo a pila de Tipos */
-        push(&pilaLoca, varloca);
+        push(&pilaTipos, tipo); 
     }
     if(!success)
         free(id);  //libera el yylval.yystring
@@ -530,7 +537,7 @@ void np1(char* id){
 
 void np1_1(DataType type){
     printf("<NP1_1 %d>", type); 
-    declaringType = DT2TT(type); 
+    currentType = DT2TT(type); 
 }
 
 void np2(){

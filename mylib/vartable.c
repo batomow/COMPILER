@@ -129,6 +129,7 @@ char* __enum2String(TableType tt){
     case 5: return "Vector"; break; 
     case 6: return "(null)"; break; 
     case 7: return "Double"; break; 
+    case 8: return "Bool"; break; 
     default: return "Not Defined"; break; 
     }
 }
