@@ -129,6 +129,7 @@ typedef enum TableType{
     TableVector, 
     TableNull, 
     TableDouble,
+    TableBool 
 } TableType; 
 //you have to manualy free the DIM if you dont add it to a vartable
 //you cant modify the DIM once assigned
@@ -198,8 +199,8 @@ typedef struct FuncTable{
     int (*isEmpty)(FuncTable*); 
     void (*print)(FuncTable*); 
     int (*add)(FuncTable*, char*, TableType, int); //id, return type, quad line
-    int (*addVar)(FuncTable*, char*, char*, TableType, int, DIM*); //set dim later 
-    int (*addParam)(FuncTable*, char*, char*, TableType, int, DIM*); //set dim later
+    int (*addVar)(FuncTable*, char*, char*, TableType, int, DIM*); 
+    int (*addParam)(FuncTable*, char*, char*, TableType, int, DIM*); 
     int (*updateSize)(FuncTable*, char*); 
     FTE* (*lookup)(FuncTable*, char*);  
     VTE* (*lookupVar)(FuncTable*, char*, char*); 

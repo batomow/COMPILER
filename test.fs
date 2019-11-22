@@ -58,10 +58,11 @@ order functionName:double(var arg1:int, var arg2:double) {
 
 // testFunction definition
 order testFunction:int(var arg1:char, var arg2:int) {
-	// if statement
+    var a:float
+ 	// if statement
 	if(floatExample > doubleExample) {
-		var a:float = intExample + floatExample
-	} elif (boolExample) {
+	    a = intExample + floatExample
+    } elif (boolExample) {
 		if (isInsideShape(shape1Bounds, shape2Bounds) == lie) {
 			meditate
 		}
@@ -71,18 +72,20 @@ order testFunction:int(var arg1:char, var arg2:int) {
 	}
 
 	// for statement
+    var x:int 
 	for [0, 1, size] -> x {
 		if (isInsideShape(shape1Bounds, shape2Bounds) == lie) {
 			meditate
 		}
 	}
-
+    var y:int 
 	for arrayName -> y {
 		meditate
 	}
-
+    
 	while (x > 5) {
 		vision(x)
+        x = x - 1
 	}
 
 	return lie

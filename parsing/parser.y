@@ -1,6 +1,7 @@
 %{
 	#include <stdio.h> 
     #include <stdlib.h>
+    #include <string.h> 
     #include <jedi.h>
 
 	extern int yylex();
@@ -71,9 +72,30 @@
 	void npFor3();
 	void npFor4();
    
-    //int subContextCounter = 0;  
-    //Stack* filaPilaTipos; 
+    int globalsCounter; 
+    int localsCounter; 
+    int tempsCounter;  
+    int isParam; 
+
+    char currentFuncId[96];  
+    VarTable globals; 
+    FuncTable functions; 
+    TableType declaringType; 
+    Stack pilaLoca; 
     
+    TableType DT2TT(DataType current){
+        switch(current){
+            case TypeInt: return TableInt; break; 
+            case TypeFloat: return TableFloat; break; 
+            case TypeDouble: return TableDouble; break; 
+            case TypeChar: return TableChar; break; 
+            case TypeString: return TableString; break; 
+            case TypeNull: return TableNull; break; 
+            case TypeBool: return TableBool; break; 
+            default : return TableNull; break; 
+        }
+    }
+
 %}
 
 %token SYM_OBRAC 
@@ -182,18 +204,14 @@ script:
 	| assign crlf script 
 	| expr crlf script
 	| function crlf script
-	| vardec crlf script
-	| arrdec crlf script
-	| matdec crlf script
-	| vectordec crlf script
-	| elementdec crlf script
+	| generaldec crlf script
 	| crlf script
 
 
 /* ------- GENERAL GRAMMAR ------- */
 
 crlf:
-	CR LF
+	  CR LF
 	| LF {printf("\n");}
 
 optlf:
@@ -201,38 +219,37 @@ optlf:
 	| crlf {printf("\n");} 
 
 function: 
-	RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE functionHelper SYM_CPARE optlf SYM_OCURL crlf functionHelper2 SYM_CCURL
+	RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE {isParam = 1;}funparams SYM_CPARE{isParam = 0;} optlf SYM_OCURL crlf funbody SYM_CCURL
 
-functionHelper: 
-	/* empty */
-	| functionHelper4 SYM_COMMA functionHelper
-	| functionHelper4
+funparams: 
+	  generaldec morefunparams
+    | /*empty*/
 
-functionHelper2:
-	stmt crlf functionHelper3
+morefunparams:
+	  SYM_COMMA generaldec morefunparams
+    | /*empty*/
 
-functionHelper3: 
-	/* empty */ 
-	| functionHelper2 
+funbody:
+	  stmt crlf funbody
+    | generaldec crlf funbody
+    | /*emtpy*/
 
-
-functionHelper4:
-	vardec
+generaldec: /* declaras o declaras y assignas */
+	  vardec
 	| arrdec
 	| matdec
 	| vectordec
-	| elementdec
+	| elementdec 
+	| vardec MTH_SEQUA { npAssign0(); } expr { npAssign1(); }
+	| arrdec MTH_SEQUA { npAssign0(); } arr { npAssign2(); }
+	| matdec MTH_SEQUA { npAssign0(); } mat { npAssign2(); }
+	| vectordec MTH_SEQUA { npAssign0(); } vector {npAssign3();}
+	| elementdec MTH_SEQUA { npAssign0(); } funcall {npAssign4();}
 
 stmt: 
-	/* empty */
-	| assign 
+	  assign 
 	| expr
 	| logicstruct
-	| vardec
-	| arrdec
-	| matdec
-	| vectordec
-	| elementdec
 	| RES_MEDIT
 	| ret
 
@@ -255,7 +272,7 @@ ret:
 /* ------- VARIABLES GRAMMAR ------- */
 
 vardec: 
-	V_VAR V_ID SYM_COLON vartypes { np1_1($2); }
+	V_VAR V_ID SYM_COLON vartypes { np1($2); }
 
 basictypes:
 	  V_CHAR { npExpr1_2(); }
@@ -266,29 +283,22 @@ basictypes:
 	| V_BOOL { npExpr1_2(); }
 
 vartypes:
-	  T_INT  { np1($1);}
-	| T_FLOAT { np1($1);}  
-	| T_DOUBLE{ np1($1);} 
-	| T_CHAR{ np1($1);} 
-	| T_STRING{ np1($1);} 
-	| T_BOOL{ np1($1);}  
+	  T_INT  { np1_1($1);}
+	| T_FLOAT { np1_1($1);}  
+	| T_DOUBLE{ np1_1($1);} 
+	| T_CHAR{ np1_1($1);} 
+	| T_STRING{ np1_1($1);} 
+	| T_BOOL{ np1_1($1);}  
 
 
 var_or_cte:
-	V_ID { npExpr1_1(); }
+	  V_ID { npExpr1_1(); }
 	| basictypes
 
 assign: 
-	vardec MTH_SEQUA { npAssign0(); } expr { npAssign1(); }
-	| arrdec MTH_SEQUA { npAssign0(); } arr { npAssign2(); }
-	| matdec MTH_SEQUA { npAssign0(); } mat { npAssign2(); }
-	| vectordec MTH_SEQUA { npAssign0(); } vector {npAssign3();}
-	| elementdec MTH_SEQUA { npAssign0(); } funcall {npAssign4();}
 	| V_ID { npExpr1_1(); } MTH_SEQUA { npAssign0(); } expr {npAssign1();}
 	| structaccess MTH_SEQUA { npAssign0(); } expr {npAssign1();}
 	| property MTH_SEQUA { npAssign0(); } expr {npAssign1();}
-
-
 
 /* ------- DATA STRUCTURES GRAMMAR ------- */
 
@@ -395,7 +405,6 @@ comp_operator:
 
 
 /* ------- LOGICAL STRUCTURES GRAMMAR ------ */
-
 logicstruct:
 	if
 	| for
@@ -446,10 +455,12 @@ void yyerror(const char *s){
 
 int main(int argc, char *argv[]) {
     //globals initializations 
-    //filaPilaTipos = calloc(1, sizeof(Stack)); 
-    //filaPilaTipos[subContextCounter] = NewStack(32, TypeInt); 
-    
-    
+    globals = NewVarTable(127); 
+    functions = NewFuncTable(127); 
+    strcpy(currentFuncId, ""); 
+    pilaLoca = NewStack(TypeString, 64); 
+    isParam = 0; 
+
 	extern FILE *yyin;
 	++argv;
 	--argc;
@@ -463,28 +474,63 @@ int main(int argc, char *argv[]) {
 		printf("COMPILATION SUCCESSFUL!\n");
 	} 
     fclose(yyin); 
-    /*for(int n = 0; n<100; n++){
-        if(filaPilaTipos+n)
-            DestroyStack(&(filaPilaTipos[n])); 
-    }*/
-    //free(filaPilaTipos); 
 	return 0;
 }
 
 void npFinalCheck(){
-	printf("<FINALCHECK> ");
+	printf("<FINALCHECK>\n");
 	/* revisar que existan las funciones necesarias de un script y cosas asi */
+    printf("Aqui van las globales\n"); 
+    globals.print(&globals);  
+    printf("Aqui van las locales\n"); 
+    functions.print(&functions); 
 }
 
 void np1(char* id){
     printf("<NP1 %s >", id); 
 	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
-}
-void np1_1(DataType type){
-    printf("<NP1_1 >"); 
+    DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+    VTE* result = globals.lookup(&globals, id);
+    if(result->isSet){
+        yyerror("Ya existe esa variable en el global scope");  
+    } else if(strlen(currentFuncId) > 0){
+        result = functions.lookupVar(&functions, currentFuncId, id);
+        if(result->isSet)
+            yyerror("Ya existe esa variable en el scope local"); 
+        result = functions.lookupParam(&functions, currentFuncId, id); 
+        if(result->isSet)
+            yyerror("Ya existe esa variable en el scope local parametros");
+    }
+    int success = 0; 
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
-	/* Push de nombre a pila de Operandos */
-	/* Push tipo a pila de Tipos */
+    if(strlen(currentFuncId) > 0){
+       if(isParam){
+            success = functions.addParam(&functions, currentFuncId, id, declaringType, localsCounter, dim); 
+        }else{
+            success = functions.addVar(&functions, currentFuncId, id, declaringType, localsCounter, dim); 
+        }
+       if(success)
+            localsCounter++; 
+    }else{
+       success = globals.add(&globals, id, declaringType, globalsCounter, dim);  
+        if(success)
+            globalsCounter++; 
+    }
+    if (success){
+        Var varloca = NewVarS(id); 
+        varloca.type = declaringType;
+	
+        /* Push de nombre a pila de Operandos */
+	    /* Push tipo a pila de Tipos */
+        push(&pilaLoca, varloca);
+    }
+    if(!success)
+        free(id);  //libera el yylval.yystring
+}
+
+void np1_1(DataType type){
+    printf("<NP1_1 %d>", type); 
+    declaringType = DT2TT(type); 
 }
 
 void np2(){

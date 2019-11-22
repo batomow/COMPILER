@@ -34,70 +34,38 @@ EOL			\n\r
 "meditate"			{ printf("medit "); return RES_MEDIT; }
 "return"			{ printf("retrn "); return RES_RETRN; }
 "bool"				{   
-                        if(yylval.yystring){
-                            free(yylval.yystring); 
-                            yylval.yystring = NULL; 
-                        }
                         yylval.datatype = TypeBool; 
                         printf("bool "); return T_BOOL; 
                     }
 "char"				{   
-                        if(yylval.yystring){
-                            free(yylval.yystring); 
-                            yylval.yystring = NULL; 
-                        }
                          yylval.datatype = TypeChar; 
                         printf("char "); return T_CHAR; 
                     }
 "int"				{   
-                        if(yylval.yystring){
-                            free(yylval.yystring); 
-                            yylval.yystring = NULL; 
-                        }
                          yylval.datatype = TypeInt; 
                         printf("int "); return T_INT; 
                     }
 "float"				{   
-                        if(yylval.yystring){
-                            free(yylval.yystring); 
-                            yylval.yystring = NULL; 
-                        }
                          yylval.datatype = TypeFloat; 
                         printf("float "); return T_FLOAT; 
                     }
 "double"			{
-                        if(yylval.yystring){
-                            free(yylval.yystring); 
-                            yylval.yystring = NULL; 
-                        }
                         yylval.datatype = TypeDouble; 
                         printf("double "); return T_DOUBLE; 
                     }
 "string"			{ 
    
-                        if(yylval.yystring){
-                            free(yylval.yystring); 
-                            yylval.yystring = NULL; 
-                        }
                         yylval.datatype = TypeString; 
                         printf("string "); return T_STRING; 
                     }
 (lie|truth)			{   
                         
-                        if(yylval.yystring){
-                            free(yylval.yystring); 
-                            yylval.yystring = NULL; 
-                        }
                         //yylval.variable.data.iVal = atoi(yytext); 
                         //yylval.variable.type = TypeBool; 
                         printf("bool "); return V_BOOL; /* bool */ 
                     }
 
 [a-z][a-zA-Z0-9]*               {   
-                                    if(yylval.yystring){
-                                        free(yylval.yystring); 
-                                        yylval.yystring = NULL; 
-                                    }
                                     char* aux = calloc(100, sizeof(char)); 
                                     sscanf(yytext, "%s", aux); 
                                     int size = strlen(aux); 
