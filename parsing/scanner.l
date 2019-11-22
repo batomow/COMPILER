@@ -58,11 +58,11 @@ EOL			\n\r
                         yylval.datatype = TypeString; 
                         printf("string "); return T_STRING; 
                     }
-(lie|truth)			{   
-                        
-                        //yylval.variable.data.iVal = atoi(yytext); 
-                        //yylval.variable.type = TypeBool; 
-                        printf("bool "); return V_BOOL; /* bool */ 
+(lie|truth)			{   char aux[100];  
+                        sscanf(yytext, "%s", aux);
+                        yylval.yybool = strcmp(aux, "lie") == 0 ? 0 : 1; 
+                        yylval.yybool == 0 ? printf("bool(lie) ") : printf("bool(truth) "); 
+                        return V_BOOL; /* bool */ 
                     }
 
 [a-z][a-zA-Z0-9]*               {   
@@ -78,29 +78,35 @@ EOL			\n\r
 [a-zA-Z][a-zA-Z0-9]*\.fs        { printf("f_id "); return F_ID; }
 [a-zA-Z][a-zA-Z0-9]*\.holo      { printf("m_id "); return M_ID; }
 
-\'[a-zA-Z0-9]\'			{   
-                            //sscanf(yytext, "%c", &(yylval.variable.data.cVal));
-                            //yylval.variable.type = TypeChar; 
-                            printf("char "); return V_CHAR; /* char */ 
+\'[a-zA-Z0-9]\'			{   char aux[3];
+                            sscanf(yytext, "%s", aux); 
+                            yylval.yychar = aux[1]; 
+                            printf("char('%c') ", aux[1]); return V_CHAR; /* char */ 
                         }
 
-[-+]?[0-9]+i?			{   //sscanf(yytext, "%d", &(yylval.variable.data.iVal)); 
-                            //yylval.variable.type = TypeInt; 
-                            printf("int "); return V_INT; /* int */ 
+[-+]?[0-9]+i?			{   int aux; 
+                            sscanf(yytext, "%d", &aux);
+                            yylval.yyint = aux; 
+                            printf("int(%d) ", aux); return V_INT; /* int */ 
                         }
-[-+]?[0-9]+\.?[0-9]*f?		{   //sscanf(yytext, "%f", &(yylval.variable.data.fVal)); 
-                                //yylval.variable.type = TypeFloat; 
-                                printf("float "); return V_FLOAT; /* float */ 
+[-+]?[0-9]+\.?[0-9]*f?		{   float aux; 
+                                sscanf(yytext, "%f", &aux); 
+                                yylval.yyfloat = aux; 
+                                printf("float(%f) ", aux); return V_FLOAT; /* float */ 
                             }
 
-[-+]?[0-9]+\.?[0-9]*d		{   //sscanf(yytext, "%lf", &(yylval.variable.data.dVal));
-                                //yylval.variable.type = TypeDouble; 
-                                printf("double "); return V_DOUBLE; /* double */ 
+[-+]?[0-9]+\.?[0-9]*d		{   double aux; 
+                                sscanf(yytext, "%lf", &aux);
+                                yylval.yydouble = aux; 
+                                printf("double(%lf) ", aux); return V_DOUBLE; /* double */ 
                             }
 
-\"(\\.|[^"\\])*\"		{   //sscanf(yytext, "%s", yylval.variable.data.sVal); 
-                            //yylval.variable.type =  TypeString; 
-                            printf("string "); return V_STRING; /* string */ 
+\"(\\.|[^"\\])*\"		{   char* aux = calloc(100, sizeof(char));
+                            sscanf(yytext, "%s", aux);
+                            int size = strlen(aux); 
+                            yylval.yystring = calloc(size+1, sizeof(char)); 
+                            strcpy(yylval.yystring, aux);  
+                            printf("string(%s) ", yylval.yystring); return V_STRING; /* string */ 
                         }
 
 

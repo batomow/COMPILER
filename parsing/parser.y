@@ -71,20 +71,31 @@
 	void npFor2();
 	void npFor3();
 	void npFor4();
-   
-    //todos nuestros tipos se pueden guardar como var 
+    
+    // Functions
+    void npFun1();
+    void npFun2(); 
+
+    // Global Counters //virtual mem-dirs
     int globalsCounter; 
     int localsCounter; 
     int tempsCounter;  
-    int isParam; //true si la variable que se esta parseando es parametro
-
-    char currentFuncId[96];  
-    VarTable globals; 
-    FuncTable functions; 
-    TableType currentType; 
-    Stack pilaOpes; 
-    Stack pilaTipos; 
+    int quadrupleCounter; 
     
+    //Global Variables
+    char currentFunction[96];  
+    TableType currentType;  //tipo de variable
+    TableType returnType;  //tipo de valor de retorno de funcion
+    int isParam; // true si la variable que se esta parseando es parametro
+
+    // Global Structures
+    VarTable globals; //variables globales
+    VarTable constants; //constantes globales
+    FuncTable functions; 
+    Stack pilaOperadores; 
+    Stack pilaTipos; 
+   
+    // Helper functions 
     TableType DT2TT(DataType current){
         switch(current){
             case TypeInt: return TableInt; break; 
@@ -221,7 +232,7 @@ optlf:
 	| crlf {printf("\n");} 
 
 function: 
-	RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE {isParam = 1;}funparams SYM_CPARE{isParam = 0;} optlf SYM_OCURL crlf funbody SYM_CCURL
+	RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE {npFun1($2); isParam = 1;}funparams SYM_CPARE{isParam = 0;} optlf SYM_OCURL crlf funbody SYM_CCURL{npFun2(); }
 
 funparams: 
 	  generaldec morefunparams
@@ -459,8 +470,8 @@ int main(int argc, char *argv[]) {
     //globals initializations 
     globals = NewVarTable(127); 
     functions = NewFuncTable(127); 
-    strcpy(currentFuncId, ""); 
-    pilaOpes = NewStack(TypeString, 64); 
+    strcpy(currentFunction, ""); 
+    pilaOperadores = NewStack(TypeString, 64); 
     pilaTipos = NewStack(TypeInt, 64); 
     isParam = 0; 
 
@@ -487,7 +498,7 @@ void npFinalCheck(){
     globals.print(&globals);  
     printf("Aqui van las locales\n"); 
     functions.print(&functions); 
-    DestroyStack(&pilaOpes); 
+    DestroyStack(&pilaOperadores); 
     DestroyStack(&pilaTipos); 
     DestroyVarTable(&globals);
     DestroyFuncTable(&functions); 
@@ -500,21 +511,21 @@ void np1(char* id){
     VTE* result = globals.lookup(&globals, id);
     if(result->isSet){
         yyerror("Ya existe esa variable en el global scope");  
-    } else if(strlen(currentFuncId) > 0){
-        result = functions.lookupVar(&functions, currentFuncId, id);
+    } else if(strlen(currentFunction) > 0){
+        result = functions.lookupVar(&functions, currentFunction, id);
         if(result->isSet)
             yyerror("Ya existe esa variable en el scope local"); 
-        result = functions.lookupParam(&functions, currentFuncId, id); 
+        result = functions.lookupParam(&functions, currentFunction, id); 
         if(result->isSet)
             yyerror("Ya existe esa variable en el scope local parametros");
     }
     int success = 0; 
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
-    if(strlen(currentFuncId) > 0){
+    if(strlen(currentFunction) > 0){
        if(isParam){
-            success = functions.addParam(&functions, currentFuncId, id, currentType, localsCounter, dim); 
+            success = functions.addParam(&functions, currentFunction, id, currentType, localsCounter, dim); 
         }else{
-            success = functions.addVar(&functions, currentFuncId, id, currentType, localsCounter, dim); 
+            success = functions.addVar(&functions, currentFunction, id, currentType, localsCounter, dim); 
         }
        if(success)
             localsCounter++; 
@@ -527,7 +538,7 @@ void np1(char* id){
         Var nombre = NewVarS(id); 
         Var tipo = NewVarI(currentType); 
         /* Push de nombre a pila de Operandos */
-        push(&pilaOpes, nombre); 
+        push(&pilaOperadores, nombre); 
 	    /* Push tipo a pila de Tipos */
         push(&pilaTipos, tipo); 
     }
@@ -538,6 +549,7 @@ void np1(char* id){
 void np1_1(DataType type){
     printf("<NP1_1 %d>", type); 
     currentType = DT2TT(type); 
+    returnType = DT2TT(type); 
 }
 
 void np2(){
@@ -1040,4 +1052,19 @@ void npFor4(){
 	gen quad(goto, , , return)
 	fillquad(exit, siguiente cuadruplo)
 	*/
+}
+
+void npFun1(char* newFunId){
+    printf("<NP_FUN_1 %s>", newFunId);
+    if(functions.add(&functions, newFunId, returnType, quadrupleCounter)){
+        strcpy(currentFunction, newFunId); 
+        quadrupleCounter++; 
+    }else{
+        yyerror("Function Already Defined"); 
+    }
+}
+
+void npFun2(){
+    printf("<NP_FUN_2 \"\"> ");
+    strcpy(currentFunction, ""); 
 }

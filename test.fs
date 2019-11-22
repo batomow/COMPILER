@@ -51,13 +51,13 @@ myPlayer.x = myPlayer.y
 var a:int = 5 * 2 + 1 / 2 / 1.0 - 5
 
 
-// functionName definition
-order functionName:double(var arg1:int, var arg2:double) {
+// function definition
+order sumameUnosDoubles:double(var arg1:int, var arg2:double) {
 	return arg1 + arg2
 }
 
-// testFunction definition
-order testFunction:int(var arg1:char, var arg2:int) {
+// another definition
+order calculaUnascosas:int(var arg1:char, var arg2:int) {
     var a:float
  	// if statement
 	if(floatExample > doubleExample) {
