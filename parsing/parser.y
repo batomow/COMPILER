@@ -1,8 +1,11 @@
 %{
-	#include <stdio.h>
+	#include <stdio.h> 
+    #include <stdlib.h>
+    #include <jedi.h>
 
 	extern int yylex();
 	extern int yyparse();
+     
 
 	# define YYERROR_VERBOSE 1
  
@@ -12,7 +15,7 @@
 	void npFinalCheck();
 
 	//Declarations
-	void np1();
+	void np1(); void np1_1(); 
 	void np2();	
 	void np3();
 	void np4();
@@ -67,6 +70,10 @@
 	void npFor2();
 	void npFor3();
 	void npFor4();
+   
+    //int subContextCounter = 0;  
+    //Stack* filaPilaTipos; 
+    
 %}
 
 %token SYM_OBRAC 
@@ -100,9 +107,9 @@
 %token LF 
 %token CR
 
-%token V_ID
-%token F_ID
-%token M_ID
+%token <yystring> V_ID
+%token <yystring> F_ID
+%token <yystring> M_ID
 
 %token LOG_IF
 %token LOG_ELIF
@@ -111,32 +118,54 @@
 %token LOG_WHILE
 
 %token V_VAR
-%token V_CHAR
-%token V_STRING
-%token V_FLOAT
-%token V_INT
-%token V_DOUBLE
-%token V_BOOL
-%token V_ARR
-%token V_MAT
-%token V_VECTOR
-%token V_ELEM
 
-%token T_BOOL
-%token T_INT
-%token T_FLOAT
-%token T_DOUBLE
-%token T_CHAR
-%token T_STRING
+%token <yychar> V_CHAR
+
+%token <yystring> V_STRING
+
+%token <yyfloat> V_FLOAT
+
+%token <yyint> V_INT
+
+%token <yydouble> V_DOUBLE
+
+%token <yybool> V_BOOL
+
+%token <yyint> V_ARR
+
+%token <yyint> V_MAT
+
+%token <yyint>V_VECTOR
+
+%token <yyint> V_ELEM
+
+
+%token <datatype> T_BOOL
+%token <datatype> T_INT
+%token <datatype> T_FLOAT
+%token <datatype> T_DOUBLE
+%token <datatype> T_CHAR
+%token <datatype> T_STRING
 
 %token RES_ORDER
 %token RES_MEDIT
 %token RES_RETRN
 
-%union{
-	/* TODO: Define data types for vars and ids */
+%code requires{
+    #include <jedi.h>
 }
 
+%union{
+	/* TODO: Define data types for vars and ids */
+    DataType datatype; 
+    int yyint; 
+    float yyfloat; 
+    double yydouble; 
+    char yychar; 
+    char* yystring; 
+    int yybool; 
+    OP op; 
+}
 
 %start prog
 %%
@@ -165,11 +194,11 @@ script:
 
 crlf:
 	CR LF
-	| LF
+	| LF {printf("\n");}
 
 optlf:
 	/* empty */
-	| crlf
+	| crlf {printf("\n");} 
 
 function: 
 	RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE functionHelper SYM_CPARE optlf SYM_OCURL crlf functionHelper2 SYM_CCURL
@@ -226,10 +255,10 @@ ret:
 /* ------- VARIABLES GRAMMAR ------- */
 
 vardec: 
-	V_VAR V_ID SYM_COLON vartypes { np1(); }
+	V_VAR V_ID SYM_COLON vartypes { np1_1($2); }
 
 basictypes:
-	V_CHAR { npExpr1_2(); }
+	  V_CHAR { npExpr1_2(); }
 	| V_STRING { npExpr1_2(); }
 	| V_FLOAT { npExpr1_2(); }
 	| V_DOUBLE { npExpr1_2(); }
@@ -237,12 +266,12 @@ basictypes:
 	| V_BOOL { npExpr1_2(); }
 
 vartypes:
-	T_INT
-	| T_FLOAT
-	| T_DOUBLE
-	| T_CHAR
-	| T_STRING
-	| T_BOOL
+	  T_INT  { np1($1);}
+	| T_FLOAT { np1($1);}  
+	| T_DOUBLE{ np1($1);} 
+	| T_CHAR{ np1($1);} 
+	| T_STRING{ np1($1);} 
+	| T_BOOL{ np1($1);}  
 
 
 var_or_cte:
@@ -416,19 +445,29 @@ void yyerror(const char *s){
 }
 
 int main(int argc, char *argv[]) {
+    //globals initializations 
+    //filaPilaTipos = calloc(1, sizeof(Stack)); 
+    //filaPilaTipos[subContextCounter] = NewStack(32, TypeInt); 
+    
+    
 	extern FILE *yyin;
 	++argv;
 	--argc;
 	int r;
 
-	yyin = fopen("../test.fs", "r");
+	yyin = fopen("./test.fs", "r");
 
 	r = yyparse();
 
 	if(r == 0){
 		printf("COMPILATION SUCCESSFUL!\n");
 	} 
-
+    fclose(yyin); 
+    /*for(int n = 0; n<100; n++){
+        if(filaPilaTipos+n)
+            DestroyStack(&(filaPilaTipos[n])); 
+    }*/
+    //free(filaPilaTipos); 
 	return 0;
 }
 
@@ -437,9 +476,12 @@ void npFinalCheck(){
 	/* revisar que existan las funciones necesarias de un script y cosas asi */
 }
 
-void np1(){
-	printf("<NP1> ");
+void np1(char* id){
+    printf("<NP1 %s >", id); 
 	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
+}
+void np1_1(DataType type){
+    printf("<NP1_1 >"); 
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
 	/* Push de nombre a pila de Operandos */
 	/* Push tipo a pila de Tipos */

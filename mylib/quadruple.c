@@ -55,6 +55,7 @@ char* QUADToStringHuman(QUAD quadruple){
         case NEQ: strcat(string, "NEQ, "); break; 
         case ENDPROC: strcat(string, "ENDPROC, "); break; 
         case ENDPROG: strcat(string, "ENDPROG, "); break; 
+        case NEG: strcat(string, "NEG, "); break; 
         default: strcat(string, "not defined"); break; 
     }
     strcat(string, quadruple.opdum1.id); 

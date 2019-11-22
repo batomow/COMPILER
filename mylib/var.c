@@ -89,6 +89,7 @@ char* VarToString(Var var){
         case TypeInt: sprintf(result, "%d", var.data.iVal); break;  
         case TypeChar: sprintf(result, "%c", var.data.cVal); break;  
         case TypeString: sprintf(result, "%s", var.data.sVal); break; 
+        case TypeBool: sprintf(result, "%d", var.data.iVal); break; 
         case TypeNull: sprintf(result, "(null)"); 
     }
     return result; 

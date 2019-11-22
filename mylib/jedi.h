@@ -12,7 +12,8 @@ typedef enum DataType{
         TypeChar,
         TypeString,
         TypeDouble, 
-        TypeNull
+        TypeNull,
+        TypeBool
 } DataType;
 
 
@@ -70,7 +71,7 @@ Var peek(Stack*);
     //-----array functions-----///
     void insert(Stack*, Var, int); 
     Var extract(Stack*, int);  
-    Var access(Stack*, int); 
+    Var accessElement(Stack*, int); 
 Stack NewStack(DataType, int);
 Stack NewStackFromArray(Var* , int); 
 void DestroyStack(Stack* ); 
@@ -230,7 +231,8 @@ typedef enum OP{
     EEQ, //19
     NEQ,//20
     ENDPROC,//21
-    ENDPROG //22
+    ENDPROG, //22
+    NEG //23
 } OP; 
 
 typedef struct Operandum OPDUM; 
