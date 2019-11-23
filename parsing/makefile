@@ -13,7 +13,7 @@ parser.o: parser.tab.c
 	gcc -c -g parser.tab.c -I../mylib -o parser.o 
 
 parser.tab.c: 
-	bison -d parser.y 
+	bison -dv parser.y 
 
 cube.o: cube.c 
 	gcc -c -g cube.c -I../mylib -o cube.o

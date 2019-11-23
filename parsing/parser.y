@@ -315,7 +315,7 @@ var_or_cte:
 	| basictypes
 
 assign: 
-	| V_ID { npExpr1_1($1); } MTH_SEQUA { npAssign0(); } expr {npAssign1();}
+	 V_ID { npExpr1_1($1); } MTH_SEQUA { npAssign0(); } expr {npAssign1();}
 	| structaccess MTH_SEQUA { npAssign0(); } expr {npAssign1();}
 	| property MTH_SEQUA { npAssign0(); } expr {npAssign1();}
 

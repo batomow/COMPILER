@@ -55,3 +55,4 @@ dkms.conf
 parsing/lex.yy.c
 parsing/parser.tab.c
 parsing/parser.tab.h
+parsing/parser.output
