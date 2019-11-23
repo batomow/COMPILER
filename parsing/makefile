@@ -4,13 +4,13 @@ parser.exe: parser.o scanner.o
 	gcc -o ../parser.exe parser.o scanner.o -L../mylib/ -ljedi
 
 scanner.o: lex.yy.c
-	gcc -c lex.yy.c -I ../mylib -o scanner.o
+	gcc -c -g lex.yy.c -I ../mylib -o scanner.o
 
 lex.yy.c:
 	flex scanner.l 
 
 parser.o: parser.tab.c
-	gcc -c parser.tab.c -I../mylib -o parser.o 
+	gcc -c -g parser.tab.c -I../mylib -o parser.o 
 
 parser.tab.c: 
 	bison -d parser.y 
