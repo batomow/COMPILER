@@ -259,6 +259,11 @@ generaldec: /* declaras o declaras y assignas */
 	| matdec
 	| vectordec
 	| elementdec 
+	| vardec MTH_SEQUA { npAssign0(); } expr { npAssign1(); }
+	| arrdec MTH_SEQUA { npAssign0(); } arr { npAssign2(); }
+	| matdec MTH_SEQUA { npAssign0(); } mat { npAssign2(); }
+	| vectordec MTH_SEQUA { npAssign0(); } vector {npAssign3();}
+	| elementdec MTH_SEQUA { npAssign0(); } funcall {npAssign4();}
 
 stmt: 
 	  assign 
@@ -313,11 +318,6 @@ assign:
 	| V_ID { npExpr1_1($1); } MTH_SEQUA { npAssign0(); } expr {npAssign1();}
 	| structaccess MTH_SEQUA { npAssign0(); } expr {npAssign1();}
 	| property MTH_SEQUA { npAssign0(); } expr {npAssign1();}
-	| vardec MTH_SEQUA { npAssign0(); } expr { npAssign1(); }
-	| arrdec MTH_SEQUA { npAssign0(); } arr { npAssign2(); }
-	| matdec MTH_SEQUA { npAssign0(); } mat { npAssign2(); }
-	| vectordec MTH_SEQUA { npAssign0(); } vector {npAssign3();}
-	| elementdec MTH_SEQUA { npAssign0(); } funcall {npAssign4();}
 
 /* ------- DATA STRUCTURES GRAMMAR ------- */
 
@@ -507,6 +507,7 @@ void npFinalCheck(){
     constants.print(&constants); 
     printf("Aqui van las locales\n"); 
     functions.print(&functions); 
+    
     DestroyStack(&pilaOperandos); 
     DestroyStack(&pilaTipos); 
     DestroyVarTable(&globals);
@@ -517,48 +518,28 @@ void npFinalCheck(){
 void np1(char* id){
     printf("<NP1 %s >", id); 
 	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
-    DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-    VTE* result = globals.lookup(&globals, id);
-    if(result->isSet){
-        yyerror("Ya existe esa variable en el global scope");  
-        DestroyDIM(dim); 
-    } else if(strlen(currentFunction) > 0){
-        result = functions.lookupVar(&functions, currentFunction, id);
-        if(result->isSet){
-            yyerror("Ya existe esa variable en el scope local"); 
-            DestroyDIM(dim); 
-        }
-        result = functions.lookupParam(&functions, currentFunction, id); 
-        if(result->isSet){
-            yyerror("Ya existe esa variable en el scope local parametros");
-            DestroyDIM(dim); 
-        }
-    }
-    int success = 0; 
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
-    if(strlen(currentFunction) > 0){
-       if(isParam){
-            success = functions.addParam(&functions, currentFunction, id, currentType, localsCounter, dim); 
+    int success = 0 ;
+    DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+    if(strlen(currentFunction)>0){
+        if(isParam){
+            success = functions.addParam(&functions, currentFunction, id, currentType, localsCounter++, dim);
         }else{
-            success = functions.addVar(&functions, currentFunction, id, currentType, localsCounter, dim); 
-        }
-       if(success)
-            localsCounter++; 
+            success = functions.addVar(&functions, currentFunction, id, currentType, localsCounter++,  dim); 
+        } 
     }else{
-       success = globals.add(&globals, id, currentType, globalsCounter, dim);  
-        if(success)
-            globalsCounter++; 
+        success = globals.add(&globals, id, currentType, globalsCounter++, dim); 
     }
-    if (success){
-        Var nombre = NewVarS(id); 
-        Var tipo = NewVarI(currentType); 
+    if(success){
         /* Push de nombre a pila de Operandos */
-        push(&pilaOperandos, nombre); 
+        Var name = NewVarS(id); 
 	    /* Push tipo a pila de Tipos */
-        push(&pilaTipos, tipo); 
-    }
-    if(!success)
+        Var type = NewVarI(currentType); 
+    }else{
         free(id);  //libera el yylval.yystring
+        DestroyDIM(dim); 
+        yyerror("Esa variable ya esta definida"); 
+    }
 }
 
 void np1_1(DataType type){
