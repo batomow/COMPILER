@@ -121,37 +121,37 @@ EOL			\n\r
 ":"				{ printf(": "); return SYM_COLON; }
 "."				{ printf(". "); return SYM_DOT; }
 
-"=="				{   //yylval.op = EEQ;
+"=="				{   yylval.op = EEQ;
                         printf("== "); return MTH_DEQUA; }
-">="				{   //yylval.op = GTE;
+">="				{   yylval.op = GTE;
                         printf(">= "); return MTH_GTEQ; }
-"<="				{   //yylval.op = LTE; 
+"<="				{   yylval.op = LTE; 
                         printf("<= "); return MTH_LTEQ; }
-"!="				{   //yylval.op = NEQ; 
+"!="				{   yylval.op = NEQ; 
                         printf("!= "); return MTH_NOTEQ; }
-"="				{   //yylval.op = ASSIGN;
+"="				{   yylval.op = ASSIGN;
                     printf("= "); return MTH_SEQUA; }
-">"				{   //yylval.op = GT; 
+">"				{   yylval.op = GT; 
                     printf("> "); return MTH_GT; }
-"<"				{   //yylval.op = LT;
+"<"				{   yylval.op = LT;
                     printf("< "); return MTH_LT; }
-"!"				{   //yylval.op = NEG;   
+"!"				{   yylval.op = NEG;   
                     printf("! "); return MTH_NOT; }
-"+"				{   //yylval.op = SUM;
+"+"				{   yylval.op = SUM;
                     printf("+ "); return MTH_PLUS; }
-"-"				{   //yylval.op = RES; 
+"-"				{   yylval.op = RES; 
                     printf("- "); return MTH_MINUS; }
-"*"				{   //yylval.op = MULT;
+"*"				{   yylval.op = MULT;
                     printf("* "); return MTH_ASTRK; }
-"/"				{    //yylval.op = DIV; 
+"/"				{    yylval.op = DIV; 
                      printf("/ "); return MTH_DIVIS; }
-"^^"				{   //yylval.op = ROOT; 
+"^^"				{   yylval.op = ROOT; 
                         printf("^^ "); return MTH_ROOT; }
-"^"				{   //yylval.op = POW; 
+"^"				{   yylval.op = POW; 
                     printf("^ "); return MTH_POWER; }
-"&&"				{   //yylval.op = AND; 
+"&&"				{   yylval.op = AND; 
                         printf("&& "); return MTH_AND; }
-"||"				{   //yylval.op = OR; 
+"||"				{   yylval.op = OR; 
                         printf("|| "); return MTH_OR; }
 "\t"                {   printf("\t"); }
 [ \v\f]			{ /* do nothing */}

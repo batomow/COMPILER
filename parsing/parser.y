@@ -24,7 +24,12 @@
 
 	//Expressions 
 	void npExpr1_1();
-	void npExpr1_2();
+	void npExpr1_2_char(char);
+    void npExpr1_2_string(); 
+    void npExpr1_2_float(float); 
+    void npExpr1_2_double(); 
+    void npExpr1_2_int(); 
+    void npExpr1_2_bool(); 
 	void npExpr1_3();
 	void npExpr1_4();
 	void npExpr1_5();
@@ -80,6 +85,7 @@
     int globalsCounter; 
     int localsCounter; 
     int tempsCounter;  
+    int constCounter; 
     int quadrupleCounter; 
     
     //Global Variables
@@ -92,7 +98,7 @@
     VarTable globals; //variables globales
     VarTable constants; //constantes globales
     FuncTable functions; 
-    Stack pilaOperadores; 
+    Stack pilaOperandos; 
     Stack pilaTipos; 
    
     // Helper functions 
@@ -253,11 +259,6 @@ generaldec: /* declaras o declaras y assignas */
 	| matdec
 	| vectordec
 	| elementdec 
-	| vardec MTH_SEQUA { npAssign0(); } expr { npAssign1(); }
-	| arrdec MTH_SEQUA { npAssign0(); } arr { npAssign2(); }
-	| matdec MTH_SEQUA { npAssign0(); } mat { npAssign2(); }
-	| vectordec MTH_SEQUA { npAssign0(); } vector {npAssign3();}
-	| elementdec MTH_SEQUA { npAssign0(); } funcall {npAssign4();}
 
 stmt: 
 	  assign 
@@ -288,12 +289,12 @@ vardec:
 	V_VAR V_ID SYM_COLON vartypes { np1($2); }
 
 basictypes:
-	  V_CHAR { npExpr1_2(); }
-	| V_STRING { npExpr1_2(); }
-	| V_FLOAT { npExpr1_2(); }
-	| V_DOUBLE { npExpr1_2(); }
-	| V_INT { npExpr1_2(); }
-	| V_BOOL { npExpr1_2(); }
+	  V_CHAR { npExpr1_2_char($1); }
+	| V_STRING { npExpr1_2_string($1); }
+	| V_FLOAT { npExpr1_2_float($1); }
+	| V_DOUBLE { npExpr1_2_double($1); }
+	| V_INT { npExpr1_2_int($1); }
+	| V_BOOL { npExpr1_2_bool($1); }
 
 vartypes:
 	  T_INT  { np1_1($1);}
@@ -305,13 +306,18 @@ vartypes:
 
 
 var_or_cte:
-	  V_ID { npExpr1_1(); }
+	  V_ID { npExpr1_1($1); }
 	| basictypes
 
 assign: 
-	| V_ID { npExpr1_1(); } MTH_SEQUA { npAssign0(); } expr {npAssign1();}
+	| V_ID { npExpr1_1($1); } MTH_SEQUA { npAssign0(); } expr {npAssign1();}
 	| structaccess MTH_SEQUA { npAssign0(); } expr {npAssign1();}
 	| property MTH_SEQUA { npAssign0(); } expr {npAssign1();}
+	| vardec MTH_SEQUA { npAssign0(); } expr { npAssign1(); }
+	| arrdec MTH_SEQUA { npAssign0(); } arr { npAssign2(); }
+	| matdec MTH_SEQUA { npAssign0(); } mat { npAssign2(); }
+	| vectordec MTH_SEQUA { npAssign0(); } vector {npAssign3();}
+	| elementdec MTH_SEQUA { npAssign0(); } funcall {npAssign4();}
 
 /* ------- DATA STRUCTURES GRAMMAR ------- */
 
@@ -469,9 +475,10 @@ void yyerror(const char *s){
 int main(int argc, char *argv[]) {
     //globals initializations 
     globals = NewVarTable(127); 
+    constants = NewVarTable(127);
     functions = NewFuncTable(127); 
     strcpy(currentFunction, ""); 
-    pilaOperadores = NewStack(TypeString, 64); 
+    pilaOperandos = NewStack(TypeString, 64); 
     pilaTipos = NewStack(TypeInt, 64); 
     isParam = 0; 
 
@@ -496,12 +503,15 @@ void npFinalCheck(){
 	/* revisar que existan las funciones necesarias de un script y cosas asi */
     printf("Aqui van las globales\n"); 
     globals.print(&globals);  
+    printf("Aqui van las constantes\n"); 
+    constants.print(&constants); 
     printf("Aqui van las locales\n"); 
     functions.print(&functions); 
-    DestroyStack(&pilaOperadores); 
+    DestroyStack(&pilaOperandos); 
     DestroyStack(&pilaTipos); 
     DestroyVarTable(&globals);
     DestroyFuncTable(&functions); 
+    DestroyVarTable(&constants); 
 }
 
 void np1(char* id){
@@ -511,13 +521,18 @@ void np1(char* id){
     VTE* result = globals.lookup(&globals, id);
     if(result->isSet){
         yyerror("Ya existe esa variable en el global scope");  
+        DestroyDIM(dim); 
     } else if(strlen(currentFunction) > 0){
         result = functions.lookupVar(&functions, currentFunction, id);
-        if(result->isSet)
+        if(result->isSet){
             yyerror("Ya existe esa variable en el scope local"); 
+            DestroyDIM(dim); 
+        }
         result = functions.lookupParam(&functions, currentFunction, id); 
-        if(result->isSet)
+        if(result->isSet){
             yyerror("Ya existe esa variable en el scope local parametros");
+            DestroyDIM(dim); 
+        }
     }
     int success = 0; 
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
@@ -538,7 +553,7 @@ void np1(char* id){
         Var nombre = NewVarS(id); 
         Var tipo = NewVarI(currentType); 
         /* Push de nombre a pila de Operandos */
-        push(&pilaOperadores, nombre); 
+        push(&pilaOperandos, nombre); 
 	    /* Push tipo a pila de Tipos */
         push(&pilaTipos, tipo); 
     }
@@ -587,21 +602,147 @@ void np5(){
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
 	/* Recuerda que un elemento es una clase de "objeto" asi que no tengo idea como se debe almacenar */
 	/* Push de nombre a pila de Operandos */
-	/* Push tipo a pila de Tipos */
+	/* Push tipo a pila de "Tipos */
 }
 
 
-void npExpr1_1(){
-	printf("<NP_EXPR_1_1> ");
-	/* Push variable a pila de operandos */
-	/* Push tipo a pila de tipos */
+void npExpr1_1(char* varid){
+	printf("<NP_EXPR_1_1 %s> ", varid);
+    VTE* result = globals.lookup(&globals, varid);  
+    if(!result->isSet && (strlen(currentFunction) > 0))
+        result = functions.lookupVar(&functions, currentFunction, varid);  
+    if(!result->isSet && (strlen(currentFunction) > 0))
+        result = functions.lookupParam(&functions, currentFunction, varid);  
+    if(result->isSet){
+        Var name = NewVarS(varid);  
+        Var type = NewVarI(result->type); 
+        push(&pilaOperandos, name); 
+        push(&pilaTipos, type); 
+    }
 }
-void npExpr1_2(){
-	printf("<NP_EXPR_1_2> ");
+void npExpr1_2_char(char constChar){
+	printf("<NP_EXPR_1_2 %c> ", constChar);
+	/* Revisar si existe en tabla de constantes */
+    char aux[2]; 
+    sprintf(aux, "%c", constChar); 
+    /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
+    DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+    if(constants.add(&constants, aux, TypeChar, constCounter, dim)){
+        constCounter++; 
+    }else{
+        DestroyDIM(dim); 
+    }
+    /* Push a pila de operandos */
+    Var name = NewVarS(aux); 
+    push(&pilaOperandos, name); 
+    
+    /* Push tipo a pila de tipos */
+    Var type = NewVarI(TypeChar); 
+    push(&pilaTipos, type); 
+    
+}
+void npExpr1_2_string(char* constString){
+	printf("<NP_EXPR_1_2 %s> ", constString);
 	/* Revisar si existe en tabla de constantes */
 	/* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
-	/* Push a pila de operandos */
-	/* Push tipo a pila de tipos */
+    DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+    if(constants.add(&constants, constString, TypeString, constCounter, dim)){
+        constCounter++; 
+    }else{
+        DestroyDIM(dim); 
+    }
+    /* Push a pila de operandos */
+    Var name = NewVarS(constString); 
+    push(&pilaOperandos, name); 
+    
+    /* Push tipo a pila de tipos */
+    Var type = NewVarI(TypeString); 
+    push(&pilaTipos, type); 
+    
+}
+void npExpr1_2_float(float constFloat){
+	printf("<NP_EXPR_1_2 %f> ", constFloat);
+	/* Revisar si existe en tabla de constantes */
+    char aux[32]; 
+    sprintf(aux, "%f", constFloat); 
+    /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
+    DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+    if(constants.add(&constants, aux, TypeFloat, constCounter, dim)){
+        constCounter++; 
+    }else{
+        DestroyDIM(dim); 
+    }
+    /* Push a pila de operandos */
+    Var name = NewVarS(aux); 
+    push(&pilaOperandos, name); 
+    
+    /* Push tipo a pila de tipos */
+    Var type = NewVarI(TypeFloat); 
+    push(&pilaTipos, type); 
+    
+}
+void npExpr1_2_double(double constDouble){
+	printf("<NP_EXPR_1_2 %lf> ", constDouble);
+	/* Revisar si existe en tabla de constantes */
+     char aux[32]; 
+     sprintf(aux, "%lf", constDouble); 
+     /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
+     DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+     if(constants.add(&constants, aux, TypeDouble, constCounter, dim)){
+         constCounter++; 
+     }else{
+         DestroyDIM(dim); 
+     }
+     /* Push a pila de operandos */
+     Var name = NewVarS(aux); 
+     push(&pilaOperandos, name); 
+     
+     /* Push tipo a pila de tipos */
+     Var type = NewVarI(TypeDouble); 
+     push(&pilaTipos, type); 
+    
+}
+void npExpr1_2_int(int constInt){
+	printf("<NP_EXPR_1_2 %d> ", constInt);
+	/* Revisar si existe en tabla de constantes */
+    char aux[32]; 
+    sprintf(aux, "%d", constInt); 
+    /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
+    DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+    if(constants.add(&constants, aux, TypeInt, constCounter, dim)){
+        constCounter++; 
+    }else{
+        DestroyDIM(dim); 
+    }
+    /* Push a pila de operandos */
+    Var name = NewVarS(aux); 
+    push(&pilaOperandos, name); 
+    
+    /* Push tipo a pila de tipos */
+    Var type = NewVarI(TypeInt); 
+    push(&pilaTipos, type); 
+    
+}
+void npExpr1_2_bool(int constBool){
+	printf("<NP_EXPR_1_2 %d> ", constBool);
+	/* Revisar si existe en tabla de constantes */
+    char aux[32]; 
+    sprintf(aux, "%d", constBool); 
+    /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
+    DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+    if(constants.add(&constants, aux, TypeBool, constCounter, dim)){
+        constCounter++; 
+    }else{
+        DestroyDIM(dim); 
+    }
+    /* Push a pila de operandos */
+    Var name = NewVarS(aux); 
+    push(&pilaOperandos, name); 
+    
+    /* Push tipo a pila de tipos */
+    Var type = NewVarI(TypeBool); 
+    push(&pilaTipos, type); 
+    
 }
 void npExpr1_3(){
 	printf("<NP_EXPR_1_3> ");
@@ -1058,7 +1199,6 @@ void npFun1(char* newFunId){
     printf("<NP_FUN_1 %s>", newFunId);
     if(functions.add(&functions, newFunId, returnType, quadrupleCounter)){
         strcpy(currentFunction, newFunId); 
-        quadrupleCounter++; 
     }else{
         yyerror("Function Already Defined"); 
     }

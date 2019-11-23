@@ -99,9 +99,11 @@ VTE NewVTE(){
 void SetVTE(VTE* vte, char* id, TableType type, int dir, DIM* dim){
     vte->isSet = 1; 
     vte->type = type; 
-    vte->id = id; 
+    int stringsize = strlen(id);    
+    vte->id = calloc(stringsize+1, sizeof(char)); 
+    strcpy(vte->id, id); 
     vte->dir = dir; 
-    vte->dim = dim; 
+    vte->dim = dim;
     vte->next = calloc(1, sizeof(VTE));  //allocate memory
     *(vte->next) =  NewVTE();  //set whats in that memory 
 }
@@ -111,6 +113,7 @@ void DestroyVTE(VTE* vte){
     if(vte->isSet){
         DestroyVTE(vte->next);  
         vte->isSet = 0; 
+        free(vte->id); 
     }
     free(vte); 
 }
