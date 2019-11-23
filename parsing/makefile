@@ -1,7 +1,7 @@
 all: parser.exe
 
-parser.exe: parser.o scanner.o
-	gcc -o ../parser.exe parser.o scanner.o -L../mylib/ -ljedi
+parser.exe: parser.o scanner.o cube.o
+	gcc -o ../parser.exe parser.o scanner.o cube.o -L../mylib/ -ljedi
 
 scanner.o: lex.yy.c
 	gcc -c -g lex.yy.c -I ../mylib -o scanner.o
@@ -14,6 +14,9 @@ parser.o: parser.tab.c
 
 parser.tab.c: 
 	bison -d parser.y 
+
+cube.o: cube.c 
+	gcc -c -g cube.c -I../mylib -o cube.o
 
 clean: 
 	rm parser.o scanner.o -rf 

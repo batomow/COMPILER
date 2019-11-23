@@ -121,15 +121,15 @@ void DestroyDictionary(Dictionary*);
 
 //---------------------------- var table stuff ----------------------///
 typedef enum TableType{
-    TableInt, 
-    TableFloat, 
-    TableChar, 
-    TableString, 
-    TableElement, 
-    TableVector, 
-    TableNull, 
-    TableDouble,
-    TableBool 
+    TableInt, //0
+    TableFloat, //1
+    TableChar, //2
+    TableString, //3
+    TableElement, //4
+    TableVector, //5
+    TableNull, //6
+    TableDouble,//7
+    TableBool //8
 } TableType; 
 //you have to manualy free the DIM if you dont add it to a vartable
 //you cant modify the DIM once assigned
