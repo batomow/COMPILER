@@ -268,6 +268,7 @@ morefunparams:
 funbody:
 	  stmt crlf funbody
     | generaldec crlf funbody
+    | crlf funbody
     | /*emtpy*/
 
 generaldec: /* declaras o declaras y assignas */
@@ -537,7 +538,6 @@ void npError(){
 }
 
 void npFinalCheck(){
-	printf("<FINALCHECK>\n");
 	/* revisar que existan las funciones necesarias de un script y cosas asi */
    /* printf("Aqui van las globales\n"); 
     globals.print(&globals);  
@@ -568,7 +568,6 @@ void npFinalCheck(){
 }
 
 void np1(char* id){
-    printf("<NP1 %s >", id); 
 	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
     int success = 0 ;
@@ -585,8 +584,10 @@ void np1(char* id){
     if(success){
         /* Push de nombre a pila de Operandos */
         Var name = NewVarS(id); 
+        push(&pilaOperandos, name); 
 	    /* Push tipo a pila de Tipos */
         Var type = NewVarI(currentType); 
+        push(&pilaTipos, type); 
     }else{
         DestroyDIM(dim); 
         yyerror("Esa variable ya esta definida"); 
@@ -594,13 +595,11 @@ void np1(char* id){
 }
 
 void np1_1(DataType type){
-    printf("<NP1_1 %d>", type); 
     currentType = DT2TT(type); 
     returnType = DT2TT(type); 
 }
 
 void np2(){
-	printf("<NP2> ");
 	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
 	/* Revisar que el tamaño del arreglo es mayor a 0 y menor a INT_MAX */
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
@@ -610,7 +609,6 @@ void np2(){
 }
 
 void np3(){
-	printf("<NP3> ");
 	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
 	/* Revisar que el tamaño de ambas dimensiones son mayores a 0 y menores a INT_MAX */
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
@@ -620,7 +618,6 @@ void np3(){
 }
 
 void np4(){
-	printf("<NP4> ");
 	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
 	/* Recuerda que este vector es un pair, asi que haz las modificaciones necesarias */
@@ -629,7 +626,6 @@ void np4(){
 }
 
 void np5(){
-	printf("<NP5> ");
 	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
 	/* Recuerda que un elemento es una clase de "objeto" asi que no tengo idea como se debe almacenar */
@@ -639,7 +635,6 @@ void np5(){
 
 
 void npExpr1_1(char* varid){
-	printf("<NP_EXPR_1_1 %s> ", varid);
     VTE* result = globals.lookup(&globals, varid);  
     if(!result->isSet && (strlen(currentFunction) > 0))
         result = functions.lookupVar(&functions, currentFunction, varid);  
@@ -655,7 +650,6 @@ void npExpr1_1(char* varid){
     }
 }
 void npExpr1_2_char(char constChar){
-	printf("<NP_EXPR_1_2 %c> ", constChar);
 	/* Revisar si existe en tabla de constantes */
     char aux[2]; 
     sprintf(aux, "%c", constChar); 
@@ -676,7 +670,6 @@ void npExpr1_2_char(char constChar){
     
 }
 void npExpr1_2_string(char* constString){
-	printf("<NP_EXPR_1_2 %s> ", constString);
 	/* Revisar si existe en tabla de constantes */
 	/* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
     DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
@@ -695,7 +688,6 @@ void npExpr1_2_string(char* constString){
      
 }
 void npExpr1_2_float(float constFloat){
-	printf("<NP_EXPR_1_2 %f> ", constFloat);
 	/* Revisar si existe en tabla de constantes */
     char aux[32]; 
     sprintf(aux, "%f", constFloat); 
@@ -715,7 +707,6 @@ void npExpr1_2_float(float constFloat){
     push(&pilaTipos, type); 
 }
 void npExpr1_2_double(double constDouble){
-	printf("<NP_EXPR_1_2 %lf> ", constDouble);
 	/* Revisar si existe en tabla de constantes */
      char aux[32]; 
      sprintf(aux, "%lf", constDouble); 
@@ -736,7 +727,6 @@ void npExpr1_2_double(double constDouble){
     
 }
 void npExpr1_2_int(int constInt){
-	printf("<NP_EXPR_1_2 %d> ", constInt);
 	/* Revisar si existe en tabla de constantes */
     char aux[32]; 
     sprintf(aux, "%d", constInt); 
@@ -757,7 +747,6 @@ void npExpr1_2_int(int constInt){
     
 }
 void npExpr1_2_bool(int constBool){
-	printf("<NP_EXPR_1_2 %d> ", constBool);
 	/* Revisar si existe en tabla de constantes */
     char aux[32]; 
     sprintf(aux, "%d", constBool); 
@@ -778,34 +767,28 @@ void npExpr1_2_bool(int constBool){
     
 }
 void npExpr1_3(){
-	printf("<NP_EXPR_1_3> ");
 	/* Push tipo a pila de tipos */
 	/* Esto es después de una llamada a función, de alguna manera debe haber en la 
 	   pila de operadores el temporal con el resultado a la funcion */
 
 }
 void npExpr1_4(){
-	printf("<NP_EXPR_1_4> ");
 	// Todavía no tengo claro el acceso a los arreglos
 }
 void npExpr1_5(){
-	printf("<NP_EXPR_1_5> ");
 	// Todavía no tengo claro el acceso a las matrices
 }
 void npExpr1_6(){
-	printf("<NP_EXPR_1_6> ");
 	/* Revisar que exista un vector o elemento con ese id
 	   Revisar que ese vector o elemento tenga esa propiedad
 	   Push propiedad a pila de operandos
 	   Push tipo a pila de tipos */
 }
 void npExpr3(OP newOpe){
-	printf("<NP_EXPR_3> ");
 	/* Push de operador a pila de operadores */
     push(&pilaOperadores, NewVarI(newOpe)); 
 }
 void npExpr5(OP* opes, int opesSize){
-	printf("<NP_EXPR_5_1> ");
     if(pilaOperadores.isEmpty(&pilaOperadores))
         return; 
 	//Si el top de la pila es un ^ o un ^^:
@@ -879,23 +862,19 @@ void npExpr5(OP* opes, int opesSize){
 	
 }
 void npExpr6(){
-	printf("<NP_EXPR_6> ");
 	/* Meter un fondo falso a la pila de Operadores */
     push(&pilaOperadores, NewVarI(-1)); 
 }
 void npExpr7(){
-	printf("<NP_EXPR_7> ");
 	/* Sacar un fondo falso de la pila de Operadores */
     Var tope = peek(&pilaOperadores); 
     pop(&pilaOperadores);  
 }
 
 void npAssign0(){
-	printf("<NP_ASSIGN_0> ");
 	/* Push '=' a pila de operadores */
 }
 void npAssign1(){
-	printf("<NP_ASSIGN_1> ");
 	/* 
 	Si (pOperadores.top() == '=')
 		pOperadores.pop()
@@ -912,7 +891,6 @@ void npAssign1(){
 	*/
 }
 void npAssign2(){
-	printf("<NP_ASSIGN_2> ");
 	/*
 	Si (pOperadores.top() == '=')
 		pOperadores.pop()
@@ -946,7 +924,6 @@ void npAssign2(){
 
 }
 void npAssign3(){
-	printf("<NP_ASSIGN_3> ");
 	/*
 	Si (pOperadores.top() == '='):
 		y = pOperandos.pop()
@@ -964,7 +941,6 @@ void npAssign3(){
 	*/	
 }
 void npAssign4(){
-	printf("<NP_ASSIGN_3> ");
 	/* 
 	Aquí asignas el resultado de la función de generacion de elemento al memory address del elemento.
 	No se como planeas implementar los elements, asi que no se cómo darte instrucciones precisas 
@@ -972,11 +948,9 @@ void npAssign4(){
 }
 
 void npArrGen1(){
-	printf("<NP_ARRGEN_1> ");
 	/* Meter tope de arreglo (]) a filaArrOperandos (queue) */
 }
 void npArrGen2(){
-	printf("<NP_ARRGEN_2> ");
 	/*
 	tipo = pTipos.pop()
 	Si(pTipos.top() == tipo):
@@ -989,11 +963,9 @@ void npArrGen2(){
 
 
 void npIf0(){
-	printf("<NP_IF_0> ");
 	/* Push fondo falso a pila de saltos */
 }
 void npIf1(){
-	printf("<NP_IF_1> ");
 	/*
 	exp_type = pTipos.pop()
 	Si (exp_type es nan o algo no evaluable como truthy value):
@@ -1005,7 +977,6 @@ void npIf1(){
 	*/
 }
 void npIf2(){
-	printf("<NP_IF_2> ");
 	/*
 	gen quad(goto, , ,___) El ultimo espacio se va a llenar después
 	false = pSaltos.pop()
@@ -1014,7 +985,6 @@ void npIf2(){
 	*/
 }
 void npIf3(){
-	printf("<NP_IF_3> ");
 	/*
 	tofill = pSaltos.pop()
 	while (tofill != fondo falso)
@@ -1024,11 +994,9 @@ void npIf3(){
 
 
 void npWhile1(){
-	printf("<NP_WHILE_1> ");
 	/* push siguiente numero de cuadruplo a la pila de saltos */
 }
 void npWhile2(){
-	printf("<NP_WHILE_2> ");
 	/* 
 	exp_type = pTipos.pop()
 	Si (exp_type es nan o algo no evaluable como truthy value):
@@ -1040,7 +1008,6 @@ void npWhile2(){
 	*/
 }
 void npWhile3(){
-	printf("<NP_WHILE_3> ");
 	/*
 	end = pSaltos.pop()
 	return = pSaltos.pop()
@@ -1051,7 +1018,6 @@ void npWhile3(){
 
 
 void npFor1(){
-	printf("<NP_FOR_1> ");
 	/* THIS IS SKETCHY, IDK IF IT WILL WORK */
 	/*
 	Checa si V_ID es un array
@@ -1069,14 +1035,12 @@ void npFor1(){
 	*/
 }
 void npFor2(){
-	printf("<NP_FOR_2> ");
 	/* THIS IS SKETCHY, IDK IF IT WILL WORK */
 	/*
 	pilaForHelper.push("step")
 	*/
 }
 void npFor3(){
-	printf("<NP_FOR_3> ");
 	/* THIS IS SKETCHY, IDK IF IT WILL WORK */
 	/*
 	if(pilaForHelper.pop == array)
@@ -1125,7 +1089,6 @@ void npFor3(){
 
 }
 void npFor4(){
-	printf("<NP_FOR_1> ");
 	/* THIS IS SKETCHY, IDK IF IT WILL WORK */
 	/*
 	exit = pSaltos.pop
@@ -1136,7 +1099,6 @@ void npFor4(){
 }
 
 void npFun1(char* newFunId){
-    printf("<NP_FUN_1 %s>", newFunId);
     if(functions.add(&functions, newFunId, returnType, quadrupleCounter)){
         strcpy(currentFunction, newFunId); 
     }else{
@@ -1145,6 +1107,5 @@ void npFun1(char* newFunId){
 }
 
 void npFun2(){
-    printf("<NP_FUN_2 \"\"> ");
     strcpy(currentFunction, ""); 
 }

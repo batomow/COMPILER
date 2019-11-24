@@ -1,4 +1,4 @@
-n/ comments
+// comments
 /*	multiline
 	comments	*/ 
 
@@ -70,10 +70,10 @@ order calculaUnascosas:int(var arg1:char, var arg2:int) {
 		}
 	} else {
 		return truth
-	}
-
-	// for statement
+	} 
+    //comment
     var x:int 
+    var size:int
 	for [0, 1, size] -> x {
 		if (isInsideShape(shape1Bounds, shape2Bounds) == lie) {
 			meditate
@@ -83,7 +83,7 @@ order calculaUnascosas:int(var arg1:char, var arg2:int) {
 	for arrayName -> y {
 		meditate
 	}
-    
+
 	while (x > 5) {
 		vision(x)
         x = x - 1

@@ -34,7 +34,7 @@ EOL			\n\r
 "element"			{ printf("element "); return V_ELEM; }
 "order"				{ printf("order "); return RES_ORDER; }
 "meditate"			{ printf("medit "); return RES_MEDIT; }
-"return"			{ printf("retrn "); return RES_RETRN; }
+"return"			{ printf("return "); return RES_RETRN; }
 "bool"				{   
                         yylval.datatype = TypeBool; 
                         printf("bool "); return T_BOOL; 
@@ -149,7 +149,8 @@ EOL			\n\r
                         printf("&& "); return MTH_AND; }
 "||"				{   yylval.op = OR; 
                         printf("|| "); return MTH_OR; }
-"\t"                {   printf("\t"); }
+"\t"                    {   printf("\t"); }
+"    "                  {   printf("\t"); }
 [ \v\f]			{ /* do nothing */}
 .				{ yyerror("Invalid character"); return *yytext;}
 

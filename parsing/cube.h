@@ -36,7 +36,7 @@
 typedef struct CuboSemantico CuboSemantico; 
 typedef struct CuboSemantico {
   int __c[24][9][9];
-  int (*getReturnType)(CuboSemantico*, OP, TableType, TableType);
+  TableType (*getReturnType)(CuboSemantico*, OP, TableType, TableType);
 } CuboSemantico;
 CuboSemantico NewCubo();
 
