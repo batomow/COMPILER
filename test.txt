@@ -1,0 +1,156 @@
+v_id / <NP_EXPR_1_1 n> 
+ERROR: ERROR: variable no declarada
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_3> v_id lf
+<NP_EXPR_1_1 comments> 
+ERROR: ERROR: variable no declarada
+<NP_EXPR_5_1> <NP_EXPR_5_1> 
+ERROR: ERROR: error de tipos
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> 
+lf
+
+lf
+
+lf
+
+var v_id : int <NP1_1 0><NP1 intExample >= <NP_ASSIGN_0> int(23) <NP_EXPR_1_2 23> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+var v_id : double <NP1_1 4><NP1 doubleExample >= <NP_ASSIGN_0> double(3.000000) <NP_EXPR_1_2 3.000000> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+var v_id : float <NP1_1 1><NP1 floatExam >= <NP_ASSIGN_0> float(5.320000) <NP_EXPR_1_2 5.320000> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+var v_id : float <NP1_1 1><NP1 floatExample >= <NP_ASSIGN_0> float(5.320000) <NP_EXPR_1_2 5.320000> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+var v_id : string <NP1_1 3><NP1 stringExample >= <NP_ASSIGN_0> string("string") <NP_EXPR_1_2 "string"> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+var v_id : char <NP1_1 2><NP1 charExample >= <NP_ASSIGN_0> char('c') <NP_EXPR_1_2 c> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+var v_id : bool <NP1_1 6><NP1 boolExample >= <NP_ASSIGN_0> bool(truth) <NP_EXPR_1_2 1> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+lf
+
+lf
+
+arr v_id : int <NP1_1 0>[ int(12) ] <NP2> lf
+
+arr v_id : char <NP1_1 2>[ int(6) ] <NP2> = <NP_ASSIGN_0> [ char('a') <NP_EXPR_1_2 a> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> char('b') <NP_EXPR_1_2 b> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> char('c') <NP_EXPR_1_2 c> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> char('d') <NP_EXPR_1_2 d> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> char('e') <NP_EXPR_1_2 e> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> char('f') <NP_EXPR_1_2 f> ] <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> <NP_ARRGEN_1> <NP_ASSIGN_2> lf
+
+v_id [ int(9) <NP_EXPR_1_2 9> ] <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_1_4> = <NP_ASSIGN_0> string("algo") <NP_EXPR_1_2 "algo"> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+v_id [ int(0) <NP_EXPR_1_2 0> ] <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_1_4> = <NP_ASSIGN_0> int(5) <NP_EXPR_1_2 5> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+var v_id : float <NP1_1 1><NP1 anotherInt >= <NP_ASSIGN_0> v_id [ int(0) <NP_EXPR_1_2 0> ] <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_1_4> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+lf
+
+mat v_id : int <NP1_1 0>[ int(4) ] [ int(12) ] <NP3> lf
+
+mat v_id : int <NP1_1 0>[ int(3) ] [ int(3) ] <NP3> = <NP_ASSIGN_0> [ lf
+
+
+	[ int(1) <NP_EXPR_1_2 1> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> int(2) <NP_EXPR_1_2 2> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> int(3) <NP_EXPR_1_2 3> ] <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> <NP_ARRGEN_1> , lf
+
+
+	[ int(4) <NP_EXPR_1_2 4> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> int(5) <NP_EXPR_1_2 5> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> int(6) <NP_EXPR_1_2 6> ] <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> <NP_ARRGEN_1> , lf
+
+
+	[ int(7) <NP_EXPR_1_2 7> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> int(8) <NP_EXPR_1_2 8> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> int(9) <NP_EXPR_1_2 9> ] <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ARRGEN_2> <NP_ARRGEN_1> lf
+
+
+] <NP_ASSIGN_2> lf
+
+v_id [ int(0) <NP_EXPR_1_2 0> ] <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_1_4> [ int(2) <NP_EXPR_1_2 2> ] <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_1_5> = <NP_ASSIGN_0> string("algo") <NP_EXPR_1_2 "algo"> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+var v_id : string <NP1_1 3><NP1 anotherThing >= <NP_ASSIGN_0> v_id [ int(1) <NP_EXPR_1_2 1> ] <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_1_4> [ int(1) <NP_EXPR_1_2 1> ] <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_1_5> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+lf
+
+vector v_id <NP1 someGeometricalVector >= <NP_ASSIGN_0> { int(10) <NP_EXPR_1_2 10> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> int(5) <NP_EXPR_1_2 5> } <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_3> lf
+
+v_id . v_id <NP_EXPR_1_6> = <NP_ASSIGN_0> int(5) <NP_EXPR_1_2 5> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+v_id . v_id <NP_EXPR_1_6> = <NP_ASSIGN_0> int(5) <NP_EXPR_1_2 5> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+lf
+
+element v_id <NP1 myPlayer >= <NP_ASSIGN_0> v_id ( { int(200) <NP_EXPR_1_2 200> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> int(300) <NP_EXPR_1_2 300> } <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> , int(50) <NP_EXPR_1_2 50> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> int(4) <NP_EXPR_1_2 4> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> bool(lie) <NP_EXPR_1_2 0> ) <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_1_3> <NP_ASSIGN_3> lf
+
+lf
+
+v_id ( v_id . v_id <NP_EXPR_1_6> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> int(10) <NP_EXPR_1_2 10> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> { int(23) <NP_EXPR_1_2 23> , <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> int(1) <NP_EXPR_1_2 1> } <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> ) <NP_EXPR_1_3> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> 
+lf
+
+v_id . v_id <NP_EXPR_1_6> = <NP_ASSIGN_0> int(150) <NP_EXPR_1_2 150> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+v_id . v_id <NP_EXPR_1_6> = <NP_ASSIGN_0> int(250) <NP_EXPR_1_2 250> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+v_id . v_id <NP_EXPR_1_6> = <NP_ASSIGN_0> v_id . v_id <NP_EXPR_1_6> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+lf
+
+lf
+
+var v_id : int <NP1_1 0><NP1 a >= <NP_ASSIGN_0> int(5) <NP_EXPR_1_2 5> * <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_3> int(2) <NP_EXPR_1_2 2> + <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_3> int(1) <NP_EXPR_1_2 1> / <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_3> int(2) <NP_EXPR_1_2 2> / <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_3> float(1.000000) <NP_EXPR_1_2 1.000000> - <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_3> int(5) <NP_EXPR_1_2 5> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+lf
+
+lf
+
+order v_id : double <NP1_1 4>( <NP_FUN_1 sumameUnosDoubles>var v_id : int <NP1_1 0><NP1 arg1 >, var v_id : double <NP1_1 4><NP1 arg2 >) { lf
+
+	retrn v_id + <NP_EXPR_1_1 arg1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_3> v_id lf
+<NP_EXPR_1_1 arg2> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> 
+} <NP_FUN_2 ""> lf
+
+lf
+
+order v_id : int <NP1_1 0>( <NP_FUN_1 calculaUnascosas>var v_id : char <NP1_1 2><NP1 arg1 >, var v_id : int <NP1_1 0><NP1 arg2 >) { lf
+
+var v_id : float <NP1_1 1><NP1 a >lf
+
+	vector v_id <NP1 shape1Bounds >lf
+
+vector v_id <NP1 shape2Bounds >lf
+
+	IF <NP_IF_0> ( v_id > <NP_EXPR_1_1 floatExample> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_3> v_id ) <NP_EXPR_1_1 doubleExample> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_IF_1> { lf
+
+	v_id = <NP_EXPR_1_1 a> <NP_ASSIGN_0> v_id + <NP_EXPR_1_1 intExample> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_3> v_id lf
+<NP_EXPR_1_1 floatExample> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_ASSIGN_1> 
+} ELIF <NP_IF_2> ( v_id ) <NP_EXPR_1_1 boolExample> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_IF_1> { lf
+
+		IF <NP_IF_0> ( v_id ( v_id , <NP_EXPR_1_1 shape1Bounds> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> v_id ) <NP_EXPR_1_1 shape2Bounds> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_1_3> == <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_3> bool(lie) <NP_EXPR_1_2 0> ) <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_IF_1> { lf
+
+			medit lf
+
+		} lf
+<NP_IF_3> 
+	} ELSE <NP_IF_2> { lf
+
+		retrn bool(truth) <NP_EXPR_1_2 1> lf
+<NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> <NP_EXPR_5_1> 
+	} <NP_IF_3> lf
+
+lf
+
+ERROR: syntax error, unexpected LF, expecting SYM_CCURL
+	var v_id : int lf
+	FOR [ int(0) , int(1) , v_id ] -> v_id { lf
+		IF ( v_id ( v_id , v_id ) == bool(lie) ) { lf
+			medit lf
+		} lf
+	} lf
+var v_id : int lf
+	FOR v_id -> v_id { lf
+		medit lf
+	} lf
+lf
+	WHILE ( v_id > int(5) ) { lf
+		v_id ( v_id ) lf
+v_id = v_id - int(1) lf
+	} lf
+lf
+	retrn bool(lie) lf
+} lf
+lf
+COMPILATION SUCCESSFUL!
+82
