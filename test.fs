@@ -1,4 +1,4 @@
-// comments
+n/ comments
 /*	multiline
 	comments	*/ 
 
@@ -60,6 +60,8 @@ order sumameUnosDoubles:double(var arg1:int, var arg2:double) {
 order calculaUnascosas:int(var arg1:char, var arg2:int) {
     var a:float
  	// if statement
+    vector shape1Bounds
+    vector shape2Bounds
 	if(floatExample > doubleExample) {
 	    a = intExample + floatExample
     } elif (boolExample) {
@@ -68,7 +70,6 @@ order calculaUnascosas:int(var arg1:char, var arg2:int) {
 		}
 	} else {
 		return truth
-		// do nothing comment
 	}
 
 	// for statement
@@ -90,3 +91,4 @@ order calculaUnascosas:int(var arg1:char, var arg2:int) {
 
 	return lie
 }
+

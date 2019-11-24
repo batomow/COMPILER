@@ -171,7 +171,6 @@ VTE* __vartable_lookup(VarTable* table, char* id){
             return iter; 
         iter = iter->next; 
     }
-    iter = calloc(1, sizeof(VTE)); *iter = NewVTE(); 
     return iter;  
 }
 
@@ -217,6 +216,7 @@ void DestroyVarTable(VarTable* table){
         if((iter+n)->isSet){
             DestroyDIM((iter+n)->dim); 
             DestroyVTE((iter+n)->next);  
+            free((iter+n)->id); 
         }
     }
     free(table->__dict); 

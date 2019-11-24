@@ -8,24 +8,51 @@ void __set_operandum_as_pointer(OPDUM* operandum, int otherVirtualAd){
     operandum->dereference = otherVirtualAd; 
 }
 
-OPDUM NewOPDUM(char* id, int virtualAd, int otherVirtualAd){
+OPDUM NewOPDUM(char* id, int virtualAd, TableType type){
     OPDUM r; 
     r.isPointer = 0; 
-    r.id = id; 
+    int idsize = strlen(id); 
+    r.id = calloc(idsize+1, sizeof(char));  
+    strcpy(r.id, id); 
+    r.type = type; 
     r.virad = virtualAd; 
-    r.dereference = otherVirtualAd; 
+    r.dereference = -1;  
     r.toPointer = &__set_operandum_as_pointer;
     return r; 
 }
 
+void DestroyOPDUM(OPDUM* dum){
+    if(dum)
+        if(dum->id){
+            free(dum->id);
+        }
+}
 
-QUAD NewQUAD(OP op, OPDUM opdum1, OPDUM opdum2, OPDUM res){
+
+void DestroyQUAD(QUAD* q){
+    if(q->isSet){
+        DestroyQUAD(q->next); 
+        DestroyOPDUM(&(q->opdum1)); 
+        DestroyOPDUM(&(q->opdum2)); 
+        free(q->next); 
+    }
+}
+
+QUAD NewQUAD(){
     QUAD q; 
-    q.op = op; 
-    q.opdum1 = opdum1; 
-    q.opdum2 = opdum2; 
-    q.result = res; 
+    q.isSet = 0; 
+    q.next = NULL; 
     return q; 
+}
+
+void SetQUAD(QUAD* q, OP op, OPDUM opdum1, OPDUM opdum2, OPDUM res){
+    q->isSet = 1; 
+    q->op = op; 
+    q->opdum1 = opdum1; 
+    q->opdum2 = opdum2; 
+    q->result = res; 
+    q->next = calloc(1, sizeof(QUAD)); 
+    *(q->next) = NewQUAD(); 
 }
 
 char* QUADToStringHuman(QUAD quadruple){

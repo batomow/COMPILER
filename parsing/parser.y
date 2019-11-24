@@ -3,6 +3,7 @@
     #include <stdlib.h>
     #include <string.h> 
     #include <jedi.h>
+    #include "cube.h"
 
 	extern int yylex();
 	extern int yyparse();
@@ -81,10 +82,11 @@
     void npFun1();
     void npFun2(); 
 
+    void npError(); 
+
     // Global Counters //virtual mem-dirs
     int globalsCounter; 
     int localsCounter; 
-    int tempsCounter;  
     int constCounter; 
     int quadrupleCounter; 
     
@@ -93,14 +95,22 @@
     TableType currentType;  //tipo de variable
     TableType returnType;  //tipo de valor de retorno de funcion
     int isParam; // true si la variable que se esta parseando es parametro
+    
+    int errorCounter = 0; 
 
     // Global Structures
     VarTable globals; //variables globales
     VarTable constants; //constantes globales
     FuncTable functions; 
+
     Stack pilaOperandos; 
+    Stack pilaOperadores; 
     Stack pilaTipos; 
-   
+
+    QUAD listQuads;   
+    QUAD* currentQuad; 
+  
+    CuboSemantico cubo;  
     // Helper functions 
     TableType DT2TT(DataType current){
         switch(current){
@@ -113,6 +123,10 @@
             case TypeBool: return TableBool; break; 
             default : return TableNull; break; 
         }
+    }
+    
+    OPDUM VTE2OPDUM(VTE old){
+        return NewOPDUM(old.id, old.dir, old.type); 
     }
 
 %}
@@ -128,22 +142,23 @@
 %token SYM_COLON
 %token SYM_DOT
 
-%token MTH_SEQUA
-%token MTH_DEQUA
-%token MTH_GT
-%token MTH_LT
-%token MTH_GTEQ
-%token MTH_LTEQ
-%token MTH_NOT
-%token MTH_NOTEQ
-%token MTH_PLUS
-%token MTH_MINUS
-%token MTH_ASTRK
-%token MTH_DIVIS
-%token MTH_POWER
-%token MTH_ROOT
-%token MTH_AND
-%token MTH_OR
+%type <op> comp_operator //no terminal 
+%token <op> MTH_SEQUA
+%token <op> MTH_DEQUA
+%token <op> MTH_GT
+%token <op> MTH_LT
+%token <op> MTH_GTEQ
+%token <op> MTH_LTEQ
+%token <op> MTH_NOT
+%token <op> MTH_NOTEQ
+%token <op> MTH_PLUS
+%token <op> MTH_MINUS
+%token <op> MTH_ASTRK
+%token <op> MTH_DIVIS
+%token <op> MTH_POWER
+%token <op> MTH_ROOT
+%token <op> MTH_AND
+%token <op> MTH_OR
 
 %token LF 
 %token CR
@@ -213,7 +228,9 @@
 
 /* ------- ENTRY POINT ------- */
 
-prog: script { npFinalCheck(); } ;
+prog: 
+    script { npFinalCheck(); } 
+    | error { npError(); errorCounter++; } 
 
 
 /* ------- SCRIPT GRAMMAR ------- */
@@ -357,13 +374,13 @@ matHelper:
 /* ------- ELEMENTS ------- */
 
 elementdec:
-	V_ELEM V_ID { np5(); }
+	V_ELEM V_ID { np1($2); }
 
 
 /* Geometric vector */
 
 vectordec: 
-	V_VECTOR V_ID { np4(); }
+	V_VECTOR V_ID { np1($2); }
 
 vector:
 	SYM_OCURL expr SYM_COMMA expr SYM_CCURL
@@ -377,35 +394,35 @@ property:
 /* ------- EXPRESSIONS GRAMMAR ------- */
 
 expr:
-	logicoperation { npExpr15(); } MTH_OR { npExpr14(); } expr
-	| logicoperation { npExpr15(); }
+	logicoperation { npExpr5((OP[]){OR}, 1); } MTH_OR { npExpr3(OR); } expr
+	| logicoperation { npExpr5((OP[]){OR}, 1); }
 
 logicoperation:
-	logicfactor { npExpr13(); } MTH_AND { npExpr12(); } logicoperation
-	| logicfactor { npExpr13(); }
+	logicfactor { npExpr5((OP[]){AND}, 1); } MTH_AND { npExpr3(AND); } logicoperation
+	| logicfactor { npExpr5((OP[]){AND}, 1); }
 
 logicfactor:
-	MTH_NOT { npExpr10(); } comparison { npExpr11(); }
+	MTH_NOT { npExpr3(NEG); } comparison { npExpr5((OP[]){NEG}, 1); }
 	| comparison
 
 comparison:
-	operation comp_operator { npExpr8(); } operation { npExpr9(); }
+	operation comp_operator { npExpr3($2); } operation { npExpr5((OP[]){LT, GT, LTE, GTE, EEQ, NEQ}, 6); }
 	| operation
 
 operation:
-	factor { npExpr4(); } MTH_PLUS { npExpr2(); } operation
-	| factor { npExpr4(); } MTH_MINUS { npExpr2(); } operation
-	| factor { npExpr4(); }
+	factor { npExpr5((OP[]){SUM, RES}, 2); } MTH_PLUS { npExpr3(SUM); } operation
+	| factor { npExpr5((OP[]){SUM, RES}, 2); } MTH_MINUS { npExpr3(RES); } operation
+	| factor { npExpr5((OP[]){SUM, RES}, 2); }
 
 factor:
-	hvalue { npExpr5(); } MTH_ASTRK { npExpr3(); } factor
-	| hvalue { npExpr5(); } MTH_DIVIS { npExpr3(); } factor
-	| hvalue { npExpr5(); }
+	hvalue { npExpr5((OP[]){MULT, DIV}, 2); } MTH_ASTRK { npExpr3(MULT); } factor
+	| hvalue { npExpr5((OP[]){MULT, DIV}, 2); } MTH_DIVIS { npExpr3(DIV); } factor
+	| hvalue { npExpr5((OP[]){MULT, DIV}, 2); }
 
 hvalue:
-	value { npExpr5_1(); } MTH_POWER { npExpr3_1(); } hvalue
-	| value { npExpr5_1(); } MTH_ROOT { npExpr3_1(); } hvalue
-	| value { npExpr5_1(); }
+	value { npExpr5((OP[]){ROOT, POW}, 2); } MTH_POWER { npExpr3(POW); } hvalue
+	| value { npExpr5((OP[]){ROOT, POW}, 2); } MTH_ROOT { npExpr3(ROOT); } hvalue
+	| value { npExpr5((OP[]){ROOT, POW}, 2); }
 
 value:
 	var_or_cte 
@@ -415,12 +432,12 @@ value:
 	| SYM_OPARE { npExpr6(); } expr SYM_CPARE { npExpr7(); }
 
 comp_operator: 
-	MTH_GT
-	| MTH_GTEQ
-	| MTH_LT
-	| MTH_LTEQ
-	| MTH_DEQUA
-	| MTH_NOTEQ
+	MTH_GT {$$ = GT; } 
+	| MTH_GTEQ { $$ = GTE;}
+	| MTH_LT  {$$ = LT; }
+	| MTH_LTEQ  {$$ = LTE; }
+	| MTH_DEQUA {$$ = EEQ; } 
+	| MTH_NOTEQ {$$ = NEQ; }
 
 
 /* ------- LOGICAL STRUCTURES GRAMMAR ------ */
@@ -478,8 +495,14 @@ int main(int argc, char *argv[]) {
     constants = NewVarTable(127);
     functions = NewFuncTable(127); 
     strcpy(currentFunction, ""); 
+    
+    cubo = NewCubo(); 
     pilaOperandos = NewStack(TypeString, 64); 
+    pilaOperadores = NewStack(TypeInt, 64); 
     pilaTipos = NewStack(TypeInt, 64); 
+
+    listQuads = NewQUAD();     
+    currentQuad = &listQuads; 
     isParam = 0; 
 
 	extern FILE *yyin;
@@ -495,24 +518,53 @@ int main(int argc, char *argv[]) {
 		printf("COMPILATION SUCCESSFUL!\n");
 	} 
     fclose(yyin); 
+    printf("%d\n", errorCounter); 
 	return 0;
+}
+
+void npError(){
+    if(errorCounter <= 0){
+     DestroyStack(&pilaOperandos); 
+     DestroyStack(&pilaTipos); 
+     DestroyStack(&pilaOperadores); 
+
+     DestroyVarTable(&globals);
+     DestroyFuncTable(&functions); 
+     DestroyVarTable(&constants); 
+
+     DestroyQUAD(&listQuads); 
+    }
 }
 
 void npFinalCheck(){
 	printf("<FINALCHECK>\n");
 	/* revisar que existan las funciones necesarias de un script y cosas asi */
-    printf("Aqui van las globales\n"); 
+   /* printf("Aqui van las globales\n"); 
     globals.print(&globals);  
     printf("Aqui van las constantes\n"); 
     constants.print(&constants); 
     printf("Aqui van las locales\n"); 
     functions.print(&functions); 
-    
+   
+    printf("Aqui van los quadruplos!!\n");  
+    QUAD* iter = &listQuads;  
+    char* aux; 
+    while(iter->isSet){
+        aux = QUADToStringHuman(*iter); 
+        printf("%s\n", aux); 
+        free(aux); 
+        iter = iter->next; 
+    }*/
+     
     DestroyStack(&pilaOperandos); 
     DestroyStack(&pilaTipos); 
+    DestroyStack(&pilaOperadores); 
+
     DestroyVarTable(&globals);
     DestroyFuncTable(&functions); 
     DestroyVarTable(&constants); 
+
+    DestroyQUAD(&listQuads); 
 }
 
 void np1(char* id){
@@ -536,7 +588,6 @@ void np1(char* id){
 	    /* Push tipo a pila de Tipos */
         Var type = NewVarI(currentType); 
     }else{
-        free(id);  //libera el yylval.yystring
         DestroyDIM(dim); 
         yyerror("Esa variable ya esta definida"); 
     }
@@ -599,6 +650,8 @@ void npExpr1_1(char* varid){
         Var type = NewVarI(result->type); 
         push(&pilaOperandos, name); 
         push(&pilaTipos, type); 
+    }else{
+        yyerror("ERROR: variable no declarada");
     }
 }
 void npExpr1_2_char(char constChar){
@@ -639,7 +692,7 @@ void npExpr1_2_string(char* constString){
     /* Push tipo a pila de tipos */
     Var type = NewVarI(TypeString); 
     push(&pilaTipos, type); 
-    
+     
 }
 void npExpr1_2_float(float constFloat){
 	printf("<NP_EXPR_1_2 %f> ", constFloat);
@@ -660,7 +713,6 @@ void npExpr1_2_float(float constFloat){
     /* Push tipo a pila de tipos */
     Var type = NewVarI(TypeFloat); 
     push(&pilaTipos, type); 
-    
 }
 void npExpr1_2_double(double constDouble){
 	printf("<NP_EXPR_1_2 %lf> ", constDouble);
@@ -747,188 +799,95 @@ void npExpr1_6(){
 	   Push propiedad a pila de operandos
 	   Push tipo a pila de tipos */
 }
-void npExpr2(){
-	printf("<NP_EXPR_2> ");
- 	/* Push de operador a pila de operadores (+ o -) */
-}
-void npExpr3(){
+void npExpr3(OP newOpe){
 	printf("<NP_EXPR_3> ");
-	/* Push de operador a pila de operadores (* o /) */
+	/* Push de operador a pila de operadores */
+    push(&pilaOperadores, NewVarI(newOpe)); 
 }
-void npExpr3_1(){
-	printf("<NP_EXPR_3_1> ");
-	/* Push de operador a pila de operadores (^ o ^^) */
-}
-void npExpr4(){
-	printf("<NP_EXPR_4> ");
-	/*
-	Si el top de la pila es un + o un -:
-	    right = pilaOperandos.pop
-	    right_type = pTipos.pop
-	    left  = pOperandos.pop
-	    left_type = pTipos.pop
-	    operador = pOperadores.pop
-
-	    resType = cubosematinco(operador, left_type, right_type)
-
-	    Si (resType != Error):
-	        result = siguiente temporal disponible
-	        generar quad(operador, left, right, result)
-	        push de result a pOperandos
-	        push tipo de resType a pTipos
-	    Else: 
-	    	Lanzar error de tipos
-	*/
-
-}
-void npExpr5(){
-	printf("<NP_EXPR_5> ");
-	/*
-	Si el top de la pila es un * o un /:
-	    right = pilaOperandos.pop
-	    right_type = pTipos.pop
-	    left  = pOperandos.pop
-	    left_type = pTipos.pop
-	    operador = pOperadores.pop
-
-	    resType = cubosematinco(operador, left_type, right_type)
-
-	    Si (resType != Error):
-	        result = siguiente temporal disponible
-	        generar quad(operador, left, right, result)
-	        push de result a pOperandos
-	        push tipo de resType a pTipos
-	    Else: 
-	    	Lanzar error de tipos
-	*/
-}
-void npExpr5_1(){
+void npExpr5(OP* opes, int opesSize){
 	printf("<NP_EXPR_5_1> ");
-	/*
-	Si el top de la pila es un ^ o un ^^:
-	    right = pilaOperandos.pop
-	    right_type = pTipos.pop
-	    left  = pOperandos.pop
-	    left_type = pTipos.pop
-	    operador = pOperadores.pop
+    if(pilaOperadores.isEmpty(&pilaOperadores))
+        return; 
+	//Si el top de la pila es un ^ o un ^^:
+    Var tope = peek(&pilaOperadores); 
+    for(int n = 0; n<opesSize; n++){
+        if(tope.data.iVal == opes[n]){
+    	    //right = pilaOperandos.pop
+            Var right = peek(&pilaOperandos); pop(&pilaOperandos); 
+    	    //right_type = pTipos.pop
+            Var right_type = peek(&pilaTipos); pop(&pilaTipos); 
+    	    //left  = pOperandos.pop
+            Var left = peek(&pilaOperandos); pop(&pilaOperandos); 
+    	    //left_type = pTipos.pop
+            Var left_type = peek(&pilaTipos); pop(&pilaTipos); 
+    	    //operador = pOperadores.pop
+            Var operador = peek(&pilaOperadores); pop(&pilaOperadores); 
+             
+    	    //resType = cubosematinco(operador, left_type, right_type)
+            TableType tipoRetorno = TableNull; 
+            tipoRetorno = cubo.getReturnType(&cubo, operador.data.iVal, left_type.data.iVal, right_type.data.iVal); 
+    
+    	    //Si (resType != Error):
+            if(tipoRetorno != TableNull){
+    	       // result = siguiente temporal disponible
+               DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+               VTE temp; 
+               VTE* lookupizq = NULL; 
+               VTE* lookupder = NULL; 
+               char* aux = calloc(21, sizeof(char)); 
+               if(strlen(currentFunction) > 0){
+                   sscanf(aux, "%d", &localsCounter);  
+                   temp = NewVTE(); SetVTE(&temp, aux, tipoRetorno, localsCounter++, dim); 
+                    functions.addVar(&functions, currentFunction, temp.id, temp.type, temp.dir, temp.dim);
+                   lookupizq = functions.lookupVar(&functions, currentFunction, left.data.sVal); 
+                   if(!lookupizq->isSet)
+                        lookupizq = functions.lookupParam(&functions, currentFunction, left.data.sVal); 
+                   lookupder = functions.lookupVar(&functions, currentFunction, right.data.sVal); 
+                   if(!lookupder->isSet)
+                        lookupder = functions.lookupParam(&functions, currentFunction, right.data.sVal); 
+               }else{
+                   sscanf(aux, "%d", &globalsCounter); 
+                   temp = NewVTE(); SetVTE(&temp, aux, tipoRetorno, globalsCounter++, dim); 
+                   globals.add(&globals, temp.id, temp.type, temp.dir, temp.dim); 
+               }
+               if(!lookupizq || !lookupizq->isSet)
+                   lookupizq = globals.lookup(&globals, left.data.sVal); 
+               if(!lookupder || !lookupder->isSet)
+                   lookupder = globals.lookup(&globals, right.data.sVal); 
 
-	    resType = cubosematinco(operador, left_type, right_type)
-
-	    Si (resType != Error):
-	        result = siguiente temporal disponible
-	        generar quad(operador, left, right, result)
-	        push de result a pOperandos
-	        push tipo de resType a pTipos
-	    Else: 
-	    	Lanzar error de tipos
-	*/
+    	       // generar quad(operador, left, right, result)
+                OPDUM leftdum = NewOPDUM(lookupizq->id, lookupizq->dir, lookupizq->type);
+                OPDUM rightdum = NewOPDUM(lookupder->id, lookupder->dir, lookupder->type);
+                OPDUM tempdum = NewOPDUM(temp.id, temp.dir, temp.type); 
+                
+                SetQUAD(currentQuad, operador.data.iVal, leftdum, rightdum, tempdum); 
+                currentQuad = currentQuad->next; 
+    	       // push de result a pOperandos
+               Var tempOperando = NewVarS(temp.id); 
+                push(&pilaOperandos, tempOperando); 
+    	       // push tipo de resType a pTipos
+               Var tempTipo = NewVarI(temp.type); 
+                push(&pilaTipos, tempTipo); 
+               //free el aux; 
+                free(aux); 
+            }else{
+    	    //Else: 
+    	    	yyerror("ERROR: error de tipos"); 
+            }
+        }
+    }
+	
 }
 void npExpr6(){
 	printf("<NP_EXPR_6> ");
 	/* Meter un fondo falso a la pila de Operadores */
+    push(&pilaOperadores, NewVarI(-1)); 
 }
 void npExpr7(){
 	printf("<NP_EXPR_7> ");
 	/* Sacar un fondo falso de la pila de Operadores */
-}
-void npExpr8(){
-	printf("<NP_EXPR_8> ");
-	/* Push el operador relacional a pila de Operadores */
-}
-void npExpr9(){
-	printf("<NP_EXPR_9> ");
-	/*
-	Si el top de la pila es un operador relacional:
-	    right = pilaOperandos.pop
-	    right_type = pTipos.pop
-	    left  = pOperandos.pop
-	    left_type = pTipos.pop
-	    operador = pOperadores.pop
-
-	    resType = cubosematinco(operador, left_type, right_type)
-
-	    Si (resType != Error):
-	        result = siguiente temporal disponible
-	        generar quad(operador, left, right, result)
-	        push de result a pOperandos
-	        push tipo de resType a pTipos
-	    Else: 
-	    	Lanzar error de tipos
-	*/
-}
-void npExpr10(){
-	printf("<NP_EXPR_10> ");
-	/* Meter un not (!) a la pila de operadores */
-}
-void npExpr11(){
-	printf("<NP_EXPR_11> ");
-	/*
-	Si el top de la pila es un not:
-	    operando = pilaOperandos.pop
-	    type = pilaTipos.pop
-
-	    operador = pOperadores.pop
-
-	    resType = cubosematinco(operador, operando, operando)
-
-	    Si (resType != Error):
-	        result = siguiente temporal disponible
-	        generar quad(operador, operando, , result)
-	        push de result a pOperandos
-	        push tipo de resType a pTipos
-	    Else: 
-	    	Lanzar error de tipos
-	*/
-}
-void npExpr12(){
-	printf("<NP_EXPR_12> ");
-	/* Meter un AND a la pila de operadores */
-}
-void npExpr13(){
-	printf("<NP_EXPR_13> ");
-	/*
-	Si el top de la pila es un and:
-	    right = pilaOperandos.pop
-	    right_type = pTipos.pop
-	    left  = pOperandos.pop
-	    left_type = pTipos.pop
-	    operador = pOperadores.pop
-
-	    resType = cubosematinco(operador, left_type, right_type)
-
-	    Si (resType != Error):
-	        result = siguiente temporal disponible
-	        generar quad(operador, left, right, result)
-	        push de result a pOperandos
-	        push tipo de resType a pTipos
-	    Else: 
-	    	Lanzar error de tipos
-	*/
-}
-void npExpr14(){
-	printf("<NP_EXPR_14> ");
-	/* Meter un OR a la pila de operadores */
-}
-void npExpr15(){
-	printf("<NP_EXPR_15> ");
-	/*
-	Si el top de la pila es un OR:
-	    right = pilaOperandos.pop
-	    right_type = pTipos.pop
-	    left  = pOperandos.pop
-	    left_type = pTipos.pop
-	    operador = pOperadores.pop
-
-	    resType = cubosematinco(operador, left_type, right_type)
-
-	    Si (resType != Error):
-	        result = siguiente temporal disponible
-	        generar quad(operador, left, right, result)
-	        push de result a pOperandos
-	        push tipo de resType a pTipos
-	    Else: 
-	    	Lanzar error de tipos
-	*/
+    Var tope = peek(&pilaOperadores); 
+    pop(&pilaOperadores);  
 }
 
 void npAssign0(){

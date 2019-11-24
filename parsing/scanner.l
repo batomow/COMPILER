@@ -6,6 +6,8 @@
 	extern void yyerror();
 
 	void multilineComment();
+    
+    char buffer[256]; 
 %}
 
 Digit			[0-9]
@@ -66,12 +68,8 @@ EOL			\n\r
                     }
 
 [a-z][a-zA-Z0-9]*               {   
-                                    char* aux = calloc(100, sizeof(char)); 
-                                    sscanf(yytext, "%s", aux); 
-                                    int size = strlen(aux); 
-                                    yylval.yystring = calloc(size+1, sizeof(char)); 
-                                    strcpy(yylval.yystring, aux); 
-                                    free(aux); 
+                                    sscanf(yytext, "%s", buffer); 
+                                    yylval.yystring = buffer; 
                                     printf("v_id "); return V_ID; 
                                 }
 
@@ -101,11 +99,9 @@ EOL			\n\r
                                 printf("double(%lf) ", aux); return V_DOUBLE; /* double */ 
                             }
 
-\"(\\.|[^"\\])*\"		{   char* aux = calloc(100, sizeof(char));
-                            sscanf(yytext, "%s", aux);
-                            int size = strlen(aux); 
-                            yylval.yystring = calloc(size+1, sizeof(char)); 
-                            strcpy(yylval.yystring, aux);  
+\"(\\.|[^"\\])*\"		{   
+                            sscanf(yytext, "%s", buffer);
+                            yylval.yystring = buffer; 
                             printf("string(%s) ", yylval.yystring); return V_STRING; /* string */ 
                         }
 

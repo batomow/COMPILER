@@ -241,18 +241,25 @@ typedef struct Operandum {
     int isPointer; 
     char* id; 
     int virad; 
+    TableType type; 
     int dereference;  
     void (*toPointer)(OPDUM*, int);
 } OPDUM; 
-OPDUM NewOPDUM(char*, int, int); 
+OPDUM NewOPDUM(char*, int, TableType); 
+void DestroyOPDUM(OPDUM*); 
 
+typedef struct QUADRUPLE QUAD; 
 typedef struct QUADRUPLE {
+    int isSet; 
     OP op; 
     OPDUM opdum1;
     OPDUM opdum2;
     OPDUM result;
+    QUAD* next; 
 } QUAD; 
-QUAD NewQUAD(OP, OPDUM, OPDUM, OPDUM); 
+QUAD NewQUAD(); 
+void SetQUAD(QUAD*, OP, OPDUM, OPDUM, OPDUM); 
+void DestroyQUAD(QUAD*); 
 char* QUADToStringHuman(QUAD); //need freeing
 char* QUADToStringMachine(QUAD); //need freeing
 

@@ -99,9 +99,9 @@ void DestroyFTE(FTE* iter){
         DestroyFTE(iter->next);  
         DestroyVarTable(iter->params); 
         DestroyVarTable(iter->vars); 
+        iter->isSet = 0; 
         free(iter->moduleid); 
     }
-    iter->isSet = 0; 
     free(iter); 
 }
 
@@ -199,6 +199,7 @@ void DestroyFuncTable(FuncTable* table){
             DestroyVarTable((iter+n)->vars); 
             free((iter+n)->vars); 
             DestroyFTE((iter+n)->next); 
+            free((iter+n)->moduleid); 
          }
      }
      free(table->__dict); 
