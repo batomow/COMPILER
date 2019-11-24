@@ -53,7 +53,6 @@
 	void npExpr15();
 
 	//Assignments
-	void npAssign0();
 	void npAssign1();
 	void npAssign2();
 	void npAssign3();
@@ -95,6 +94,8 @@
     TableType currentType;  //tipo de variable
     TableType returnType;  //tipo de valor de retorno de funcion
     int isParam; // true si la variable que se esta parseando es parametro
+    int isVector; 
+    int isMat; 
     
     int errorCounter = 0; 
 
@@ -102,10 +103,11 @@
     VarTable globals; //variables globales
     VarTable constants; //constantes globales
     FuncTable functions; 
-
-    Stack pilaOperandos; 
-    Stack pilaOperadores; 
-    Stack pilaTipos; 
+    
+    Stack pilaNombres; //los ids's 
+    Stack pilaOperandos; //las dir de memroai
+    Stack pilaOperadores; //el proceso 
+    Stack pilaTipos;  //los tipos 
 
     QUAD listQuads;   
     QUAD* currentQuad; 
@@ -128,6 +130,20 @@
     OPDUM VTE2OPDUM(VTE old){
         return NewOPDUM(old.id, old.dir, old.type); 
     }
+    char* OPE2STRING(OP ope){
+        switch(ope){
+            case SUM: return "SUM"; case RES: return "RES"; case DIV: return "DIV"; case MULT: return "MULT"; case POW: return "POW"; 
+            case ROOT: return "ROOT"; case EEQ: return "EEQ"; case NEQ: return "NEQ"; case LT: return "LT"; case GT: return "GT"; 
+            case GTE: return "GTE"; case LTE: return "LTE"; case NEG: return "NEG"; default: return "(undefined)";  
+        }
+    }
+    char* TABLETYPE2STRING(TableType t){
+        switch(t){
+        case TableInt: return "TableInt"; case TableFloat: return "TableFloat"; case TableDouble: return "TableDouble"; 
+        case TableBool: return "TableBool"; case TableChar: return "TableChar"; case TableString: return "TableString";
+        case TableNull: return "TableNull"; default: return "(undefined)"; 
+        }
+    }
 
 %}
 
@@ -142,7 +158,6 @@
 %token SYM_COLON
 %token SYM_DOT
 
-%type <op> comp_operator //no terminal 
 %token <op> MTH_SEQUA
 %token <op> MTH_DEQUA
 %token <op> MTH_GT
@@ -207,6 +222,8 @@
 %token RES_MEDIT
 %token RES_RETRN
 
+%type <op> comp_operator //no terminal 
+%type <yystring> vardec //no terminal
 %code requires{
     #include <jedi.h>
 }
@@ -230,7 +247,7 @@
 
 prog: 
     script { npFinalCheck(); } 
-    | error { npError(); errorCounter++; } 
+    | error { npError(); } 
 
 
 /* ------- SCRIPT GRAMMAR ------- */
@@ -277,11 +294,11 @@ generaldec: /* declaras o declaras y assignas */
 	| matdec
 	| vectordec
 	| elementdec 
-	| vardec MTH_SEQUA { npAssign0(); } expr { npAssign1(); }
-	| arrdec MTH_SEQUA { npAssign0(); } arr { npAssign2(); }
-	| matdec MTH_SEQUA { npAssign0(); } mat { npAssign2(); }
-	| vectordec MTH_SEQUA { npAssign0(); } vector {npAssign3();}
-	| elementdec MTH_SEQUA { npAssign0(); } funcall {npAssign4();}
+	| vardec {npExpr1_1($1);} MTH_SEQUA expr { npAssign1(); }
+	| arrdec MTH_SEQUA arr { npAssign2(); }
+	| matdec MTH_SEQUA mat { npAssign2(); }
+	| vectordec MTH_SEQUA vector {npAssign3();}
+	| elementdec MTH_SEQUA funcall {npAssign4();}
 
 stmt: 
 	  assign 
@@ -309,23 +326,23 @@ ret:
 /* ------- VARIABLES GRAMMAR ------- */
 
 vardec: 
-	V_VAR V_ID SYM_COLON vartypes { np1($2); }
+	V_VAR V_ID SYM_COLON vartypes { $$ = $2; np1($2); }
 
 basictypes:
-	  V_CHAR { npExpr1_2_char($1); }
+	  V_CHAR   { npExpr1_2_char($1); }
 	| V_STRING { npExpr1_2_string($1); }
-	| V_FLOAT { npExpr1_2_float($1); }
+	| V_FLOAT  { npExpr1_2_float($1); }
 	| V_DOUBLE { npExpr1_2_double($1); }
-	| V_INT { npExpr1_2_int($1); }
-	| V_BOOL { npExpr1_2_bool($1); }
+	| V_INT    { npExpr1_2_int($1); }
+	| V_BOOL   { npExpr1_2_bool($1); }
 
 vartypes:
-	  T_INT  { np1_1($1);}
-	| T_FLOAT { np1_1($1);}  
-	| T_DOUBLE{ np1_1($1);} 
-	| T_CHAR{ np1_1($1);} 
-	| T_STRING{ np1_1($1);} 
-	| T_BOOL{ np1_1($1);}  
+	  T_INT    { np1_1($1);}
+	| T_FLOAT  { np1_1($1);}  
+	| T_DOUBLE { np1_1($1);} 
+	| T_CHAR   { np1_1($1);} 
+	| T_STRING { np1_1($1);} 
+	| T_BOOL   { np1_1($1);}  
 
 
 var_or_cte:
@@ -333,9 +350,9 @@ var_or_cte:
 	| basictypes
 
 assign: 
-	 V_ID { npExpr1_1($1); } MTH_SEQUA { npAssign0(); } expr {npAssign1();}
-	| structaccess MTH_SEQUA { npAssign0(); } expr {npAssign1();}
-	| property MTH_SEQUA { npAssign0(); } expr {npAssign1();}
+	  V_ID { npExpr1_1($1); } MTH_SEQUA expr {npAssign1();}
+	| structaccess MTH_SEQUA expr {npAssign1();}
+	| property MTH_SEQUA expr {npAssign1();}
 
 /* ------- DATA STRUCTURES GRAMMAR ------- */
 
@@ -362,7 +379,7 @@ arrHelper:
 /* Matrix */
 
 matdec:
-	V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC { np3(); }
+	V_MAT V_ID { isMat = 1; np1($2); isMat=0;} SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC { np3(); }
 
 mat:
 	SYM_OBRAC optlf matHelper SYM_CBRAC
@@ -381,7 +398,7 @@ elementdec:
 /* Geometric vector */
 
 vectordec: 
-	V_VECTOR V_ID { np1($2); }
+	V_VECTOR V_ID { isVector = 1; np1($2); isVector = 0;  }
 
 vector:
 	SYM_OCURL expr SYM_COMMA expr SYM_CCURL
@@ -395,35 +412,35 @@ property:
 /* ------- EXPRESSIONS GRAMMAR ------- */
 
 expr:
-	logicoperation { npExpr5((OP[]){OR}, 1); } MTH_OR { npExpr3(OR); } expr
-	| logicoperation { npExpr5((OP[]){OR}, 1); }
+	  logicoperation { OP input[] = {OR}; npExpr5(input, 1); } MTH_OR { npExpr3(OR); } expr
+	| logicoperation { OP input[] = {OR}; npExpr5(input, 1); }
 
 logicoperation:
-	logicfactor { npExpr5((OP[]){AND}, 1); } MTH_AND { npExpr3(AND); } logicoperation
-	| logicfactor { npExpr5((OP[]){AND}, 1); }
+	  logicfactor { OP input[] = {AND}; npExpr5(input, 1); } MTH_AND { npExpr3(AND); } logicoperation
+	| logicfactor { OP input[] = {AND}; npExpr5(input, 1); }
 
 logicfactor:
-	MTH_NOT { npExpr3(NEG); } comparison { npExpr5((OP[]){NEG}, 1); }
+	  MTH_NOT { npExpr3(NEG); } comparison { OP input[] = {NEG}; npExpr5(input, 1); }
 	| comparison
 
 comparison:
-	operation comp_operator { npExpr3($2); } operation { npExpr5((OP[]){LT, GT, LTE, GTE, EEQ, NEQ}, 6); }
+	  operation comp_operator { npExpr3($2); } operation { OP input[]={LT, GT, LTE, GTE, EEQ, NEQ}; npExpr5(input, 6); }
 	| operation
 
 operation:
-	factor { npExpr5((OP[]){SUM, RES}, 2); } MTH_PLUS { npExpr3(SUM); } operation
-	| factor { npExpr5((OP[]){SUM, RES}, 2); } MTH_MINUS { npExpr3(RES); } operation
-	| factor { npExpr5((OP[]){SUM, RES}, 2); }
+	  factor { OP input[] = {SUM, RES}; npExpr5(input, 2); } MTH_PLUS { npExpr3(SUM); } operation
+	| factor { OP input[] = {SUM, RES}; npExpr5(input, 2); } MTH_MINUS { npExpr3(RES); } operation
+	| factor { OP input[] = {SUM, RES}; npExpr5(input, 2); }
 
 factor:
-	hvalue { npExpr5((OP[]){MULT, DIV}, 2); } MTH_ASTRK { npExpr3(MULT); } factor
-	| hvalue { npExpr5((OP[]){MULT, DIV}, 2); } MTH_DIVIS { npExpr3(DIV); } factor
-	| hvalue { npExpr5((OP[]){MULT, DIV}, 2); }
+	  hvalue { OP input[] = {MULT, DIV}; npExpr5(input, 2);  } MTH_ASTRK { npExpr3(MULT); } factor
+	| hvalue { OP input[] = {MULT, DIV}; npExpr5(input, 2); } MTH_DIVIS { npExpr3(DIV); } factor
+	| hvalue { OP input[] = {MULT, DIV}; npExpr5(input, 2); }
 
 hvalue:
-	value { npExpr5((OP[]){ROOT, POW}, 2); } MTH_POWER { npExpr3(POW); } hvalue
-	| value { npExpr5((OP[]){ROOT, POW}, 2); } MTH_ROOT { npExpr3(ROOT); } hvalue
-	| value { npExpr5((OP[]){ROOT, POW}, 2); }
+	  value { OP input[] = {ROOT, POW}; npExpr5(input, 2); } MTH_POWER { npExpr3(POW); } hvalue
+	| value { OP input[] = {ROOT, POW}; npExpr5(input, 2); } MTH_ROOT { npExpr3(ROOT); } hvalue
+	| value { OP input[] = {ROOT, POW}; npExpr5(input, 2); }
 
 value:
 	var_or_cte 
@@ -487,6 +504,7 @@ newline:
 %%
 
 void yyerror(const char *s){
+    errorCounter++; 
 	printf("\nERROR: %s\n", s);
 }
 
@@ -497,11 +515,12 @@ int main(int argc, char *argv[]) {
     functions = NewFuncTable(127); 
     strcpy(currentFunction, ""); 
     
-    cubo = NewCubo(); 
-    pilaOperandos = NewStack(TypeString, 64); 
+    pilaNombres = NewStack(TypeString, 64);  
+    pilaOperandos = NewStack(TypeInt, 64); 
     pilaOperadores = NewStack(TypeInt, 64); 
     pilaTipos = NewStack(TypeInt, 64); 
-
+    cubo = NewCubo(); 
+    
     listQuads = NewQUAD();     
     currentQuad = &listQuads; 
     isParam = 0; 
@@ -511,7 +530,7 @@ int main(int argc, char *argv[]) {
 	--argc;
 	int r;
 
-	yyin = fopen("./test.fs", "r");
+	yyin = fopen("./test2.fs", "r");
 
 	r = yyparse();
 
@@ -524,22 +543,23 @@ int main(int argc, char *argv[]) {
 }
 
 void npError(){
-    if(errorCounter <= 0){
-     DestroyStack(&pilaOperandos); 
-     DestroyStack(&pilaTipos); 
-     DestroyStack(&pilaOperadores); 
+    printf("Destroying structures\n"); 
+    //if(errorCounter){
+    //     DestroyStack(&pilaOperandos); 
+    //     DestroyStack(&pilaTipos); 
+    //     DestroyStack(&pilaOperadores); 
 
-     DestroyVarTable(&globals);
-     DestroyFuncTable(&functions); 
-     DestroyVarTable(&constants); 
+    //     DestroyVarTable(&globals);
+    //     DestroyFuncTable(&functions); 
+    //     DestroyVarTable(&constants); 
 
-     DestroyQUAD(&listQuads); 
-    }
+    //     DestroyQUAD(&listQuads); 
+    //}
 }
 
 void npFinalCheck(){
 	/* revisar que existan las funciones necesarias de un script y cosas asi */
-   /* printf("Aqui van las globales\n"); 
+    printf("Aqui van las globales\n"); 
     globals.print(&globals);  
     printf("Aqui van las constantes\n"); 
     constants.print(&constants); 
@@ -550,12 +570,16 @@ void npFinalCheck(){
     QUAD* iter = &listQuads;  
     char* aux; 
     while(iter->isSet){
-        aux = QUADToStringHuman(*iter); 
+        aux = QUADToStringMachine(*iter); 
         printf("%s\n", aux); 
         free(aux); 
         iter = iter->next; 
-    }*/
-     
+    }
+    Var* stackIter = pilaNombres.__stack; 
+    for(int n = 0; n<pilaNombres.size; n++){
+        free(stackIter[n].data.sVal); 
+    }
+    DestroyStack(&pilaNombres);  
     DestroyStack(&pilaOperandos); 
     DestroyStack(&pilaTipos); 
     DestroyStack(&pilaOperadores); 
@@ -581,22 +605,20 @@ void np1(char* id){
     }else{
         success = globals.add(&globals, id, currentType, globalsCounter++, dim); 
     }
-    if(success){
-        /* Push de nombre a pila de Operandos */
-        Var name = NewVarS(id); 
-        push(&pilaOperandos, name); 
-	    /* Push tipo a pila de Tipos */
-        Var type = NewVarI(currentType); 
-        push(&pilaTipos, type); 
-    }else{
+    if(!success){
         DestroyDIM(dim); 
         yyerror("Esa variable ya esta definida"); 
     }
 }
 
 void np1_1(DataType type){
-    currentType = DT2TT(type); 
-    returnType = DT2TT(type); 
+    if(isVector){
+        currentType = TableVector;
+    }else if (isMat){
+        currentType = TableMat; 
+    }else{
+        currentType = DT2TT(type); 
+    }
 }
 
 void np2(){
@@ -640,10 +662,16 @@ void npExpr1_1(char* varid){
         result = functions.lookupVar(&functions, currentFunction, varid);  
     if(!result->isSet && (strlen(currentFunction) > 0))
         result = functions.lookupParam(&functions, currentFunction, varid);  
+
     if(result->isSet){
-        Var name = NewVarS(varid);  
+        int varidsize = strlen(varid); 
+        char* buffer = calloc(varidsize + 1, sizeof(char));     
+        strcpy(buffer, varid); 
+        Var name = NewVarS(buffer);  
+        Var dir = NewVarI(result->dir); 
         Var type = NewVarI(result->type); 
-        push(&pilaOperandos, name); 
+        push(&pilaNombres, name); 
+        push(&pilaOperandos, dir); 
         push(&pilaTipos, type); 
     }else{
         yyerror("ERROR: variable no declarada");
@@ -661,12 +689,10 @@ void npExpr1_2_char(char constChar){
         DestroyDIM(dim); 
     }
     /* Push a pila de operandos */
-    Var name = NewVarS(aux); 
-    push(&pilaOperandos, name); 
-    
+    push(&pilaNombres, NewVarS(aux)); 
+    push(&pilaOperandos, NewVarI(constCounter-1)); 
     /* Push tipo a pila de tipos */
-    Var type = NewVarI(TypeChar); 
-    push(&pilaTipos, type); 
+    push(&pilaTipos, NewVarI(TypeChar)); 
     
 }
 void npExpr1_2_string(char* constString){
@@ -680,8 +706,9 @@ void npExpr1_2_string(char* constString){
     }
     /* Push a pila de operandos */
     Var name = NewVarS(constString); 
-    push(&pilaOperandos, name); 
-    
+    push(&pilaNombres, name); 
+   
+    push(&pilaOperandos, NewVarI(constCounter-1)); 
     /* Push tipo a pila de tipos */
     Var type = NewVarI(TypeString); 
     push(&pilaTipos, type); 
@@ -700,8 +727,9 @@ void npExpr1_2_float(float constFloat){
     }
     /* Push a pila de operandos */
     Var name = NewVarS(aux); 
-    push(&pilaOperandos, name); 
+    push(&pilaNombres, name); 
     
+    push(&pilaOperandos, NewVarI(constCounter-1)); 
     /* Push tipo a pila de tipos */
     Var type = NewVarI(TypeFloat); 
     push(&pilaTipos, type); 
@@ -719,8 +747,9 @@ void npExpr1_2_double(double constDouble){
      }
      /* Push a pila de operandos */
      Var name = NewVarS(aux); 
-     push(&pilaOperandos, name); 
-     
+     push(&pilaNombres, name); 
+
+     push(&pilaOperandos, NewVarI(constCounter-1)); 
      /* Push tipo a pila de tipos */
      Var type = NewVarI(TypeDouble); 
      push(&pilaTipos, type); 
@@ -739,8 +768,9 @@ void npExpr1_2_int(int constInt){
     }
     /* Push a pila de operandos */
     Var name = NewVarS(aux); 
-    push(&pilaOperandos, name); 
+    push(&pilaNombres, name); 
     
+    push(&pilaOperandos, NewVarI(constCounter-1)); 
     /* Push tipo a pila de tipos */
     Var type = NewVarI(TypeInt); 
     push(&pilaTipos, type); 
@@ -759,8 +789,9 @@ void npExpr1_2_bool(int constBool){
     }
     /* Push a pila de operandos */
     Var name = NewVarS(aux); 
-    push(&pilaOperandos, name); 
+    push(&pilaNombres, name); 
     
+    push(&pilaOperandos, NewVarI(constCounter-1)); 
     /* Push tipo a pila de tipos */
     Var type = NewVarI(TypeBool); 
     push(&pilaTipos, type); 
@@ -787,74 +818,47 @@ void npExpr1_6(){
 void npExpr3(OP newOpe){
 	/* Push de operador a pila de operadores */
     push(&pilaOperadores, NewVarI(newOpe)); 
+    //printf("<Debug> ope:%s\n",  OPE2STRING(newOpe)); 
 }
 void npExpr5(OP* opes, int opesSize){
     if(pilaOperadores.isEmpty(&pilaOperadores))
         return; 
-	//Si el top de la pila es un ^ o un ^^:
     Var tope = peek(&pilaOperadores); 
     for(int n = 0; n<opesSize; n++){
         if(tope.data.iVal == opes[n]){
-    	    //right = pilaOperandos.pop
+            //aqui chingo a mi madre
             Var right = peek(&pilaOperandos); pop(&pilaOperandos); 
-    	    //right_type = pTipos.pop
             Var right_type = peek(&pilaTipos); pop(&pilaTipos); 
-    	    //left  = pOperandos.pop
+            Var right_name = peek(&pilaNombres); pop(&pilaNombres); 
+            //aqui la vuelvo a chingar
             Var left = peek(&pilaOperandos); pop(&pilaOperandos); 
-    	    //left_type = pTipos.pop
             Var left_type = peek(&pilaTipos); pop(&pilaTipos); 
-    	    //operador = pOperadores.pop
+            Var left_name = peek(&pilaNombres); pop(&pilaNombres); 
+
             Var operador = peek(&pilaOperadores); pop(&pilaOperadores); 
-             
-    	    //resType = cubosematinco(operador, left_type, right_type)
+            
             TableType tipoRetorno = TableNull; 
             tipoRetorno = cubo.getReturnType(&cubo, operador.data.iVal, left_type.data.iVal, right_type.data.iVal); 
-    
-    	    //Si (resType != Error):
             if(tipoRetorno != TableNull){
-    	       // result = siguiente temporal disponible
-               DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-               VTE temp; 
-               VTE* lookupizq = NULL; 
-               VTE* lookupder = NULL; 
-               char* aux = calloc(21, sizeof(char)); 
-               if(strlen(currentFunction) > 0){
-                   sscanf(aux, "%d", &localsCounter);  
-                   temp = NewVTE(); SetVTE(&temp, aux, tipoRetorno, localsCounter++, dim); 
-                    functions.addVar(&functions, currentFunction, temp.id, temp.type, temp.dir, temp.dim);
-                   lookupizq = functions.lookupVar(&functions, currentFunction, left.data.sVal); 
-                   if(!lookupizq->isSet)
-                        lookupizq = functions.lookupParam(&functions, currentFunction, left.data.sVal); 
-                   lookupder = functions.lookupVar(&functions, currentFunction, right.data.sVal); 
-                   if(!lookupder->isSet)
-                        lookupder = functions.lookupParam(&functions, currentFunction, right.data.sVal); 
-               }else{
-                   sscanf(aux, "%d", &globalsCounter); 
-                   temp = NewVTE(); SetVTE(&temp, aux, tipoRetorno, globalsCounter++, dim); 
-                   globals.add(&globals, temp.id, temp.type, temp.dir, temp.dim); 
-               }
-               if(!lookupizq || !lookupizq->isSet)
-                   lookupizq = globals.lookup(&globals, left.data.sVal); 
-               if(!lookupder || !lookupder->isSet)
-                   lookupder = globals.lookup(&globals, right.data.sVal); 
+               printf("%s\n", TABLETYPE2STRING(tipoRetorno));  
+                char* aux = calloc(21, sizeof(char)); 
+                int tempAddr = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
+                sprintf(aux, "%d", tempAddr); 
 
-    	       // generar quad(operador, left, right, result)
-                OPDUM leftdum = NewOPDUM(lookupizq->id, lookupizq->dir, lookupizq->type);
-                OPDUM rightdum = NewOPDUM(lookupder->id, lookupder->dir, lookupder->type);
-                OPDUM tempdum = NewOPDUM(temp.id, temp.dir, temp.type); 
+                OPDUM leftdum = NewOPDUM(left_name.data.sVal, left.data.iVal, left_type.data.iVal);
+                OPDUM rightdum = NewOPDUM(right_name.data.sVal, right.data.iVal, right_type.data.iVal);
+                OPDUM tempdum = NewOPDUM(aux, tempAddr, tipoRetorno);
                 
                 SetQUAD(currentQuad, operador.data.iVal, leftdum, rightdum, tempdum); 
                 currentQuad = currentQuad->next; 
-    	       // push de result a pOperandos
-               Var tempOperando = NewVarS(temp.id); 
-                push(&pilaOperandos, tempOperando); 
-    	       // push tipo de resType a pTipos
-               Var tempTipo = NewVarI(temp.type); 
-                push(&pilaTipos, tempTipo); 
-               //free el aux; 
+               
+                push(&pilaOperandos, NewVarI(tempAddr)); 
+                push(&pilaNombres, NewVarS(aux)); 
+                
+                push(&pilaTipos, NewVarI(tipoRetorno)); 
                 free(aux); 
+                //la wuevlo a chingar
             }else{
-    	    //Else: 
     	    	yyerror("ERROR: error de tipos"); 
             }
         }
@@ -871,24 +875,28 @@ void npExpr7(){
     pop(&pilaOperadores);  
 }
 
-void npAssign0(){
-	/* Push '=' a pila de operadores */
-}
 void npAssign1(){
-	/* 
-	Si (pOperadores.top() == '=')
-		pOperadores.pop()
-		value = pOperandos.pop()
-		value_type = pTipos.pop()
+    if(!pilaOperandos.isEmpty)
+        return; 
 
-		variable = pOperandos.pop()
-		variable_type = pTipo.pop()
+    Var value = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var value_name = peek(&pilaNombres); pop(&pilaNombres); 
+	Var value_type = peek(&pilaTipos); pop(&pilaTipos); 
 
-		Si (variable_type == value_type):
-			gen quad(=, value, , variable)
-		else:
-			Error: type mismatch
-	*/
+    Var variable = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var variable_name = peek(&pilaNombres); pop(&pilaNombres); 
+	Var variable_type = peek(&pilaTipos); pop(&pilaTipos); 
+    
+	if(variable_type.data.iVal == value_type.data.iVal){
+        OPDUM opdum1 = NewOPDUM(value_name.data.sVal, value.data.iVal, value_type.data.iVal); 
+        OPDUM opdummy = NewOPDUM("", -1, TableNull); 
+        OPDUM result = NewOPDUM(variable_name.data.sVal, variable.data.iVal, variable_type.data.iVal); 
+        SetQUAD(currentQuad, ASSIGN, opdum1, opdummy, result);  
+        currentQuad = currentQuad->next;
+	}else{
+        yyerror("Type Mismatch 001"); 
+    }
+	
 }
 void npAssign2(){
 	/*
@@ -1099,7 +1107,7 @@ void npFor4(){
 }
 
 void npFun1(char* newFunId){
-    if(functions.add(&functions, newFunId, returnType, quadrupleCounter)){
+    if(functions.add(&functions, newFunId, currentType, quadrupleCounter)){
         strcpy(currentFunction, newFunId); 
     }else{
         yyerror("Function Already Defined"); 

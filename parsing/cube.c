@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h> 
 #include "cube.h"
 #include <jedi.h>
 
@@ -8,10 +9,13 @@ TableType  __getReturnType(CuboSemantico* cube, OP operator, TableType type1, Ta
 
 CuboSemantico NewCubo() {
 	CuboSemantico CS;	
-    for(int op = 0; op<24; op++)
-        for(int type1 = 0; type1<9; type1++)
-            for(int type2=0; type2<9; type2++)
-                CS.__c[op][type1][type2] = TableNull; 
+    
+    for(int op = 0; op<24; op++){
+        for(int type1 = 0; type1<9; type1++){
+            for(int type2 = 0; type2<9; type2++){
+                CS.__c[op][type1][type2] = TableNull; }}}
+
+
 /* --------------------- INT _ --------------------- */
 	//Int Int
 	CS.__c[EEQ ][TableInt][TableInt] = TableBool;
@@ -46,21 +50,21 @@ CuboSemantico NewCubo() {
 	CS.__c[AND ][TableInt][TableFloat] = TableBool;
 	CS.__c[OR  ][TableInt][TableFloat] = TableBool;
 	//Int Double
-	CS.__c[EEQ ][TableNull][TableDouble] = TableBool;
-	CS.__c[GT  ][TableNull][TableDouble] = TableBool;
-	CS.__c[LTE ][TableNull][TableDouble] = TableBool;
-	CS.__c[NEQ ][TableNull][TableDouble] = TableBool;
-	CS.__c[GT  ][TableNull][TableDouble] = TableBool;
-	CS.__c[LT  ][TableNull][TableDouble] = TableBool;
-	CS.__c[NEG ][TableNull][TableDouble] = TableNull;
-	CS.__c[SUM ][TableNull][TableDouble] = TableDouble;
-	CS.__c[RES ][TableNull][TableDouble] = TableDouble;
-	CS.__c[MULT][TableNull][TableDouble] = TableDouble;
-	CS.__c[DIV ][TableNull][TableDouble] = TableDouble;
-	CS.__c[ROOT][TableNull][TableDouble] = TableDouble;
-	CS.__c[POW ][TableNull][TableDouble] = TableDouble;
-	CS.__c[AND ][TableNull][TableDouble] = TableBool;
-	CS.__c[OR  ][TableNull][TableDouble] = TableBool;
+	CS.__c[EEQ ][TableInt][TableDouble] = TableBool;
+	CS.__c[GT  ][TableInt][TableDouble] = TableBool;
+	CS.__c[LTE ][TableInt][TableDouble] = TableBool;
+	CS.__c[NEQ ][TableInt][TableDouble] = TableBool;
+	CS.__c[GT  ][TableInt][TableDouble] = TableBool;
+	CS.__c[LT  ][TableInt][TableDouble] = TableBool;
+	CS.__c[NEG ][TableInt][TableDouble] = TableNull;
+	CS.__c[SUM ][TableInt][TableDouble] = TableDouble;
+	CS.__c[RES ][TableInt][TableDouble] = TableDouble;
+	CS.__c[MULT][TableInt][TableDouble] = TableDouble;
+	CS.__c[DIV ][TableInt][TableDouble] = TableDouble;
+	CS.__c[ROOT][TableInt][TableDouble] = TableDouble;
+	CS.__c[POW ][TableInt][TableDouble] = TableDouble;
+	CS.__c[AND ][TableInt][TableDouble] = TableBool;
+	CS.__c[OR  ][TableInt][TableDouble] = TableBool;
 	//Int Char
 	CS.__c[EEQ ][TableInt][TableChar] = TableBool;
 	CS.__c[GT  ][TableInt][TableChar] = TableBool;

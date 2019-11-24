@@ -129,7 +129,8 @@ typedef enum TableType{
     TableVector, //5
     TableNull, //6
     TableDouble,//7
-    TableBool //8
+    TableBool, //8
+    TableMat //9
 } TableType; 
 //you have to manualy free the DIM if you dont add it to a vartable
 //you cant modify the DIM once assigned
