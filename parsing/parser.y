@@ -108,6 +108,7 @@
     Stack pilaOperandos; //las dir de memroai
     Stack pilaOperadores; //el proceso 
     Stack pilaTipos;  //los tipos 
+    Stack pilaSaltos; 
 
     QUAD listQuads;   
     QUAD* currentQuad; 
@@ -515,11 +516,12 @@ int main(int argc, char *argv[]) {
     pilaOperandos = NewStack(TypeInt, 64); 
     pilaOperadores = NewStack(TypeInt, 64); 
     pilaTipos = NewStack(TypeInt, 64); 
+    pilaSaltos = NewStack(TypeInt, 64); 
     cubo = NewCubo(); 
 
-    globalsCounter = 0; 
-    localsCounter = 1000; 
-    constCounter = 20000; 
+    globalsCounter = 1000; 
+    localsCounter = 2000; 
+    constCounter = 3000; 
     
     listQuads = NewQUAD();     
     currentQuad = &listQuads; 
@@ -571,16 +573,23 @@ void npFinalCheck(){
    
     printf("Aqui van los quadruplos!!\n");  
     QUAD* iter = &listQuads;  
-    char* aux; 
+    char *aux, *aux2; 
+    int n = 0; 
     while(iter->isSet){
-        aux = QUADToStringHuman(*iter); 
-        printf("%s\n", aux); 
+        aux = QUADToStringMachine(*iter); 
+        aux2 = QUADToStringHuman(*iter); 
+        printf("%d|\t%s\t\t%s\n",n, aux, aux2);
+        n++; 
         free(aux); 
+        free(aux2); 
         iter = iter->next; 
     }
     Var* stackIter = pilaNombres.__stack; 
     for(int n = 0; n<pilaNombres.size; n++){
-        free(stackIter[n].data.sVal); 
+        if(stackIter[n].data.sVal){
+            free(stackIter[n].data.sVal); 
+            stackIter[n].data.sVal = NULL; 
+        }
     }
     DestroyStack(&pilaNombres);  
     DestroyStack(&pilaOperandos); 
@@ -836,10 +845,10 @@ void npExpr5(OP* opes, int opesSize){
                 
                 SetQUAD(currentQuad, operador.data.iVal, leftdum, rightdum, tempdum); 
                 currentQuad = currentQuad->next; 
+                quadrupleCounter++;  
                
-                push(&pilaOperandos, NewVarI(tempAddr)); 
                 push(&pilaNombres, NewVarS(aux)); 
-                
+                push(&pilaOperandos, NewVarI(tempAddr)); 
                 push(&pilaTipos, NewVarI(tipoRetorno)); 
                 //la wuevlo a chingar
             }else{
@@ -877,6 +886,7 @@ void npAssign1(){
         OPDUM result = NewOPDUM(variable_name.data.sVal, variable.data.iVal, variable_type.data.iVal); 
         SetQUAD(currentQuad, ASSIGN, opdum1, opdummy, result);  
         currentQuad = currentQuad->next;
+        quadrupleCounter++; 
 	}else{
         yyerror("Type Mismatch 001"); 
     }
@@ -956,32 +966,58 @@ void npArrGen2(){
 
 void npIf0(){
 	/* Push fondo falso a pila de saltos */
+    push(&pilaSaltos, NewVarI(-1)); 
+    
 }
 void npIf1(){
-	/*
-	exp_type = pTipos.pop()
-	Si (exp_type es nan o algo no evaluable como truthy value):
-		ERROR type mismatch
-	else:
-		result = pOperadores.pop()
-		gen quad(gotof, result, ,__) El ultimo espacio se va a llenar después
-		pSaltos.push(el numero de cuadruplo donde pusiste el gotof)
-	*/
+	Var exp_type = peek(&pilaTipos); pop(&pilaTipos); 
+    int falsies[] = {2, 4, 5, 6, 9};
+    for(int n = 0; n<5; n++){
+    	if(exp_type.data.iVal == falsies[n]){
+		    yyerror("Type Mismatch"); 
+            return; 
+	    }
+    }
+	Var result = peek(&pilaOperadores); pop(&pilaOperadores);
+    Var result_name = peek(&pilaNombres); pop(&pilaNombres); 
+    Var result_type = peek(&pilaTipos); pop(&pilaTipos); 
+    
+    OPDUM dummy = NewOPDUM("", -1, TableNull); 
+    OPDUM ondesalto = NewOPDUM("____", -2, TableNull); //aqui no es una virtual dir es el salto 
+    OPDUM resdum = NewOPDUM(result_name.data.sVal, result.data.iVal, result_type.data.iVal); 
+    SetQUAD(currentQuad, GOTOF, resdum, dummy, ondesalto);  
+    currentQuad = currentQuad->next; 
+	push(&pilaSaltos, NewVarI(quadrupleCounter));
+    quadrupleCounter++; 
+        
 }
 void npIf2(){
-	/*
-	gen quad(goto, , ,___) El ultimo espacio se va a llenar después
-	false = pSaltos.pop()
-	pSaltos.push(el numero de cuadruplo donde pusiste el goto)
-	fill(false, el numero del cuadruplo después del goto)
-	*/
+    OPDUM dummy1 = NewOPDUM("", -1, TypeNull); 
+    OPDUM dummy2 = NewOPDUM("", -1, TypeNull); 
+    OPDUM ondesalto = NewOPDUM("___", -2, TypeNull); 
+    SetQUAD(currentQuad, GOTO, dummy1, dummy2, ondesalto); 
+    currentQuad = currentQuad->next; 
+	
+    Var result = peek(&pilaSaltos); pop(&pilaSaltos); 
+	push(&pilaSaltos, NewVarI(quadrupleCounter));
+    quadrupleCounter++; 
+
+    int quadindex = result.data.iVal; 
+    QUAD* listiter = &listQuads; 
+    for(int n = 0; n<quadindex; n++)
+        listiter = listiter->next; 
+    listiter->result.virad = quadrupleCounter; 
 }
 void npIf3(){
-	/*
-	tofill = pSaltos.pop()
-	while (tofill != fondo falso)
-		fill(tofill, numero siguiente cuadruplo)
-	*/
+    Var tofill;  
+    do{
+	    tofill = peek(&pilaSaltos); pop(&pilaSaltos); 
+        int quadindex = tofill.data.iVal; 
+        QUAD* listiter = &listQuads; 
+        for(int n = 0; n<quadindex; n++)
+            listiter = listiter->next; 
+        listiter->result.virad = quadrupleCounter; 
+    }while(tofill.data.iVal != -1); 
 }
 
 
