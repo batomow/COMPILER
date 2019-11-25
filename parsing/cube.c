@@ -15,7 +15,6 @@ CuboSemantico NewCubo() {
             for(int type2 = 0; type2<9; type2++){
                 CS.__c[op][type1][type2] = TableNull; }}}
 
-
 /* --------------------- INT _ --------------------- */
 	//Int Int
 	CS.__c[EEQ ][TableInt][TableInt] = TableBool;
@@ -33,22 +32,6 @@ CuboSemantico NewCubo() {
 	CS.__c[POW ][TableInt][TableInt] = TableInt;
 	CS.__c[AND ][TableInt][TableInt] = TableBool;
 	CS.__c[OR  ][TableInt][TableInt] = TableBool;
-	//Int Float
-	CS.__c[EEQ ][TableInt][TableFloat] = TableBool;
-	CS.__c[GT  ][TableInt][TableFloat] = TableBool;
-	CS.__c[LTE ][TableInt][TableFloat] = TableBool;
-	CS.__c[NEQ ][TableInt][TableFloat] = TableBool;
-	CS.__c[GT  ][TableInt][TableFloat] = TableBool;
-	CS.__c[LT  ][TableInt][TableFloat] = TableBool;
-	CS.__c[NEG ][TableInt][TableFloat] = TableNull;
-	CS.__c[SUM ][TableInt][TableFloat] = TableFloat;
-	CS.__c[RES ][TableInt][TableFloat] = TableFloat;
-	CS.__c[MULT][TableInt][TableFloat] = TableFloat;
-	CS.__c[DIV ][TableInt][TableFloat] = TableFloat;
-	CS.__c[ROOT][TableInt][TableFloat] = TableFloat;
-	CS.__c[POW ][TableInt][TableFloat] = TableFloat;
-	CS.__c[AND ][TableInt][TableFloat] = TableBool;
-	CS.__c[OR  ][TableInt][TableFloat] = TableBool;
 	//Int Double
 	CS.__c[EEQ ][TableInt][TableDouble] = TableBool;
 	CS.__c[GT  ][TableInt][TableDouble] = TableBool;
@@ -97,89 +80,6 @@ CuboSemantico NewCubo() {
 	CS.__c[POW ][TableInt][TableBool] = TableNull;
 	CS.__c[AND ][TableInt][TableBool] = TableBool;
 	CS.__c[OR  ][TableInt][TableBool] = TableBool;
-	/* --------------------- FLOAT ___ --------------------- */
-	//Float Int
-	CS.__c[EEQ ][TableFloat][TableInt] = TableBool;
-	CS.__c[GT  ][TableFloat][TableInt] = TableBool;
-	CS.__c[LTE ][TableFloat][TableInt] = TableBool;
-	CS.__c[NEQ ][TableFloat][TableInt] = TableBool;
-	CS.__c[GT  ][TableFloat][TableInt] = TableBool;
-	CS.__c[LT  ][TableFloat][TableInt] = TableBool;
-	CS.__c[NEG ][TableFloat][TableInt] = TableNull;
-	CS.__c[SUM ][TableFloat][TableInt] = TableFloat;
-	CS.__c[RES ][TableFloat][TableInt] = TableFloat;
-	CS.__c[MULT][TableFloat][TableInt] = TableFloat;
-	CS.__c[DIV ][TableFloat][TableInt] = TableFloat;
-	CS.__c[ROOT][TableFloat][TableInt] = TableFloat;
-	CS.__c[POW ][TableFloat][TableInt] = TableFloat;
-	CS.__c[AND ][TableFloat][TableInt] = TableBool;
-	CS.__c[OR  ][TableFloat][TableInt] = TableBool;
-	//Float Float
-	CS.__c[EEQ ][TableFloat][TableFloat] = TableBool;
-	CS.__c[GT  ][TableFloat][TableFloat] = TableBool;
-	CS.__c[LTE ][TableFloat][TableFloat] = TableBool;
-	CS.__c[NEQ ][TableFloat][TableFloat] = TableBool;
-	CS.__c[GT  ][TableFloat][TableFloat] = TableBool;
-	CS.__c[LT  ][TableFloat][TableFloat] = TableBool;
-	CS.__c[NEG ][TableFloat][TableFloat] = TableBool;
-	CS.__c[SUM ][TableFloat][TableFloat] = TableFloat;
-	CS.__c[RES ][TableFloat][TableFloat] = TableFloat;
-	CS.__c[MULT][TableFloat][TableFloat] = TableFloat;
-	CS.__c[DIV ][TableFloat][TableFloat] = TableFloat;
-	CS.__c[ROOT][TableFloat][TableFloat] = TableFloat;
-	CS.__c[POW ][TableFloat][TableFloat] = TableFloat;
-	CS.__c[AND ][TableFloat][TableFloat] = TableBool;
-	CS.__c[OR  ][TableFloat][TableFloat] = TableBool;
-	//Float Double
-	CS.__c[EEQ ][TableFloat][TableDouble] = TableBool;
-	CS.__c[GT  ][TableFloat][TableDouble] = TableBool;
-	CS.__c[LTE ][TableFloat][TableDouble] = TableBool;
-	CS.__c[NEQ ][TableFloat][TableDouble] = TableBool;
-	CS.__c[GT  ][TableFloat][TableDouble] = TableBool;
-	CS.__c[LT  ][TableFloat][TableDouble] = TableBool;
-	CS.__c[NEG ][TableFloat][TableDouble] = TableNull;
-	CS.__c[SUM ][TableFloat][TableDouble] = TableDouble;
-	CS.__c[RES ][TableFloat][TableDouble] = TableDouble;
-	CS.__c[MULT][TableFloat][TableDouble] = TableDouble;
-	CS.__c[DIV ][TableFloat][TableDouble] = TableDouble;
-	CS.__c[ROOT][TableFloat][TableDouble] = TableDouble;
-	CS.__c[POW ][TableFloat][TableDouble] = TableDouble;
-	CS.__c[AND ][TableFloat][TableDouble] = TableBool;
-	CS.__c[OR  ][TableFloat][TableDouble] = TableBool;
-	//Float Char
-	CS.__c[EEQ ][TableFloat][TableChar] = TableBool;
-	CS.__c[GT  ][TableFloat][TableChar] = TableBool;
-	CS.__c[LTE ][TableFloat][TableChar] = TableBool;
-	CS.__c[NEQ ][TableFloat][TableChar] = TableBool;
-	CS.__c[GT  ][TableFloat][TableChar] = TableBool;
-	CS.__c[LT  ][TableFloat][TableChar] = TableBool;
-	CS.__c[NEG ][TableFloat][TableChar] = TableNull;
-	CS.__c[SUM ][TableFloat][TableChar] = TableFloat;
-	CS.__c[RES ][TableFloat][TableChar] = TableFloat;
-	CS.__c[MULT][TableFloat][TableChar] = TableFloat;
-	CS.__c[DIV ][TableFloat][TableChar] = TableFloat;
-	CS.__c[ROOT][TableFloat][TableChar] = TableFloat;
-	CS.__c[POW ][TableFloat][TableChar] = TableFloat;
-	CS.__c[AND ][TableFloat][TableChar] = TableBool;
-	CS.__c[OR  ][TableFloat][TableChar] = TableBool;
-	CS.__c[OR  ][TableFloat][TableString] = TableBool;
-	//Float Bool
-	CS.__c[EEQ ][TableFloat][TableBool] = TableBool;
-	CS.__c[GT  ][TableFloat][TableBool] = TableBool;
-	CS.__c[LTE ][TableFloat][TableBool] = TableBool;
-	CS.__c[NEQ ][TableFloat][TableBool] = TableBool;
-	CS.__c[GT  ][TableFloat][TableBool] = TableBool;
-	CS.__c[LT  ][TableFloat][TableBool] = TableBool;
-	CS.__c[NEG ][TableFloat][TableBool] = TableNull;
-	CS.__c[SUM ][TableFloat][TableBool] = TableFloat;
-	CS.__c[RES ][TableFloat][TableBool] = TableFloat;
-	CS.__c[MULT][TableFloat][TableBool] = TableFloat;
-	CS.__c[DIV ][TableFloat][TableBool] = TableFloat;
-	CS.__c[ROOT][TableFloat][TableBool] = TableFloat;
-	CS.__c[POW ][TableFloat][TableBool] = TableFloat;
-	CS.__c[AND ][TableFloat][TableBool] = TableBool;
-	CS.__c[OR  ][TableFloat][TableBool] = TableBool;
-
 /* --------------------- DOUBLE ___ --------------------- */
 	//Double Int
 	CS.__c[EEQ ][TableDouble][TableInt] = TableBool;
@@ -197,23 +97,7 @@ CuboSemantico NewCubo() {
 	CS.__c[POW ][TableDouble][TableInt] = TableDouble;
 	CS.__c[AND ][TableDouble][TableInt] = TableBool;
 	CS.__c[OR  ][TableDouble][TableInt] = TableBool;
-	//Double Float
-	CS.__c[EEQ ][TableDouble][TableFloat] = TableBool;
-	CS.__c[GT  ][TableDouble][TableFloat] = TableBool;
-	CS.__c[LTE ][TableDouble][TableFloat] = TableBool;
-	CS.__c[NEQ ][TableDouble][TableFloat] = TableBool;
-	CS.__c[GT  ][TableDouble][TableFloat] = TableBool;
-	CS.__c[LT  ][TableDouble][TableFloat] = TableBool;
-	CS.__c[NEG ][TableDouble][TableFloat] = TableNull;
-	CS.__c[SUM ][TableDouble][TableFloat] = TableDouble;
-	CS.__c[RES ][TableDouble][TableFloat] = TableDouble;
-	CS.__c[MULT][TableDouble][TableFloat] = TableDouble;
-	CS.__c[DIV ][TableDouble][TableFloat] = TableDouble;
-	CS.__c[ROOT][TableDouble][TableFloat] = TableDouble;
-	CS.__c[POW ][TableDouble][TableFloat] = TableDouble;
-	CS.__c[AND ][TableDouble][TableFloat] = TableBool;
-	CS.__c[OR  ][TableDouble][TableFloat] = TableBool;
-	//Double Double
+	//Double Float	//Double Double
 	CS.__c[EEQ ][TableDouble][TableDouble] = TableBool;
 	CS.__c[GT  ][TableDouble][TableDouble] = TableBool;
 	CS.__c[LTE ][TableDouble][TableDouble] = TableBool;
@@ -278,23 +162,7 @@ CuboSemantico NewCubo() {
 	CS.__c[POW ][TableChar][TableInt] = TableInt;
 	CS.__c[AND ][TableChar][TableInt] = TableBool;
 	CS.__c[OR  ][TableChar][TableInt] = TableBool;
-	//Char Float
-	CS.__c[EEQ ][TableChar][TableFloat] = TableBool;
-	CS.__c[GT  ][TableChar][TableFloat] = TableBool;
-	CS.__c[LTE ][TableChar][TableFloat] = TableBool;
-	CS.__c[NEQ ][TableChar][TableFloat] = TableBool;
-	CS.__c[GT  ][TableChar][TableFloat] = TableBool;
-	CS.__c[LT  ][TableChar][TableFloat] = TableBool;
-	CS.__c[NEG ][TableChar][TableFloat] = TableNull;
-	CS.__c[SUM ][TableChar][TableFloat] = TableFloat;
-	CS.__c[RES ][TableChar][TableFloat] = TableFloat;
-	CS.__c[MULT][TableChar][TableFloat] = TableFloat;
-	CS.__c[DIV ][TableChar][TableFloat] = TableFloat;
-	CS.__c[ROOT][TableChar][TableFloat] = TableFloat;
-	CS.__c[POW ][TableChar][TableFloat] = TableFloat;
-	CS.__c[AND ][TableChar][TableFloat] = TableBool;
-	CS.__c[OR  ][TableChar][TableFloat] = TableBool;
-	//Char Double
+	//Char Float	//Char Double
 	CS.__c[EEQ ][TableChar][TableDouble] = TableBool;
 	CS.__c[GT  ][TableChar][TableDouble] = TableBool;
 	CS.__c[LTE ][TableChar][TableDouble] = TableBool;
@@ -375,23 +243,7 @@ CuboSemantico NewCubo() {
 	CS.__c[POW ][TableString][TableInt] = TableNull;
 	CS.__c[AND ][TableString][TableInt] = TableBool;
 	CS.__c[OR  ][TableString][TableInt] = TableBool;
-	//String Float
-	CS.__c[EEQ ][TableString][TableFloat] = TableNull;
-	CS.__c[GT  ][TableString][TableFloat] = TableNull;
-	CS.__c[LTE ][TableString][TableFloat] = TableNull;
-	CS.__c[NEQ ][TableString][TableFloat] = TableNull;
-	CS.__c[GT  ][TableString][TableFloat] = TableNull;
-	CS.__c[LT  ][TableString][TableFloat] = TableNull;
-	CS.__c[NEG ][TableString][TableFloat] = TableNull;
-	CS.__c[SUM ][TableString][TableFloat] = TableNull;
-	CS.__c[RES ][TableString][TableFloat] = TableNull;
-	CS.__c[MULT][TableString][TableFloat] = TableNull;
-	CS.__c[DIV ][TableString][TableFloat] = TableNull;
-	CS.__c[ROOT][TableString][TableFloat] = TableNull;
-	CS.__c[POW ][TableString][TableFloat] = TableNull;
-	CS.__c[AND ][TableString][TableFloat] = TableBool;
-	CS.__c[OR  ][TableString][TableFloat] = TableBool;
-	//String Double
+	//String Float	//String Double
 	CS.__c[EEQ ][TableString][TableDouble] = TableNull;
 	CS.__c[GT  ][TableString][TableDouble] = TableNull;
 	CS.__c[LTE ][TableString][TableDouble] = TableNull;
@@ -456,23 +308,7 @@ CuboSemantico NewCubo() {
 	CS.__c[POW ][TableBool][TableInt] = TableInt;
 	CS.__c[AND ][TableBool][TableInt] = TableBool;
 	CS.__c[OR  ][TableBool][TableInt] = TableBool;
-	//Bool Float
-	CS.__c[EEQ ][TableBool][TableFloat] = TableBool;
-	CS.__c[GT  ][TableBool][TableFloat] = TableBool;
-	CS.__c[LTE ][TableBool][TableFloat] = TableBool;
-	CS.__c[NEQ ][TableBool][TableFloat] = TableBool;
-	CS.__c[GT  ][TableBool][TableFloat] = TableBool;
-	CS.__c[LT  ][TableBool][TableFloat] = TableBool;
-	CS.__c[NEG ][TableBool][TableFloat] = TableNull;
-	CS.__c[SUM ][TableBool][TableFloat] = TableFloat;
-	CS.__c[RES ][TableBool][TableFloat] = TableFloat;
-	CS.__c[MULT][TableBool][TableFloat] = TableFloat;
-	CS.__c[DIV ][TableBool][TableFloat] = TableFloat;
-	CS.__c[ROOT][TableBool][TableFloat] = TableFloat;
-	CS.__c[POW ][TableBool][TableFloat] = TableFloat;
-	CS.__c[AND ][TableBool][TableFloat] = TableBool;
-	CS.__c[OR  ][TableBool][TableFloat] = TableBool;
-	//Bool Double
+	//Bool Float	//Bool Double
 	CS.__c[EEQ ][TableBool][TableDouble] = TableBool;
 	CS.__c[GT  ][TableBool][TableDouble] = TableBool;
 	CS.__c[LTE ][TableBool][TableDouble] = TableBool;

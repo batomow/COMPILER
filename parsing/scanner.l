@@ -47,10 +47,6 @@ EOL			\n\r
                          yylval.datatype = TypeInt; 
                         printf("int "); return T_INT; 
                     }
-"float"				{   
-                         yylval.datatype = TypeFloat; 
-                        printf("float "); return T_FLOAT; 
-                    }
 "double"			{
                         yylval.datatype = TypeDouble; 
                         printf("double "); return T_DOUBLE; 
@@ -87,13 +83,8 @@ EOL			\n\r
                             yylval.yyint = aux; 
                             printf("int(%d) ", aux); return V_INT; /* int */ 
                         }
-[-+]?[0-9]+\.?[0-9]*f?		{   float aux; 
-                                sscanf(yytext, "%f", &aux); 
-                                yylval.yyfloat = aux; 
-                                printf("float(%f) ", aux); return V_FLOAT; /* float */ 
-                            }
 
-[-+]?[0-9]+\.?[0-9]*d		{   double aux; 
+[-+]?[0-9]+\.?[0-9]*		{   double aux; 
                                 sscanf(yytext, "%lf", &aux);
                                 yylval.yydouble = aux; 
                                 printf("double(%lf) ", aux); return V_DOUBLE; /* double */ 

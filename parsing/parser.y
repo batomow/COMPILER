@@ -27,7 +27,6 @@
 	void npExpr1_1();
 	void npExpr1_2_char(char);
     void npExpr1_2_string(); 
-    void npExpr1_2_float(float); 
     void npExpr1_2_double(); 
     void npExpr1_2_int(); 
     void npExpr1_2_bool(); 
@@ -96,6 +95,7 @@
     int isParam; // true si la variable que se esta parseando es parametro
     int isVector; 
     int isMat; 
+    int isElement; 
     
     int errorCounter = 0; 
 
@@ -117,7 +117,6 @@
     TableType DT2TT(DataType current){
         switch(current){
             case TypeInt: return TableInt; break; 
-            case TypeFloat: return TableFloat; break; 
             case TypeDouble: return TableDouble; break; 
             case TypeChar: return TableChar; break; 
             case TypeString: return TableString; break; 
@@ -139,7 +138,7 @@
     }
     char* TABLETYPE2STRING(TableType t){
         switch(t){
-        case TableInt: return "TableInt"; case TableFloat: return "TableFloat"; case TableDouble: return "TableDouble"; 
+        case TableInt: return "TableInt"; case TableDouble: return "TableDouble"; 
         case TableBool: return "TableBool"; case TableChar: return "TableChar"; case TableString: return "TableString";
         case TableNull: return "TableNull"; default: return "(undefined)"; 
         }
@@ -194,7 +193,6 @@
 
 %token <yystring> V_STRING
 
-%token <yyfloat> V_FLOAT
 
 %token <yyint> V_INT
 
@@ -224,6 +222,7 @@
 
 %type <op> comp_operator //no terminal 
 %type <yystring> vardec //no terminal
+
 %code requires{
     #include <jedi.h>
 }
@@ -232,7 +231,6 @@
 	/* TODO: Define data types for vars and ids */
     DataType datatype; 
     int yyint; 
-    float yyfloat; 
     double yydouble; 
     char yychar; 
     char* yystring; 
@@ -331,14 +329,12 @@ vardec:
 basictypes:
 	  V_CHAR   { npExpr1_2_char($1); }
 	| V_STRING { npExpr1_2_string($1); }
-	| V_FLOAT  { npExpr1_2_float($1); }
 	| V_DOUBLE { npExpr1_2_double($1); }
 	| V_INT    { npExpr1_2_int($1); }
 	| V_BOOL   { npExpr1_2_bool($1); }
 
 vartypes:
 	  T_INT    { np1_1($1);}
-	| T_FLOAT  { np1_1($1);}  
 	| T_DOUBLE { np1_1($1);} 
 	| T_CHAR   { np1_1($1);} 
 	| T_STRING { np1_1($1);} 
@@ -392,7 +388,7 @@ matHelper:
 /* ------- ELEMENTS ------- */
 
 elementdec:
-	V_ELEM V_ID { np1($2); }
+	V_ELEM V_ID { isElement = 1; np1($2); isElement = 0; }
 
 
 /* Geometric vector */
@@ -520,10 +516,17 @@ int main(int argc, char *argv[]) {
     pilaOperadores = NewStack(TypeInt, 64); 
     pilaTipos = NewStack(TypeInt, 64); 
     cubo = NewCubo(); 
+
+    globalsCounter = 0; 
+    localsCounter = 1000; 
+    constCounter = 20000; 
     
     listQuads = NewQUAD();     
     currentQuad = &listQuads; 
     isParam = 0; 
+    isVector = 0; 
+    isMat = 0; 
+    isElement = 0; 
 
 	extern FILE *yyin;
 	++argv;
@@ -570,7 +573,7 @@ void npFinalCheck(){
     QUAD* iter = &listQuads;  
     char* aux; 
     while(iter->isSet){
-        aux = QUADToStringMachine(*iter); 
+        aux = QUADToStringHuman(*iter); 
         printf("%s\n", aux); 
         free(aux); 
         iter = iter->next; 
@@ -616,6 +619,8 @@ void np1_1(DataType type){
         currentType = TableVector;
     }else if (isMat){
         currentType = TableMat; 
+    }else if(isElement){
+        currentType = TableElement; 
     }else{
         currentType = DT2TT(type); 
     }
@@ -692,7 +697,7 @@ void npExpr1_2_char(char constChar){
     push(&pilaNombres, NewVarS(aux)); 
     push(&pilaOperandos, NewVarI(constCounter-1)); 
     /* Push tipo a pila de tipos */
-    push(&pilaTipos, NewVarI(TypeChar)); 
+    push(&pilaTipos, NewVarI(TableChar)); 
     
 }
 void npExpr1_2_string(char* constString){
@@ -710,29 +715,9 @@ void npExpr1_2_string(char* constString){
    
     push(&pilaOperandos, NewVarI(constCounter-1)); 
     /* Push tipo a pila de tipos */
-    Var type = NewVarI(TypeString); 
+    Var type = NewVarI(TableString); 
     push(&pilaTipos, type); 
      
-}
-void npExpr1_2_float(float constFloat){
-	/* Revisar si existe en tabla de constantes */
-    char aux[32]; 
-    sprintf(aux, "%f", constFloat); 
-    /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
-    DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-    if(constants.add(&constants, aux, TypeFloat, constCounter, dim)){
-        constCounter++; 
-    }else{
-        DestroyDIM(dim); 
-    }
-    /* Push a pila de operandos */
-    Var name = NewVarS(aux); 
-    push(&pilaNombres, name); 
-    
-    push(&pilaOperandos, NewVarI(constCounter-1)); 
-    /* Push tipo a pila de tipos */
-    Var type = NewVarI(TypeFloat); 
-    push(&pilaTipos, type); 
 }
 void npExpr1_2_double(double constDouble){
 	/* Revisar si existe en tabla de constantes */
@@ -751,7 +736,7 @@ void npExpr1_2_double(double constDouble){
 
      push(&pilaOperandos, NewVarI(constCounter-1)); 
      /* Push tipo a pila de tipos */
-     Var type = NewVarI(TypeDouble); 
+     Var type = NewVarI(TableDouble); 
      push(&pilaTipos, type); 
     
 }
@@ -772,7 +757,7 @@ void npExpr1_2_int(int constInt){
     
     push(&pilaOperandos, NewVarI(constCounter-1)); 
     /* Push tipo a pila de tipos */
-    Var type = NewVarI(TypeInt); 
+    Var type = NewVarI(TableInt); 
     push(&pilaTipos, type); 
     
 }
@@ -793,7 +778,7 @@ void npExpr1_2_bool(int constBool){
     
     push(&pilaOperandos, NewVarI(constCounter-1)); 
     /* Push tipo a pila de tipos */
-    Var type = NewVarI(TypeBool); 
+    Var type = NewVarI(TableBool); 
     push(&pilaTipos, type); 
     
 }
@@ -841,9 +826,9 @@ void npExpr5(OP* opes, int opesSize){
             tipoRetorno = cubo.getReturnType(&cubo, operador.data.iVal, left_type.data.iVal, right_type.data.iVal); 
             if(tipoRetorno != TableNull){
                printf("%s\n", TABLETYPE2STRING(tipoRetorno));  
-                char* aux = calloc(21, sizeof(char)); 
+                char* aux = calloc(64, sizeof(char)); 
                 int tempAddr = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
-                sprintf(aux, "%d", tempAddr); 
+                sprintf(aux, "t%d", tempAddr); 
 
                 OPDUM leftdum = NewOPDUM(left_name.data.sVal, left.data.iVal, left_type.data.iVal);
                 OPDUM rightdum = NewOPDUM(right_name.data.sVal, right.data.iVal, right_type.data.iVal);
@@ -856,7 +841,6 @@ void npExpr5(OP* opes, int opesSize){
                 push(&pilaNombres, NewVarS(aux)); 
                 
                 push(&pilaTipos, NewVarI(tipoRetorno)); 
-                free(aux); 
                 //la wuevlo a chingar
             }else{
     	    	yyerror("ERROR: error de tipos"); 
@@ -942,7 +926,7 @@ void npAssign3(){
 		vector = pOperandos.pop()
 		pTipos.pop() No necesitamos el tipo de vector
 		
-		if(y_type y x_type no son int, float, o double):
+		if(y_type y x_type no son int o double):
 			ERROR: type mismatch
 		
 		gen quad(=, pair(x, y), ,vector) o como vayas a asignar en memoria
@@ -1077,7 +1061,7 @@ void npFor3(){
 		start = pOperandos.pop
 		start_type = pTipos.pop()
 
-		Checa que sean int, float o double, y que sean del mismo tipo, para no tener cosas raras, sino lanzas error de que no se vale eso
+		Checa que sean int o double, y que sean del mismo tipo, para no tener cosas raras, sino lanzas error de que no se vale eso
 
 		Checas que no exista ya una variable con ese nombre
 		Crea una variable el nombre que pusiste (iter) de tipo start_type
