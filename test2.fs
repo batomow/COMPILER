@@ -11,7 +11,6 @@ var e:double = 3.000 / d
 var f:double = 400
 
 order main:int(){
-    
     if(truth){
         a = 2*b
     }elif(a < 2){
@@ -28,6 +27,15 @@ order main:int(){
         }else{
             carlos = "wtf"
         }
+    }
+    
+    var iter:int
+    var iter2:int
+    while(iter < 40*24 + 3){
+        while(iter2>7){
+            meditate 
+        }
+        meditate
     }
     
     var i:double = 2.5

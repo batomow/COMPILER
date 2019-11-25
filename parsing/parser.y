@@ -522,6 +522,7 @@ int main(int argc, char *argv[]) {
     globalsCounter = 1000; 
     localsCounter = 2000; 
     constCounter = 3000; 
+    quadrupleCounter = 0; 
     
     listQuads = NewQUAD();     
     currentQuad = &listQuads; 
@@ -548,7 +549,7 @@ int main(int argc, char *argv[]) {
 }
 
 void npError(){
-    printf("Destroying structures\n"); 
+    //printf("Destroying structures\n"); 
     //if(errorCounter){
     //     DestroyStack(&pilaOperandos); 
     //     DestroyStack(&pilaTipos); 
@@ -882,7 +883,7 @@ void npAssign1(){
     
 	if(variable_type.data.iVal == value_type.data.iVal){
         OPDUM opdum1 = NewOPDUM(value_name.data.sVal, value.data.iVal, value_type.data.iVal); 
-        OPDUM opdummy = NewOPDUM("", -1, TableNull); 
+        OPDUM opdummy = NewOPDUM("    ", -1, TableNull); 
         OPDUM result = NewOPDUM(variable_name.data.sVal, variable.data.iVal, variable_type.data.iVal); 
         SetQUAD(currentQuad, ASSIGN, opdum1, opdummy, result);  
         currentQuad = currentQuad->next;
@@ -982,7 +983,7 @@ void npIf1(){
     Var result_name = peek(&pilaNombres); pop(&pilaNombres); 
     Var result_type = peek(&pilaTipos); pop(&pilaTipos); 
     
-    OPDUM dummy = NewOPDUM("", -1, TableNull); 
+    OPDUM dummy = NewOPDUM("    ", -1, TableNull); 
     OPDUM ondesalto = NewOPDUM("____", -2, TableNull); //aqui no es una virtual dir es el salto 
     OPDUM resdum = NewOPDUM(result_name.data.sVal, result.data.iVal, result_type.data.iVal); 
     SetQUAD(currentQuad, GOTOF, resdum, dummy, ondesalto);  
@@ -992,8 +993,8 @@ void npIf1(){
         
 }
 void npIf2(){
-    OPDUM dummy1 = NewOPDUM("", -1, TypeNull); 
-    OPDUM dummy2 = NewOPDUM("", -1, TypeNull); 
+    OPDUM dummy1 = NewOPDUM("    ", -1, TypeNull); 
+    OPDUM dummy2 = NewOPDUM("    ", -1, TypeNull); 
     OPDUM ondesalto = NewOPDUM("___", -2, TypeNull); 
     SetQUAD(currentQuad, GOTO, dummy1, dummy2, ondesalto); 
     currentQuad = currentQuad->next; 
@@ -1023,25 +1024,47 @@ void npIf3(){
 
 void npWhile1(){
 	/* push siguiente numero de cuadruplo a la pila de saltos */
+    push(&pilaSaltos, NewVarI(quadrupleCounter)); 
 }
 void npWhile2(){
-	/* 
-	exp_type = pTipos.pop()
-	Si (exp_type es nan o algo no evaluable como truthy value):
-		ERROR type mismatch
-	else:
-		result = pOperadores.pop()
-		gen quad(gotof, result, ,___) Después se va a completar este cuadruplo
-		pSaltos.push(el numero de cuadruplo donde estaba quad)
-	*/
+	Var exp_type = peek(&pilaTipos); pop(&pilaTipos);
+    int falsies[] = {2, 4, 5, 6, 9};
+    for(int n = 0; n<5; n++){
+    	if(exp_type.data.iVal == falsies[n]){
+		    yyerror("Type Mismatch"); 
+            return; 
+	    }
+    }
+	Var result = peek(&pilaOperadores); pop(&pilaOperadores);
+    Var result_name = peek(&pilaNombres); pop(&pilaNombres); 
+    Var result_type = peek(&pilaTipos); pop(&pilaTipos); 
+
+    OPDUM resdum = NewOPDUM(result_name.data.sVal, result.data.iVal, result_type.data.iVal); 
+    OPDUM dummy = NewOPDUM("    ", -1, TableNull); 
+    OPDUM ondesalto = NewOPDUM("____", -2, TableNull); 
+    SetQUAD(currentQuad, GOTOF, resdum, dummy, ondesalto); 
+    currentQuad = currentQuad->next; 
+    push(&pilaSaltos, NewVarI(quadrupleCounter)); 
+    quadrupleCounter++; 
 }
 void npWhile3(){
-	/*
-	end = pSaltos.pop()
-	return = pSaltos.pop()
-	gen quad(goto, , , return)
-	fill(end, el siguiente cuadruplo)
-	*/
+    
+	Var salend = peek(&pilaSaltos); pop(&pilaSaltos);
+	Var salreturn = peek(&pilaSaltos); pop(&pilaSaltos);
+    
+    OPDUM dummy1 = NewOPDUM("    ", -1, TypeNull); 
+    OPDUM dummy2 = NewOPDUM("    ", -1, TypeNull); 
+    OPDUM ondesalto = NewOPDUM("jumpback", salreturn.data.iVal, TypeNull); //restale 1 porque cuando se metio apuntaba al de abajo
+     
+    SetQUAD(currentQuad, GOTO,  dummy1, dummy2, ondesalto); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
+    
+    int quadindex = salend.data.iVal; 
+    QUAD* listiter = &listQuads; 
+    for(int n = 0; n<quadindex; n++)
+        listiter = listiter->next; 
+    listiter->result.virad = quadrupleCounter; 
 }
 
 
