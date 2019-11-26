@@ -84,6 +84,8 @@ char* QUADToStringHuman(QUAD quadruple){
         case ENDPROG: strcat(string, "ENDPROG, "); break; 
         case NEG: strcat(string, "NEG, "); break; 
         case FORCHECK: strcat(string, "FORCHECK, "); break; 
+        case ERA: strcat(string, "ERA, ");break;  
+        case PARAM: strcat(string, "PARAM, "); break; 
         default: strcat(string, "not defined"); break; 
     }
     strcat(string, quadruple.opdum1.id); 
@@ -97,6 +99,10 @@ char* QUADToStringHuman(QUAD quadruple){
 
 char* QUADToStringMachine(QUAD quadruple){
     char* string = calloc(96, sizeof(char)); 
-    sprintf(string, "<%d, %d, %d, %d>", quadruple.op, quadruple.opdum1.virad, quadruple.opdum2.virad, quadruple.result.virad); 
+    if(quadruple.result.isPointer){
+        sprintf(string, "<%d, %d, %d, %d>", quadruple.op, quadruple.opdum1.virad, quadruple.opdum2.virad, quadruple.result.dereference); 
+    }else{
+        sprintf(string, "<%d, %d, %d, %d>", quadruple.op, quadruple.opdum1.virad, quadruple.opdum2.virad, quadruple.result.virad); 
+    }
     return string; 
 }

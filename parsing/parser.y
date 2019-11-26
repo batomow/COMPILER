@@ -93,12 +93,21 @@
     
     //Global Variables
     char currentFunction[96];  
+    char currentGoSub[96]; 
+    int currentGoSubReturn;//direccion virtual de la variable a retornar 
+    char currentGoSubReturnName[96]; 
+    TableType currentGoSubReturnType; 
     TableType currentType;  //tipo de variable
     int isParam; // true si la variable que se esta parseando es parametro
     int isVector; 
     int isMat; 
     int isElement; 
-    int isArgument;
+    int argCounter; 
+    int isFunCall; 
+   
+    int lastTemp;  
+    char lastTemp_name[96];  
+    int lastTemp_type; 
     
     int errorCounter = 0; 
 
@@ -139,7 +148,7 @@
             case SUM: return "SUM"; case RES: return "RES"; case DIV: return "DIV"; case MULT: return "MULT"; case POW: return "POW"; 
             case ROOT: return "ROOT"; case EEQ: return "EEQ"; case NEQ: return "NEQ"; case LT: return "LT"; case GT: return "GT"; 
             case GTE: return "GTE"; case LTE: return "LTE"; case NEG: return "NEG"; case FORCHECK: return "FORCHECK"; 
-            default: return "(undefined)";  
+            case ERA: return "ERA"; case PARAM: return "PARAM"; default: return "(undefined)";  
         }
     }
     char* TABLETYPE2STRING(TableType t){
@@ -289,6 +298,7 @@ morefunparams:
 funbody:
 	  stmt crlf funbody
     | generaldec crlf funbody
+    | funcall crlf funbody
     | crlf funbody
     | /*emtpy*/
 
@@ -312,11 +322,11 @@ stmt:
 	| ret
 
 funcall: 
-	V_ID { npFunCall1($1); } SYM_OPARE funcallHelper SYM_CPARE { npFunCall3(); }
+	V_ID { npFunCall1($1); isFunCall = 1; } SYM_OPARE funcallHelper SYM_CPARE { isFunCall = 0; npFunCall3(); }
 
 funcallHelper:
 	/* empty */
-	| expr { npFunCall2(); } funcallHelper2 
+	| expr { npFunCall2();} funcallHelper2 
 	| vector funcallHelper2
 
 funcallHelper2:
@@ -516,6 +526,10 @@ int main(int argc, char *argv[]) {
     constants = NewVarTable(127);
     functions = NewFuncTable(127); 
     strcpy(currentFunction, ""); 
+    currentGoSubReturn = -1; 
+    strcpy(currentGoSubReturnName, ""); 
+    currentGoSubReturnType = TableNull; 
+    
     
     pilaNombres = NewStack(TypeString, 64);  
     pilaOperandos = NewStack(TypeInt, 64); 
@@ -525,18 +539,24 @@ int main(int argc, char *argv[]) {
     pilaFor = NewStack(TypeInt, 64); 
     cubo = NewCubo(); 
 
-    globalsCounter = 1000; 
-    localsCounter = 2000; 
-    constCounter = 3000; 
+    constCounter = 1000; 
+    globalsCounter = 2000; 
+    localsCounter = 3000; 
+
     quadrupleCounter = 0; 
+    argCounter = 0; 
+    isFunCall = 0; 
     
+    lastTemp = -1; 
+    strcpy(lastTemp_name, ""); 
+    lastTemp_type = TableNull;
+
     listQuads = NewQUAD();     
     currentQuad = &listQuads; 
     isParam = 0; 
     isVector = 0; 
     isMat = 0; 
     isElement = 0; 
-    isArgument = 0; 
 
 	extern FILE *yyin;
 	++argv;
@@ -859,6 +879,8 @@ void npExpr5(OP* opes, int opesSize){
                 push(&pilaNombres, NewVarS(aux)); 
                 push(&pilaOperandos, NewVarI(tempAddr)); 
                 push(&pilaTipos, NewVarI(tipoRetorno)); 
+                if(isFunCall)
+                    lastTemp = tempAddr; 
             }else{
     	    	yyerror("ERROR: error de tipos"); 
             }
@@ -879,27 +901,88 @@ void npExpr7(){
 void npFunCall1(char* funID){
     /*revisar que exista el id de la funcion en la tabla de 
         funciones*/
-    
-    //setear el currentGoSub al funID
-    //generarl el quad <ERA, , ,funID> tamaño de de la funcion
-    //generar nueva temporal-> este es el resultado de la llamada
-    //currentSubReturn = nueva temporal
-    //meter la nueva temporal a la tabla de variables de currentGoSub
+    FTE* result = functions.lookup(&functions, funID); 
+    if(result->isSet){
+        //setear el currentGoSub al funID
+        strcpy(currentGoSub, funID); 
+        int funsize = functions.updateSize(&functions, funID); //no se bebiera llamar update size, deberia ser getSize
+        //generarl el quad <ERA, , ,funsize> tamaño de de la funcion
+        OPDUM dummy1 = NewOPDUM("    ", -1, TableNull); 
+        OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
+        OPDUM pointer = NewOPDUM("erasize",  -1, TableNull); 
+        pointer.toPointer(&pointer, result->quadlinenum); 
+        SetQUAD(currentQuad, ERA, dummy1, dummy2, pointer); 
+        currentQuad = currentQuad->next; 
+        quadrupleCounter++; 
+        //generar nueva temporal-> este es el resultado de la llamada
+        DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+        char* aux = calloc(64, sizeof(char)); 
+        int tempAddr = localsCounter++; 
+        sprintf(aux, "t%d", tempAddr); 
+        //currentSubReturn = nueva temporal
+        currentGoSubReturn = tempAddr; //nomas guarda el address
+        strcpy(currentGoSubReturnName, aux); 
+        currentGoSubReturnType = result->returntype; 
+        //meter la nueva temporal a la tabla de variables de currentGoSub
+        functions.addVar(&functions, currentGoSub, aux, result->returntype, tempAddr, dim); 
+    }else{
+        yyerror("Funcion no definida"); 
+    }
 }
 void npFunCall2(){
     /* esto sigue despues de un no terminal 'expr' 
     por lo que lo ultimo en la pila debe ser el temporal */
-
+    
+        
+    int numparams = 0; ;
+    
+    FTE* fte = functions.lookup(&functions, currentGoSub); 
+    VTE* iter2; 
+    for(int n = 0; n<fte->params->size; n++){
+        iter2 = (fte->params->__dict+n);
+        while(iter2->isSet){
+            numparams++; 
+            iter2 = iter2->next; 
+        }
+    }
+    
     //verificar que el argCounter < ParamTableSize de la currentGoSub
-    //no es?
-        //genera error
+    if(argCounter < numparams){
     //si es? 
        //temporal = pop(pilaOperadores);
+        Var temp = NewVarI(lastTemp); 
+        Var temp_name = NewVarS(lastTemp_name); 
+        Var temp_type = NewVarI(lastTemp_type); 
+        
        /*crear arg que apunte al argumento numero argCounter
-         de la tabla de parametros del currentGoSub*/
-       //validar que temporal.tipo == arg.tipo 
-       //generar quad <PARAM, temporal,  , arg>
-       //argCounter++; 
+         de la tabla de parametros del currentGoSub*/ //necesitamos resolver esto
+        FTE* func = functions.lookup(&functions, currentGoSub); 
+        VTE* iter; 
+        for(int n = 0; n<func->vars->size; n++){
+            iter = (func->vars->__dict+n);
+            for(int m = 0; m<argCounter; m++ ){
+                iter = iter->next; 
+            }
+        }
+        //validar que temporal.tipo == arg.tipo 
+        if(iter->type == temp_type.data.iVal){
+           //generar quad <PARAM, temporal,  , arg>
+            OPDUM temporal = NewOPDUM(temp_name.data.sVal, temp.data.iVal, temp_type.data.iVal);
+            OPDUM dummy = NewOPDUM("    ", -1, TableNull); 
+            OPDUM arg = NewOPDUM(iter->id, iter->dir, iter->type); 
+            SetQUAD(currentQuad, PARAM, temporal, dummy, arg); 
+            currentQuad = currentQuad->next; 
+            quadrupleCounter++; 
+           //argCounter++; 
+            argCounter++; 
+        }else{
+            yyerror("argumento no es del tipo correcto"); 
+        }
+    //no es?
+    }else{
+        //genera error
+        yyerror("wrong number of params"); 
+    }
 
 }
 

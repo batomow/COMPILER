@@ -64,16 +64,15 @@ int getBytes(TableType type, int size){
         case TableFloat: 
         case TableDouble: 
         case TableChar:
-        case TableString: return sizeof(Var)*size; break; 
-        case TableElement: return sizeof(Element)*size; break; 
-        case TableVector: return sizeof(Vector)*size; break; 
+        case TableString: return size; break; 
+        case TableElement: return 2*size; break; //<var, var>
+        case TableVector: return 6*size; break; //<Vector, Vector, var tipo, var color>
         default: return 0; break; 
     }
 }
 
 int __update_table_total_size(FuncTable* table, char* funcid){
     FTE* fte = table->lookup(table, funcid); 
-    printf("lookin up at table: %s\n", fte->moduleid); 
     int totalBytes = 0; 
     VTE* iter; 
     for(int n = 0; n<fte->params->size; n++){
@@ -91,7 +90,7 @@ int __update_table_total_size(FuncTable* table, char* funcid){
         }
     }
     fte->bytesize = totalBytes; 
-    return totalBytes; 
+    return totalBytes/16; 
 }
 
 void DestroyFTE(FTE* iter){
