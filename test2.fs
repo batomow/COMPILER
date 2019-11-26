@@ -1,4 +1,4 @@
-var a:int = 10
+/* var a:int = 10
 
 var b:int = 4
 
@@ -8,10 +8,10 @@ var d:int = d / c + (b * a)
 
 var e:double = 3.000 / d
 
-var f:double = 400
+var f:double = 400 */
 
 order main:int(){
-    if(truth){
+/*    if(truth){
         a = 2*b
     }elif(a < 2){
         b = b*a*2
@@ -37,10 +37,12 @@ order main:int(){
         }
         meditate
     }
-    var i:double = 2.5 
-    
+   */ 
+    var i:int = 0
     for[0, 1, 5]->x{
-        i = i*x
+        for[0, 2, 10]->y{
+            i = x*y
+        }
     }
     var e:int = 10
     meditate

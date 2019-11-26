@@ -598,6 +598,8 @@ void npFinalCheck(){
     DestroyStack(&pilaOperandos); 
     DestroyStack(&pilaTipos); 
     DestroyStack(&pilaOperadores); 
+    DestroyStack(&pilaFor); 
+    DestroyStack(&pilaSaltos); 
 
     DestroyVarTable(&globals);
     DestroyFuncTable(&functions); 
@@ -696,7 +698,7 @@ void npExpr1_1(char* varid){
 }
 void npExpr1_2_char(char constChar){
 	/* Revisar si existe en tabla de constantes */
-    char aux[2]; 
+    char* aux = calloc(2, sizeof(char)); 
     sprintf(aux, "%c", constChar); 
     /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
     DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
@@ -715,6 +717,7 @@ void npExpr1_2_char(char constChar){
 void npExpr1_2_string(char* constString){
 	/* Revisar si existe en tabla de constantes */
 	/* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
+
     DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
     if(constants.add(&constants, constString, TableString, constCounter, dim)){
         constCounter++; 
@@ -733,7 +736,7 @@ void npExpr1_2_string(char* constString){
 }
 void npExpr1_2_double(double constDouble){
 	/* Revisar si existe en tabla de constantes */
-     char aux[32]; 
+     char* aux = calloc(32, sizeof(char)); 
      sprintf(aux, "%lf", constDouble); 
      /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
      DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
@@ -754,7 +757,7 @@ void npExpr1_2_double(double constDouble){
 }
 void npExpr1_2_int(int constInt){
 	/* Revisar si existe en tabla de constantes */
-    char aux[32]; 
+    char* aux =  calloc(32, sizeof(char)); 
     sprintf(aux, "%d", constInt); 
     /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
     DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
@@ -775,7 +778,7 @@ void npExpr1_2_int(int constInt){
 }
 void npExpr1_2_bool(int constBool){
 	/* Revisar si existe en tabla de constantes */
-    char aux[32]; 
+    char* aux =  calloc(32, sizeof(char)); 
     sprintf(aux, "%d", constBool); 
     /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
     DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
@@ -1178,7 +1181,7 @@ void npFor3(char* iterId){
                 DIM* dim3 = calloc(1, sizeof(DIM)); *dim3 = NewDIM(); 
                 char* aux2 = calloc(64, sizeof(char)); 
                 int tempAddr3 = localsCounter++; 
-                sprintf(aux, "t%d", tempAddr3); 
+                sprintf(aux2, "t%d", tempAddr3); 
                 functions.addVar(&functions, currentFunction, aux2, TableBool, tempAddr3, dim3); 
 
 		        //gen quad(<=, iter, limit, res)
