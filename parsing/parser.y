@@ -81,6 +81,9 @@
     void npFun2(); 
 
     void npError(); 
+    void npFunCall1();
+    void npFunCall2(); 
+    void npFunCall3(); 
 
     // Global Counters //virtual mem-dirs
     int globalsCounter; 
@@ -95,6 +98,7 @@
     int isVector; 
     int isMat; 
     int isElement; 
+    int isArgument;
     
     int errorCounter = 0; 
 
@@ -308,11 +312,11 @@ stmt:
 	| ret
 
 funcall: 
-	V_ID SYM_OPARE funcallHelper SYM_CPARE { npExpr1_3(); }
+	V_ID { npFunCall1($1); } SYM_OPARE funcallHelper SYM_CPARE { npFunCall3(); }
 
 funcallHelper:
 	/* empty */
-	| expr funcallHelper2
+	| expr { npFunCall2(); } funcallHelper2 
 	| vector funcallHelper2
 
 funcallHelper2:
@@ -532,6 +536,7 @@ int main(int argc, char *argv[]) {
     isVector = 0; 
     isMat = 0; 
     isElement = 0; 
+    isArgument = 0; 
 
 	extern FILE *yyin;
 	++argv;
@@ -797,12 +802,6 @@ void npExpr1_2_bool(int constBool){
     push(&pilaTipos, type); 
     
 }
-void npExpr1_3(){
-	/* Push tipo a pila de tipos */
-	/* Esto es después de una llamada a función, de alguna manera debe haber en la 
-	   pila de operadores el temporal con el resultado a la funcion */
-
-}
 void npExpr1_4(){
 	// Todavía no tengo claro el acceso a los arreglos
 }
@@ -826,11 +825,10 @@ void npExpr5(OP* opes, int opesSize){
     Var tope = peek(&pilaOperadores); 
     for(int n = 0; n<opesSize; n++){
         if(tope.data.iVal == opes[n]){
-            //aqui chingo a mi madre
             Var right = peek(&pilaOperandos); pop(&pilaOperandos); 
             Var right_type = peek(&pilaTipos); pop(&pilaTipos); 
             Var right_name = peek(&pilaNombres); pop(&pilaNombres); 
-            //aqui la vuelvo a chingar
+            
             Var left = peek(&pilaOperandos); pop(&pilaOperandos); 
             Var left_type = peek(&pilaTipos); pop(&pilaTipos); 
             Var left_name = peek(&pilaNombres); pop(&pilaNombres); 
@@ -840,10 +838,15 @@ void npExpr5(OP* opes, int opesSize){
             TableType tipoRetorno = TableNull; 
             tipoRetorno = cubo.getReturnType(&cubo, operador.data.iVal, left_type.data.iVal, right_type.data.iVal); 
             if(tipoRetorno != TableNull){
-               printf("%s\n", TABLETYPE2STRING(tipoRetorno));  
+                DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
                 char* aux = calloc(64, sizeof(char)); 
                 int tempAddr = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
                 sprintf(aux, "t%d", tempAddr); 
+                if(strlen(currentFunction) > 0){
+                    functions.addVar(&functions, currentFunction, aux, tempAddr, tipoRetorno, dim); 
+                }else{
+                    globals.add(&globals, aux, tipoRetorno, tempAddr, dim);  
+                }
 
                 OPDUM leftdum = NewOPDUM(left_name.data.sVal, left.data.iVal, left_type.data.iVal);
                 OPDUM rightdum = NewOPDUM(right_name.data.sVal, right.data.iVal, right_type.data.iVal);
@@ -856,7 +859,6 @@ void npExpr5(OP* opes, int opesSize){
                 push(&pilaNombres, NewVarS(aux)); 
                 push(&pilaOperandos, NewVarI(tempAddr)); 
                 push(&pilaTipos, NewVarI(tipoRetorno)); 
-                //la wuevlo a chingar
             }else{
     	    	yyerror("ERROR: error de tipos"); 
             }
@@ -872,6 +874,49 @@ void npExpr7(){
 	/* Sacar un fondo falso de la pila de Operadores */
     Var tope = peek(&pilaOperadores); 
     pop(&pilaOperadores);  
+}
+
+void npFunCall1(char* funID){
+    /*revisar que exista el id de la funcion en la tabla de 
+        funciones*/
+    
+    //setear el currentGoSub al funID
+    //generarl el quad <ERA, , ,funID> tamaño de de la funcion
+    //generar nueva temporal-> este es el resultado de la llamada
+    //currentSubReturn = nueva temporal
+    //meter la nueva temporal a la tabla de variables de currentGoSub
+}
+void npFunCall2(){
+    /* esto sigue despues de un no terminal 'expr' 
+    por lo que lo ultimo en la pila debe ser el temporal */
+
+    //verificar que el argCounter < ParamTableSize de la currentGoSub
+    //no es?
+        //genera error
+    //si es? 
+       //temporal = pop(pilaOperadores);
+       /*crear arg que apunte al argumento numero argCounter
+         de la tabla de parametros del currentGoSub*/
+       //validar que temporal.tipo == arg.tipo 
+       //generar quad <PARAM, temporal,  , arg>
+       //argCounter++; 
+
+}
+
+void npFunCall3(){
+	/* Push tipo a pila de tipos */
+	/* Esto es después de una llamada a función, de alguna manera debe haber en la 
+	   pila de operadores el temporal con el resultado a la funcion */
+
+    /* segun yo es nomas -> */
+        //genera subaddr
+        //pointer(subaddr) = direccion de memoria donde empieza currentGoSUb
+        //genera el quad <GOSUB, , (subaddr)>
+        //generar quad <ASSIGN, pendiente, , currentGoSubReturn>
+        //meter el numero de ^ este cuadruplo a una pila de 
+            //pendingReturns
+    /* y en alguna parte del codigo cuando te topes un return 
+        rellenear el ultimo pendingReturns */
 }
 
 void npAssign1(){
