@@ -105,10 +105,6 @@
     int argCounter; 
     int isFunCall; 
    
-    int lastTemp;  
-    char lastTemp_name[96];  
-    int lastTemp_type; 
-    
     int errorCounter = 0; 
 
     // Global Structures
@@ -122,7 +118,7 @@
     Stack pilaTipos;  //los tipos 
     Stack pilaSaltos; 
     Stack pilaFor; 
-
+    
     QUAD listQuads;   
     QUAD* currentQuad; 
   
@@ -455,7 +451,7 @@ hvalue:
 	| value { OP input[] = {ROOT, POW}; npExpr5(input, 2); }
 
 value:
-	var_or_cte 
+	var_or_cte
 	| funcall
 	| structaccess
 	| property
@@ -546,10 +542,6 @@ int main(int argc, char *argv[]) {
     quadrupleCounter = 0; 
     argCounter = 0; 
     isFunCall = 0; 
-    
-    lastTemp = -1; 
-    strcpy(lastTemp_name, ""); 
-    lastTemp_type = TableNull;
 
     listQuads = NewQUAD();     
     currentQuad = &listQuads; 
@@ -863,7 +855,8 @@ void npExpr5(OP* opes, int opesSize){
                 int tempAddr = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
                 sprintf(aux, "t%d", tempAddr); 
                 if(strlen(currentFunction) > 0){
-                    functions.addVar(&functions, currentFunction, aux, tempAddr, tipoRetorno, dim); 
+                    functions.addVar(&functions, currentFunction, aux, tipoRetorno, tempAddr, dim); 
+                    int debug = 0; 
                 }else{
                     globals.add(&globals, aux, tipoRetorno, tempAddr, dim);  
                 }
@@ -879,8 +872,7 @@ void npExpr5(OP* opes, int opesSize){
                 push(&pilaNombres, NewVarS(aux)); 
                 push(&pilaOperandos, NewVarI(tempAddr)); 
                 push(&pilaTipos, NewVarI(tipoRetorno)); 
-                if(isFunCall)
-                    lastTemp = tempAddr; 
+                
             }else{
     	    	yyerror("ERROR: error de tipos"); 
             }
@@ -933,7 +925,7 @@ void npFunCall2(){
     /* esto sigue despues de un no terminal 'expr' 
     por lo que lo ultimo en la pila debe ser el temporal */
     
-        
+     
     int numparams = 0; ;
     
     FTE* fte = functions.lookup(&functions, currentGoSub); 
@@ -949,21 +941,32 @@ void npFunCall2(){
     //verificar que el argCounter < ParamTableSize de la currentGoSub
     if(argCounter < numparams){
     //si es? 
-       //temporal = pop(pilaOperadores);
-        Var temp = NewVarI(lastTemp); 
-        Var temp_name = NewVarS(lastTemp_name); 
-        Var temp_type = NewVarI(lastTemp_type); 
+        Var temp = peek(&pilaOperandos); pop(&pilaOperandos); 
+        Var temp_name = peek(&pilaNombres); pop(&pilaNombres); 
+        Var temp_type = peek(&pilaTipos); pop(&pilaTipos); 
         
        /*crear arg que apunte al argumento numero argCounter
          de la tabla de parametros del currentGoSub*/ //necesitamos resolver esto
+        int currenttempdir = 3000 + argCounter; 
         FTE* func = functions.lookup(&functions, currentGoSub); 
-        VTE* iter; 
-        for(int n = 0; n<func->vars->size; n++){
-            iter = (func->vars->__dict+n);
-            for(int m = 0; m<argCounter; m++ ){
+        VTE* iter;
+        int found = 0; 
+        for(int n = 0; n<func->params->size; n++){
+            if(found)
+                break; 
+            iter =  (func->params->__dict+n);
+            while(iter->isSet){
+                if((iter->dir) == currenttempdir){
+                    found = 1; 
+                    break; 
+                }
                 iter = iter->next; 
             }
         }
+        if(!iter->isSet){
+            yyerror("no existe un parametro con esa direccion de memoria"); 
+        }
+        
         //validar que temporal.tipo == arg.tipo 
         if(iter->type == temp_type.data.iVal){
            //generar quad <PARAM, temporal,  , arg>
