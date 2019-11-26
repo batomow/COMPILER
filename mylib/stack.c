@@ -78,7 +78,7 @@ void print_stack(Stack* stack){
 	printf("->\n"); 
 }
 
-Var access(Stack* stack, int position){
+Var accessElement(Stack* stack, int position){
     __guard(stack, position); 
     Var result = stack->__stack[position]; 
     return result; 

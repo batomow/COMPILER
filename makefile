@@ -1,6 +1,6 @@
 LIB = ./mylib
 LIBPATH = ./mylib/
-PARS = ./PARSING/
+PARS = ./parsing/
 GL = ./GL
 GLEW = ./GL./GLEW
 GLFW = ./GL./GLFW
@@ -26,7 +26,7 @@ clean:
 	cd $(LIB) && make clean && cd ..
 	cd $(PARS) && make clean && cd .. 
 reset: 
-	rm $(REBUILDABLES) main.exe -f
+	rm $(REBUILDABLES) main.exe parser.exe -f
 	cd $(LIB) && make reset && cd .. 
 	cd $(PARS) && make reset && cd .. 
 	

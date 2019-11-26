@@ -85,10 +85,11 @@ char* VarToString(Var var){
     char* result = (char*)calloc(21, sizeof(char));
     switch(var.type){
         case TypeFloat: sprintf(result, "%0.4f", var.data.fVal); break;  
-        case TypeDouble: sprintf(result, "%0.4f", var.data.dVal); break;  
+        case TypeDouble: sprintf(result, "%0.4lf", var.data.dVal); break;  
         case TypeInt: sprintf(result, "%d", var.data.iVal); break;  
         case TypeChar: sprintf(result, "%c", var.data.cVal); break;  
         case TypeString: sprintf(result, "%s", var.data.sVal); break; 
+        case TypeBool: sprintf(result, "%d", var.data.iVal); break; 
         case TypeNull: sprintf(result, "(null)"); 
     }
     return result; 

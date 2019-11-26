@@ -51,39 +51,48 @@ myPlayer.x = myPlayer.y
 var a:int = 5 * 2 + 1 / 2 / 1.0 - 5
 
 
-// functionName definition
-order functionName:double(var arg1:int, var arg2:double) {
+// function definition
+order sumameUnosDoubles:double(var arg1:int, var arg2:double) {
 	return arg1 + arg2
 }
 
-// testFunction definition
-order testFunction:int(var arg1:char, var arg2:int) {
-	// if statement
+// another definition
+order calculaUnascosas:int(var arg1:char, var arg2:int) {
+    var a:float
+    var res1:bool
+    var res2:bool 
+ 	// if statement
+    vector shape1Bounds
+    vector shape2Bounds
 	if(floatExample > doubleExample) {
-		var a:float = intExample + floatExample
-	} elif (boolExample) {
-		if (isInsideShape(shape1Bounds, shape2Bounds) == lie) {
+	    a = intExample + floatExample
+    } elif (boolExample) {
+        res1 = lie
+		if (res1 == lie) {
 			meditate
 		}
 	} else {
 		return truth
-		// do nothing comment
-	}
-
-	// for statement
+	} 
+    //comment
+    var x:int 
+    var size:int
 	for [0, 1, size] -> x {
-		if (isInsideShape(shape1Bounds, shape2Bounds) == lie) {
+        res2 = lie 
+		if (res2 == lie) {
 			meditate
 		}
 	}
-
+    var y:int 
 	for arrayName -> y {
 		meditate
 	}
 
 	while (x > 5) {
 		vision(x)
+        x = x - 1
 	}
 
 	return lie
 }
+

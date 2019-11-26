@@ -99,9 +99,11 @@ VTE NewVTE(){
 void SetVTE(VTE* vte, char* id, TableType type, int dir, DIM* dim){
     vte->isSet = 1; 
     vte->type = type; 
-    vte->id = id; 
+    int stringsize = strlen(id);    
+    vte->id = calloc(stringsize+1, sizeof(char)); 
+    strcpy(vte->id, id); 
     vte->dir = dir; 
-    vte->dim = dim; 
+    vte->dim = dim;
     vte->next = calloc(1, sizeof(VTE));  //allocate memory
     *(vte->next) =  NewVTE();  //set whats in that memory 
 }
@@ -111,6 +113,7 @@ void DestroyVTE(VTE* vte){
     if(vte->isSet){
         DestroyVTE(vte->next);  
         vte->isSet = 0; 
+        free(vte->id); 
     }
     free(vte); 
 }
@@ -129,6 +132,7 @@ char* __enum2String(TableType tt){
     case 5: return "Vector"; break; 
     case 6: return "(null)"; break; 
     case 7: return "Double"; break; 
+    case 8: return "Bool"; break; 
     default: return "Not Defined"; break; 
     }
 }
@@ -167,7 +171,6 @@ VTE* __vartable_lookup(VarTable* table, char* id){
             return iter; 
         iter = iter->next; 
     }
-    iter = calloc(1, sizeof(VTE)); *iter = NewVTE(); 
     return iter;  
 }
 
@@ -213,6 +216,7 @@ void DestroyVarTable(VarTable* table){
         if((iter+n)->isSet){
             DestroyDIM((iter+n)->dim); 
             DestroyVTE((iter+n)->next);  
+            free((iter+n)->id); 
         }
     }
     free(table->__dict); 

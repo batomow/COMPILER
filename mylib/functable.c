@@ -42,7 +42,9 @@ FTE NewFTE(){
 
 void SetFTE(FTE* fte, char* moduleid, TableType returntype, int quadline){
     fte->isSet = 1; 
-    fte->moduleid = moduleid; 
+    int idsize = strlen(moduleid); 
+    fte->moduleid = calloc(idsize+1, sizeof(char)); 
+    strcpy(fte->moduleid, moduleid);  
     fte->returntype = returntype; 
     fte->quadlinenum = quadline; 
     fte->bytesize = 0; 
@@ -97,8 +99,9 @@ void DestroyFTE(FTE* iter){
         DestroyFTE(iter->next);  
         DestroyVarTable(iter->params); 
         DestroyVarTable(iter->vars); 
+        iter->isSet = 0; 
+        free(iter->moduleid); 
     }
-    iter->isSet = 0; 
     free(iter); 
 }
 
@@ -196,6 +199,7 @@ void DestroyFuncTable(FuncTable* table){
             DestroyVarTable((iter+n)->vars); 
             free((iter+n)->vars); 
             DestroyFTE((iter+n)->next); 
+            free((iter+n)->moduleid); 
          }
      }
      free(table->__dict); 

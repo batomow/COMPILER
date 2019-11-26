@@ -12,7 +12,8 @@ typedef enum DataType{
         TypeChar,
         TypeString,
         TypeDouble, 
-        TypeNull
+        TypeNull,
+        TypeBool
 } DataType;
 
 
@@ -70,7 +71,7 @@ Var peek(Stack*);
     //-----array functions-----///
     void insert(Stack*, Var, int); 
     Var extract(Stack*, int);  
-    Var access(Stack*, int); 
+    Var accessElement(Stack*, int); 
 Stack NewStack(DataType, int);
 Stack NewStackFromArray(Var* , int); 
 void DestroyStack(Stack* ); 
@@ -120,14 +121,16 @@ void DestroyDictionary(Dictionary*);
 
 //---------------------------- var table stuff ----------------------///
 typedef enum TableType{
-    TableInt, 
-    TableFloat, 
-    TableChar, 
-    TableString, 
-    TableElement, 
-    TableVector, 
-    TableNull, 
-    TableDouble,
+    TableInt, //0
+    TableFloat, //1
+    TableChar, //2
+    TableString, //3
+    TableElement, //4
+    TableVector, //5
+    TableNull, //6
+    TableDouble,//7
+    TableBool, //8
+    TableMat //9
 } TableType; 
 //you have to manualy free the DIM if you dont add it to a vartable
 //you cant modify the DIM once assigned
@@ -197,8 +200,8 @@ typedef struct FuncTable{
     int (*isEmpty)(FuncTable*); 
     void (*print)(FuncTable*); 
     int (*add)(FuncTable*, char*, TableType, int); //id, return type, quad line
-    int (*addVar)(FuncTable*, char*, char*, TableType, int, DIM*); //set dim later 
-    int (*addParam)(FuncTable*, char*, char*, TableType, int, DIM*); //set dim later
+    int (*addVar)(FuncTable*, char*, char*, TableType, int, DIM*); 
+    int (*addParam)(FuncTable*, char*, char*, TableType, int, DIM*); 
     int (*updateSize)(FuncTable*, char*); 
     FTE* (*lookup)(FuncTable*, char*);  
     VTE* (*lookupVar)(FuncTable*, char*, char*); 
@@ -230,7 +233,9 @@ typedef enum OP{
     EEQ, //19
     NEQ,//20
     ENDPROC,//21
-    ENDPROG //22
+    ENDPROG, //22
+    NEG, //23
+    FORCHECK //24
 } OP; 
 
 typedef struct Operandum OPDUM; 
@@ -238,18 +243,25 @@ typedef struct Operandum {
     int isPointer; 
     char* id; 
     int virad; 
+    TableType type; 
     int dereference;  
     void (*toPointer)(OPDUM*, int);
 } OPDUM; 
-OPDUM NewOPDUM(char*, int, int); 
+OPDUM NewOPDUM(char*, int, TableType); 
+void DestroyOPDUM(OPDUM*); 
 
+typedef struct QUADRUPLE QUAD; 
 typedef struct QUADRUPLE {
+    int isSet; 
     OP op; 
     OPDUM opdum1;
     OPDUM opdum2;
     OPDUM result;
+    QUAD* next; 
 } QUAD; 
-QUAD NewQUAD(OP, OPDUM, OPDUM, OPDUM); 
+QUAD NewQUAD(); 
+void SetQUAD(QUAD*, OP, OPDUM, OPDUM, OPDUM); 
+void DestroyQUAD(QUAD*); 
 char* QUADToStringHuman(QUAD); //need freeing
 char* QUADToStringMachine(QUAD); //need freeing
 
