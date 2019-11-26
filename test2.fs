@@ -37,8 +37,12 @@ order main:int(){
         }
         meditate
     }
+    var i:double = 2.5 
     
-    var i:double = 2.5
+    for[0, 1, 5]->x{
+        i = i*x
+    }
+    var e:int = 10
     meditate
 }
 

@@ -91,7 +91,6 @@
     //Global Variables
     char currentFunction[96];  
     TableType currentType;  //tipo de variable
-    TableType returnType;  //tipo de valor de retorno de funcion
     int isParam; // true si la variable que se esta parseando es parametro
     int isVector; 
     int isMat; 
@@ -109,6 +108,7 @@
     Stack pilaOperadores; //el proceso 
     Stack pilaTipos;  //los tipos 
     Stack pilaSaltos; 
+    Stack pilaFor; 
 
     QUAD listQuads;   
     QUAD* currentQuad; 
@@ -134,7 +134,8 @@
         switch(ope){
             case SUM: return "SUM"; case RES: return "RES"; case DIV: return "DIV"; case MULT: return "MULT"; case POW: return "POW"; 
             case ROOT: return "ROOT"; case EEQ: return "EEQ"; case NEQ: return "NEQ"; case LT: return "LT"; case GT: return "GT"; 
-            case GTE: return "GTE"; case LTE: return "LTE"; case NEG: return "NEG"; default: return "(undefined)";  
+            case GTE: return "GTE"; case LTE: return "LTE"; case NEG: return "NEG"; case FORCHECK: return "FORCHECK"; 
+            default: return "(undefined)";  
         }
     }
     char* TABLETYPE2STRING(TableType t){
@@ -210,12 +211,12 @@
 %token <yyint> V_ELEM
 
 
-%token <datatype> T_BOOL
-%token <datatype> T_INT
-%token <datatype> T_FLOAT
-%token <datatype> T_DOUBLE
-%token <datatype> T_CHAR
-%token <datatype> T_STRING
+%token <tabletype> T_BOOL
+%token <tabletype> T_INT
+%token <tabletype> T_FLOAT
+%token <tabletype> T_DOUBLE
+%token <tabletype> T_CHAR
+%token <tabletype> T_STRING
 
 %token RES_ORDER
 %token RES_MEDIT
@@ -230,7 +231,7 @@
 
 %union{
 	/* TODO: Define data types for vars and ids */
-    DataType datatype; 
+    TableType tabletype; 
     int yyint; 
     double yydouble; 
     char yychar; 
@@ -476,7 +477,7 @@ ifHelper3:
 	| LOG_ELSE { npIf2(); } optlf SYM_OCURL crlf newlineCicle SYM_CCURL 
 
 for:
-	LOG_FOR forHelper SYM_ARROW V_ID {npFor3();} optlf SYM_OCURL crlf newlineCicle  SYM_CCURL {npFor4();}
+	LOG_FOR forHelper SYM_ARROW V_ID {npFor3($4);} optlf SYM_OCURL crlf newlineCicle  SYM_CCURL {npFor4();}
 
 forHelper:
 	V_ID {npFor1();}
@@ -517,6 +518,7 @@ int main(int argc, char *argv[]) {
     pilaOperadores = NewStack(TypeInt, 64); 
     pilaTipos = NewStack(TypeInt, 64); 
     pilaSaltos = NewStack(TypeInt, 64); 
+    pilaFor = NewStack(TypeInt, 64); 
     cubo = NewCubo(); 
 
     globalsCounter = 1000; 
@@ -624,7 +626,7 @@ void np1(char* id){
     }
 }
 
-void np1_1(DataType type){
+void np1_1(TableType type){
     if(isVector){
         currentType = TableVector;
     }else if (isMat){
@@ -632,7 +634,7 @@ void np1_1(DataType type){
     }else if(isElement){
         currentType = TableElement; 
     }else{
-        currentType = DT2TT(type); 
+        currentType = type; 
     }
 }
 
@@ -698,7 +700,7 @@ void npExpr1_2_char(char constChar){
     sprintf(aux, "%c", constChar); 
     /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
     DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-    if(constants.add(&constants, aux, TypeChar, constCounter, dim)){
+    if(constants.add(&constants, aux, TableChar, constCounter, dim)){
         constCounter++; 
     }else{
         DestroyDIM(dim); 
@@ -714,7 +716,7 @@ void npExpr1_2_string(char* constString){
 	/* Revisar si existe en tabla de constantes */
 	/* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
     DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-    if(constants.add(&constants, constString, TypeString, constCounter, dim)){
+    if(constants.add(&constants, constString, TableString, constCounter, dim)){
         constCounter++; 
     }else{
         DestroyDIM(dim); 
@@ -735,7 +737,7 @@ void npExpr1_2_double(double constDouble){
      sprintf(aux, "%lf", constDouble); 
      /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
      DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-     if(constants.add(&constants, aux, TypeDouble, constCounter, dim)){
+     if(constants.add(&constants, aux, TableDouble, constCounter, dim)){
          constCounter++; 
      }else{
          DestroyDIM(dim); 
@@ -756,7 +758,7 @@ void npExpr1_2_int(int constInt){
     sprintf(aux, "%d", constInt); 
     /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
     DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-    if(constants.add(&constants, aux, TypeInt, constCounter, dim)){
+    if(constants.add(&constants, aux, TableInt, constCounter, dim)){
         constCounter++; 
     }else{
         DestroyDIM(dim); 
@@ -777,7 +779,7 @@ void npExpr1_2_bool(int constBool){
     sprintf(aux, "%d", constBool); 
     /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
     DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-    if(constants.add(&constants, aux, TypeBool, constCounter, dim)){
+    if(constants.add(&constants, aux, TableBool, constCounter, dim)){
         constCounter++; 
     }else{
         DestroyDIM(dim); 
@@ -993,9 +995,9 @@ void npIf1(){
         
 }
 void npIf2(){
-    OPDUM dummy1 = NewOPDUM("    ", -1, TypeNull); 
-    OPDUM dummy2 = NewOPDUM("    ", -1, TypeNull); 
-    OPDUM ondesalto = NewOPDUM("___", -2, TypeNull); 
+    OPDUM dummy1 = NewOPDUM("    ", -1, TableNull); 
+    OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
+    OPDUM ondesalto = NewOPDUM("___", -2, TableNull); 
     SetQUAD(currentQuad, GOTO, dummy1, dummy2, ondesalto); 
     currentQuad = currentQuad->next; 
 	
@@ -1052,9 +1054,9 @@ void npWhile3(){
 	Var salend = peek(&pilaSaltos); pop(&pilaSaltos);
 	Var salreturn = peek(&pilaSaltos); pop(&pilaSaltos);
     
-    OPDUM dummy1 = NewOPDUM("    ", -1, TypeNull); 
-    OPDUM dummy2 = NewOPDUM("    ", -1, TypeNull); 
-    OPDUM ondesalto = NewOPDUM("jumpback", salreturn.data.iVal, TypeNull); //restale 1 porque cuando se metio apuntaba al de abajo
+    OPDUM dummy1 = NewOPDUM("    ", -1, TableNull); 
+    OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
+    OPDUM ondesalto = NewOPDUM("jumpback", salreturn.data.iVal, TableNull); //restale 1 porque cuando se metio apuntaba al de abajo
      
     SetQUAD(currentQuad, GOTO,  dummy1, dummy2, ondesalto); 
     currentQuad = currentQuad->next; 
@@ -1086,67 +1088,150 @@ void npFor1(){
 	*/
 }
 void npFor2(){
-	/* THIS IS SKETCHY, IDK IF IT WILL WORK */
-	/*
-	pilaForHelper.push("step")
-	*/
+	/* 0 es vanilla for y 1 es array for */
+    push(&pilaFor, NewVarI(0)); 
+    
+	
 }
-void npFor3(){
-	/* THIS IS SKETCHY, IDK IF IT WILL WORK */
-	/*
-	if(pilaForHelper.pop == array)
-		Checas que no exista ya una variable con ese nombre
-		Crea una variable de tipo apuntador con el nombre que pusiste (iter)
+void npFor3(char* iterId){
+    Var tipoFor = peek(&pilaFor); pop(&pilaFor); 
+    if(tipoFor.data.iVal == 1){
+        //meditate
+    }else if(tipoFor.data.iVal == 0){
+        Var limit = peek(&pilaOperandos); pop(&pilaOperandos); 
+        Var limit_type = peek(&pilaTipos); pop(&pilaTipos);
+        Var limit_name = peek(&pilaNombres); pop(&pilaNombres); 
 
-		limit = pOperandos.pop
-		start = pOperandos.pop
+        Var step = peek(&pilaOperandos); pop(&pilaOperandos); 
+        Var step_type = peek(&pilaTipos); pop(&pilaTipos);
+        Var step_name = peek(&pilaNombres); pop(&pilaNombres); 
 
-		init = siguiente temporal
-		gen quad(-, start, 1, init)
-		gen quad(=, init, , iter) inicializa el iterador una posición atrás, namas para poder sumarle uno
+        Var start = peek(&pilaOperandos); pop(&pilaOperandos); 
+        Var start_type = peek(&pilaTipos); pop(&pilaTipos);
+        Var start_name = peek(&pilaNombres); pop(&pilaNombres); 
 
-		pSaltos.push(siguiente cuadruplo a generar)
-		gen quad(+, iter, 1, iter)
-		res = siguiente temporal disponible
-		gen quad(<, iter, limit, result)
-		pSaltos.push(siguiente cuadruplo a generar)
-		gen quad(gotof, result, , ___)
+        if((limit_type.data.iVal == TableInt || limit_type.data.iVal == TableDouble) && 
+           (step_type.data.iVal == TableInt || step_type.data.iVal == TableDouble) && 
+           (start_type.data.iVal == TableInt || start_type.data.iVal == TableDouble) && 
+           (start_type.data.iVal == step_type.data.iVal)){
+            
+		        //Checas que no exista ya una variable con ese nombre
+                VTE* lookup = globals.lookup(&globals, iterId); 
+                if(lookup->isSet)
+                    yyerror("iterator id already taken");  
+                lookup = functions.lookupParam(&functions, currentFunction, iterId); 
+                if(lookup->isSet)
+                    yyerror("iterator id already taken"); 
+                lookup = functions.lookupVar(&functions, currentFunction, iterId); 
+                if(lookup->isSet)
+                    yyerror("iterator id already taken"); 
 
-	elif(pilaForHelper.pop == step)
-		limit = pOperandos.pop
-		limit_type = pTipos.pop()
-		step = pOperandos.pop
-		step_type = pTipos.pop()
-		start = pOperandos.pop
-		start_type = pTipos.pop()
+                //CHECKFOR 
+                OPDUM leftcheck = NewOPDUM(start_name.data.sVal, start.data.iVal, start_type.data.iVal); 
+                OPDUM rightcheck = NewOPDUM(limit_name.data.sVal, limit.data.iVal, start_type.data.iVal); 
+                OPDUM dummycheck = NewOPDUM("    ", -3, TableNull); 
+                SetQUAD(currentQuad, FORCHECK, leftcheck, rightcheck, dummycheck); 
+                currentQuad = currentQuad->next; 
+                quadrupleCounter++; 
+                
 
-		Checa que sean int o double, y que sean del mismo tipo, para no tener cosas raras, sino lanzas error de que no se vale eso
+		        //Crea una variable el nombre que pusiste (iter) de tipo start_type
+                DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+                int tempAddr = localsCounter++; 
+                functions.addVar(&functions, currentFunction, iterId, start_type.data.iVal, tempAddr, dim); 
 
-		Checas que no exista ya una variable con ese nombre
-		Crea una variable el nombre que pusiste (iter) de tipo start_type
-		init = siguiente temporal
-		gen quad(-, start, step, init)
-		gen quad(=, init, , iter)
-		pSaltos.push(siguiente cuadruplo a generar)
-		gen quad(+, iter, step, iter)
-		res = siguiente temporal
-		gen quad(<=, iter, limit, res)
-		gen quad(gotof, res, , __)
-		pSaltos.push(cuadruplo donde pusiste el gotof)
+		        //init = siguiente temporal
+                DIM* dim2  = calloc(1, sizeof(DIM)); *dim2 = NewDIM(); 
+                char* aux = calloc(64, sizeof(char)); 
+                int tempAddr2 = localsCounter++; 
+                sprintf(aux, "t%d", tempAddr); 
+                functions.addVar(&functions, currentFunction, aux, start_type.data.iVal, tempAddr2, dim2);
+                
+		        //gen quad(-, start, step, init)
+                OPDUM leftdum1 = NewOPDUM(start_name.data.sVal, start.data.iVal, start_type.data.iVal); 
+                OPDUM rightdum1 = NewOPDUM(step_name.data.sVal, step.data.iVal, step_type.data.iVal); 
+                OPDUM resdum = NewOPDUM(aux, tempAddr2, start_type.data.iVal); 
+                SetQUAD(currentQuad, RES, leftdum1, rightdum1, resdum); 
+                currentQuad = currentQuad->next; 
+                quadrupleCounter++; 
+                
+		        //gen quad(=, init, , iter)
+                OPDUM leftdum2 = NewOPDUM(aux, tempAddr2, start_type.data.iVal); 
+                OPDUM dummydum = NewOPDUM("____", -1, TableNull); 
+                OPDUM resdum2 = NewOPDUM(iterId, tempAddr, start_type.data.iVal);  
+                SetQUAD(currentQuad, ASSIGN, leftdum2, dummydum, resdum2); 
+                currentQuad = currentQuad->next; 
+                quadrupleCounter++; 
 
-	else
-		lanzas error, no se si esto pueda pasar la mera netflix, pero por si acaso
-	*/
+		        //pSaltos.push(siguiente cuadruplo a generar)
+                push(&pilaSaltos, NewVarI(quadrupleCounter));  
+
+		        //gen quad(+, iter, step, iter)
+                OPDUM leftdum3 = NewOPDUM(iterId, tempAddr, start_type.data.iVal); 
+                OPDUM rightdum3 = NewOPDUM(step_name.data.sVal, step.data.iVal, step_type.data.iVal);   
+                OPDUM resdum3 = NewOPDUM(iterId, tempAddr, start_type.data.iVal); 
+                SetQUAD(currentQuad, SUM, leftdum3, rightdum3, resdum3); 
+                currentQuad = currentQuad->next; 
+                quadrupleCounter++; 
+                
+                //res = siguiente temporal
+                DIM* dim3 = calloc(1, sizeof(DIM)); *dim3 = NewDIM(); 
+                char* aux2 = calloc(64, sizeof(char)); 
+                int tempAddr3 = localsCounter++; 
+                sprintf(aux, "t%d", tempAddr3); 
+                functions.addVar(&functions, currentFunction, aux2, TableBool, tempAddr3, dim3); 
+
+		        //gen quad(<=, iter, limit, res)
+                OPDUM leftdum4 = NewOPDUM(iterId, tempAddr, start_type.data.iVal); 
+                OPDUM rightdum4 = NewOPDUM(limit_name.data.sVal, limit.data.iVal, limit_type.data.iVal); 
+                OPDUM resdum4 = NewOPDUM(aux2, tempAddr3, TableBool); 
+                SetQUAD(currentQuad, LTE, leftdum4, rightdum4, resdum4);
+                currentQuad = currentQuad->next; 
+                quadrupleCounter++; 
+    
+		        //gen quad(gotof, res, , __)
+                OPDUM leftdumfinal = NewOPDUM(aux2, tempAddr3, start_type.data.iVal); 
+                OPDUM dummyfinal = NewOPDUM("    ", -1, TableNull); 
+                OPDUM resdumfinal = NewOPDUM("____", -2, TableNull); 
+                SetQUAD(currentQuad, GOTOF, leftdumfinal, dummyfinal, resdumfinal); 
+                currentQuad = currentQuad->next; 
+                
+		        //pSaltos.push(cuadruplo donde pusiste el gotof)
+                push(&pilaSaltos, NewVarI(quadrupleCounter)); 
+
+                quadrupleCounter++; 
+                free(aux); 
+                free(aux2); 
+            
+        }else{
+            yyerror("los valores del for deben de ser int o double y el limite inferior debe de ser del mismo tipo del step"); 
+        }
+        
+        
+    }else{
+        yyerror("How did you even manage to break this!?"); 
+    }
 
 }
+
 void npFor4(){
-	/* THIS IS SKETCHY, IDK IF IT WILL WORK */
-	/*
-	exit = pSaltos.pop
-	return = pSaltos.pop
-	gen quad(goto, , , return)
-	fillquad(exit, siguiente cuadruplo)
-	*/
+    Var salexit = peek(&pilaSaltos); pop(&pilaSaltos); 
+    Var salreturn = peek(&pilaSaltos); pop(&pilaSaltos); 
+    
+	//gen quad(goto, , , return)
+    OPDUM dummy1 = NewOPDUM("    ", -1, TableNull);
+    OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
+    OPDUM returndum = NewOPDUM("jumpback", salreturn.data.iVal, TableInt);
+    SetQUAD(currentQuad, GOTO, dummy1, dummy2, returndum); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
+
+	//fillquad(exit, siguiente cuadruplo)
+    int quadindex = salexit.data.iVal; 
+    QUAD* listiter = &listQuads; 
+    for(int n = 0; n<quadindex; n++)
+        listiter = listiter->next; 
+    listiter->result.virad = quadrupleCounter;  
 }
 
 void npFun1(char* newFunId){

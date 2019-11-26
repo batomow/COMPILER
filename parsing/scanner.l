@@ -36,24 +36,24 @@ EOL			\n\r
 "meditate"			{ printf("medit "); return RES_MEDIT; }
 "return"			{ printf("return "); return RES_RETRN; }
 "bool"				{   
-                        yylval.datatype = TypeBool; 
+                        yylval.tabletype = TableBool;
                         printf("bool "); return T_BOOL; 
                     }
 "char"				{   
-                         yylval.datatype = TypeChar; 
+                         yylval.tabletype = TableChar;
                         printf("char "); return T_CHAR; 
                     }
 "int"				{   
-                         yylval.datatype = TypeInt; 
+                         yylval.tabletype = TableInt;
                         printf("int "); return T_INT; 
                     }
 "double"			{
-                        yylval.datatype = TypeDouble; 
+                        yylval.tabletype = TableDouble;
                         printf("double "); return T_DOUBLE; 
                     }
 "string"			{ 
    
-                        yylval.datatype = TypeString; 
+                        yylval.tabletype = TableString; 
                         printf("string "); return T_STRING; 
                     }
 (lie|truth)			{   char aux[100];  

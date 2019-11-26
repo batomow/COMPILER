@@ -83,6 +83,7 @@ char* QUADToStringHuman(QUAD quadruple){
         case ENDPROC: strcat(string, "ENDPROC, "); break; 
         case ENDPROG: strcat(string, "ENDPROG, "); break; 
         case NEG: strcat(string, "NEG, "); break; 
+        case FORCHECK: strcat(string, "FORCHECK, "); break; 
         default: strcat(string, "not defined"); break; 
     }
     strcat(string, quadruple.opdum1.id); 

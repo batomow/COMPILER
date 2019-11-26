@@ -10,7 +10,7 @@ TableType  __getReturnType(CuboSemantico* cube, OP operator, TableType type1, Ta
 CuboSemantico NewCubo() {
 	CuboSemantico CS;	
     
-    for(int op = 0; op<24; op++){
+    for(int op = 0; op<25; op++){
         for(int type1 = 0; type1<9; type1++){
             for(int type2 = 0; type2<9; type2++){
                 CS.__c[op][type1][type2] = TableNull; }}}

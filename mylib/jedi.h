@@ -234,7 +234,8 @@ typedef enum OP{
     NEQ,//20
     ENDPROC,//21
     ENDPROG, //22
-    NEG //23
+    NEG, //23
+    FORCHECK //24
 } OP; 
 
 typedef struct Operandum OPDUM; 
