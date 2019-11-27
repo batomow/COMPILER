@@ -239,7 +239,7 @@ typedef enum OP{
     FORCHECK,  //24
     ERA, //25
     PARAM, //26
-    RETURN
+    RETURN // 27
 } OP; 
 
 typedef struct Operandum OPDUM; 
