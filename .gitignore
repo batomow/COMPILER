@@ -49,10 +49,12 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+#ForceScript compiler specific
 parsing/lex.yy.c
 parsing/parser.tab.c
 parsing/parser.tab.h
 parsing/parser.output
+*.fso
 
 # Godot-specific ignores
 .import/

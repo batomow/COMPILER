@@ -3,12 +3,13 @@ LIBPATH = ./mylib/
 PARS = ./parsing/
 REBUILDABLES = \
 	       *.o \
-	       *.stackdump
+	       *.stackdump\
+	       *.fso
 
 all: main.fso
 
 main.fso: jedi.a
-	./parser.exe > main.fso && make clean 
+	./parser.exe > ./vm/main.fso && make clean 
 
 jedi.a: 
 	make reset && cd $(LIB) && make && cd .$(PARS) && make
@@ -22,4 +23,5 @@ reset:
 	rm $(REBUILDABLES) main.exe parser.exe -f
 	cd $(LIB) && make reset && cd .. 
 	cd $(PARS) && make reset && cd .. 
+	cd ./vm && make reset && cd .. 
 	
