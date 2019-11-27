@@ -1,30 +1,23 @@
 LIB = ./mylib
 LIBPATH = ./mylib/
 PARS = ./parsing/
-GL = ./GL
-GLEW = ./GL./GLEW
-GLFW = ./GL./GLFW
 REBUILDABLES = \
 	       *.o \
 	       *.stackdump
-all: main.exe
 
-#main.exe: main.o jedi.a
-#	gcc main.o -o main.exe -L$(LIBPATH) -L$(GL) -L$(GLEW) -L$(GLFW) -ljedi -lopengl32 -lglew32 -lglfw3 -lgdi32
+all: main.fso
 
-main.exe: main.o jedi.a
-	gcc main.o -o main.exe -L$(LIBPATH) -ljedi
+main.fso: jedi.a
+	./parser.exe > main.fso && make clean 
 
 jedi.a: 
-	cd $(LIB) && make && cd .$(PARS) && make
-
-main.o: main.c 
-	gcc -Wall -Werror -g -c -I$(LIB) -I$(GL) -I$(PARS) main.c -o main.o 
+	make reset && cd $(LIB) && make && cd .$(PARS) && make
 
 clean: 
 	rm $(REBUILDABLES) -f
 	cd $(LIB) && make clean && cd ..
 	cd $(PARS) && make clean && cd .. 
+
 reset: 
 	rm $(REBUILDABLES) main.exe parser.exe -f
 	cd $(LIB) && make reset && cd .. 
