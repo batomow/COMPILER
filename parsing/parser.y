@@ -11,7 +11,7 @@
 
 	# define YYERROR_VERBOSE 1
  
-	void yyerror(const char *s);
+	int yyerror(const char *s);
 
 	//General neural points
 	void npFinalCheck();
@@ -273,11 +273,11 @@ script:
 
 crlf:
 	  CR LF
-	| LF {printf("\n");}
+	| LF {/*printf("\n");*/}
 
 optlf:
 	/* empty */
-	| crlf {printf("\n");} 
+	| crlf {/*printf("\n");*/} 
 
 function: 
 	RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE {npFun1($2); isParam = 1;}funparams SYM_CPARE{isParam = 0;} optlf SYM_OCURL crlf funbody SYM_CCURL{npFun2(); }
@@ -509,9 +509,10 @@ newline:
 
 %%
 
-void yyerror(const char *s){
+int yyerror(const char *s){
     errorCounter++; 
 	printf("\nERROR: %s\n", s);
+    return 1; 
 }
 
 int main(int argc, char *argv[]) {
@@ -545,6 +546,14 @@ int main(int argc, char *argv[]) {
     isMat = 0; 
     isElement = 0; 
 
+    OPDUM dummy1 = NewOPDUM("    ", -1, TableNull); 
+    OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
+    OPDUM ondesalto = NewOPDUM("    ", -2, TableNull); 
+    SetQUAD(currentQuad, GOTO, dummy1, dummy2, ondesalto); 
+    currentQuad = currentQuad->next; 
+    push(&pilaSaltos, NewVarI(quadrupleCounter)); 
+    quadrupleCounter++; 
+
 	extern FILE *yyin;
 	++argv;
 	--argc;
@@ -558,7 +567,7 @@ int main(int argc, char *argv[]) {
 		printf("COMPILATION SUCCESSFUL!\n");
 	} 
     fclose(yyin); 
-    printf("%d\n", errorCounter); 
+    printf("Number of errors: %d\n", errorCounter); 
 	return 0;
 }
 
@@ -579,24 +588,33 @@ void npError(){
 
 void npFinalCheck(){
 	/* revisar que existan las funciones necesarias de un script y cosas asi */
-    printf("Aqui van las globales\n"); 
-    globals.print(&globals);  
-    printf("Aqui van las constantes\n"); 
-    constants.print(&constants); 
-    printf("Aqui van las locales\n"); 
-    functions.print(&functions); 
+    //printf("Aqui van las globales\n"); 
+    //globals.print(&globals);  
+    //printf("Aqui van las constantes\n"); 
+    //constants.print(&constants); 
+    //printf("Aqui van las locales\n"); 
+    //functions.print(&functions); 
    
-    printf("Aqui van los quadruplos!!\n");  
+    //printf("Aqui van los quadruplos!!\n");  
+    OPDUM dummy = NewOPDUM("    ", -1, TableNull); 
+    OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
+    OPDUM dummy3 = NewOPDUM("    ", -1, TableNull); 
+    
+    SetQUAD(currentQuad, ENDPROG, dummy, dummy2, dummy3);  
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
+    
     QUAD* iter = &listQuads;  
     char *aux, *aux2; 
     int n = 0; 
     while(iter->isSet){
         aux = QUADToStringMachine(*iter); 
-        aux2 = QUADToStringHuman(*iter); 
-        printf("%d|\t%s\t\t%s\n",n, aux, aux2);
+       // aux2 = QUADToStringHuman(*iter); 
+       // printf("%d|\t%s\t\t%s\n",n, aux, aux2);
+        printf("%s\n", aux); 
         n++; 
         free(aux); 
-        free(aux2); 
+        //free(aux2); 
         iter = iter->next; 
     }
     Var* stackIter = pilaNombres.__stack; 
@@ -612,7 +630,7 @@ void npFinalCheck(){
     DestroyStack(&pilaOperadores); 
     DestroyStack(&pilaFor); 
     DestroyStack(&pilaSaltos); 
-    DestroyStack(&pilasEras); 
+    DestroyStack(&pilaEras); 
 
     DestroyVarTable(&globals);
     DestroyFuncTable(&functions); 
