@@ -185,6 +185,7 @@ typedef struct FuncTableEntry {
     int quadlinenum; 
     VarTable* params; 
     VarTable* vars;  
+    Stack* signature;
     int bytesize; 
     FTE* next;//llinked list;   
 }FTE; 
@@ -236,8 +237,9 @@ typedef enum OP{
     ENDPROG, //22
     NEG, //23
     FORCHECK,  //24
-    ERA, 
-    PARAM
+    ERA, //25
+    PARAM, //26
+    RETURN
 } OP; 
 
 typedef struct Operandum OPDUM; 

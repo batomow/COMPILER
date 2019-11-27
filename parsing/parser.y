@@ -83,28 +83,26 @@
     void npError(); 
     void npFunCall1();
     void npFunCall2(); 
-    void npFunCall3(); 
+
+    void npReturn(); 
+    void npClean(); //borra todo de la pila 
 
     // Global Counters //virtual mem-dirs
     int globalsCounter; 
     int localsCounter; 
     int constCounter; 
     int quadrupleCounter; 
-    
+    int paramCounter;  
+
     //Global Variables
     char currentFunction[96];  
     char currentGoSub[96]; 
-    int currentGoSubReturn;//direccion virtual de la variable a retornar 
-    char currentGoSubReturnName[96]; 
-    TableType currentGoSubReturnType; 
     TableType currentType;  //tipo de variable
     int isParam; // true si la variable que se esta parseando es parametro
     int isVector; 
     int isMat; 
     int isElement; 
-    int argCounter; 
-    int isFunCall; 
-   
+    
     int errorCounter = 0; 
 
     // Global Structures
@@ -118,6 +116,7 @@
     Stack pilaTipos;  //los tipos 
     Stack pilaSaltos; 
     Stack pilaFor; 
+    Stack pilaEras; 
     
     QUAD listQuads;   
     QUAD* currentQuad; 
@@ -144,7 +143,7 @@
             case SUM: return "SUM"; case RES: return "RES"; case DIV: return "DIV"; case MULT: return "MULT"; case POW: return "POW"; 
             case ROOT: return "ROOT"; case EEQ: return "EEQ"; case NEQ: return "NEQ"; case LT: return "LT"; case GT: return "GT"; 
             case GTE: return "GTE"; case LTE: return "LTE"; case NEG: return "NEG"; case FORCHECK: return "FORCHECK"; 
-            case ERA: return "ERA"; case PARAM: return "PARAM"; default: return "(undefined)";  
+            case ERA: return "ERA"; case PARAM: return "PARAM"; case RETURN: return "RETURN"; default: return "(undefined)";  
         }
     }
     char* TABLETYPE2STRING(TableType t){
@@ -256,17 +255,17 @@
 
 prog: 
     script { npFinalCheck(); } 
-    | error { npError(); } 
+    | error { npError(); }
 
 
 /* ------- SCRIPT GRAMMAR ------- */
 
 script:  
 	/* empty */
-	| assign crlf script 
-	| expr crlf script
-	| function crlf script
-	| generaldec crlf script
+	| assign crlf { npClean();} script 
+	| expr crlf { npClean();} script
+	| function crlf { npClean();} script
+	| generaldec crlf { npClean();} script
 	| crlf script
 
 
@@ -284,19 +283,18 @@ function:
 	RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE {npFun1($2); isParam = 1;}funparams SYM_CPARE{isParam = 0;} optlf SYM_OCURL crlf funbody SYM_CCURL{npFun2(); }
 
 funparams: 
-	  generaldec morefunparams
-    | /*empty*/
+     /*empty*/
+	| generaldec morefunparams
 
 morefunparams:
-	  SYM_COMMA generaldec morefunparams
-    | /*empty*/
+     /*empty*/
+	|  SYM_COMMA generaldec morefunparams
 
 funbody:
-	  stmt crlf funbody
-    | generaldec crlf funbody
-    | funcall crlf funbody
+     /*emtpy*/
+	| stmt crlf { npClean();} funbody
+    | generaldec crlf { npClean();} funbody
     | crlf funbody
-    | /*emtpy*/
 
 generaldec: /* declaras o declaras y assignas */
 	  vardec
@@ -318,11 +316,11 @@ stmt:
 	| ret
 
 funcall: 
-	V_ID { npFunCall1($1); isFunCall = 1; } SYM_OPARE funcallHelper SYM_CPARE { isFunCall = 0; npFunCall3(); }
+	V_ID { npFunCall1($1);} SYM_OPARE funcallHelper SYM_CPARE { npFunCall2(); paramCounter = 0; }
 
 funcallHelper:
 	/* empty */
-	| expr { npFunCall2();} funcallHelper2 
+	| expr {paramCounter++;}funcallHelper2 
 	| vector funcallHelper2
 
 funcallHelper2:
@@ -330,7 +328,7 @@ funcallHelper2:
 	| SYM_COMMA funcallHelper
 
 ret:
-	RES_RETRN expr
+	RES_RETRN expr {npReturn();}
 
 
 /* ------- VARIABLES GRAMMAR ------- */
@@ -522,9 +520,6 @@ int main(int argc, char *argv[]) {
     constants = NewVarTable(127);
     functions = NewFuncTable(127); 
     strcpy(currentFunction, ""); 
-    currentGoSubReturn = -1; 
-    strcpy(currentGoSubReturnName, ""); 
-    currentGoSubReturnType = TableNull; 
     
     
     pilaNombres = NewStack(TypeString, 64);  
@@ -533,15 +528,15 @@ int main(int argc, char *argv[]) {
     pilaTipos = NewStack(TypeInt, 64); 
     pilaSaltos = NewStack(TypeInt, 64); 
     pilaFor = NewStack(TypeInt, 64); 
+    pilaEras = NewStack(TypeInt, 32); 
     cubo = NewCubo(); 
 
     constCounter = 1000; 
     globalsCounter = 2000; 
     localsCounter = 3000; 
+    paramCounter = 0; 
 
     quadrupleCounter = 0; 
-    argCounter = 0; 
-    isFunCall = 0; 
 
     listQuads = NewQUAD();     
     currentQuad = &listQuads; 
@@ -555,7 +550,7 @@ int main(int argc, char *argv[]) {
 	--argc;
 	int r;
 
-	yyin = fopen("./test2.fs", "r");
+	yyin = fopen("./main.fs", "r");
 
 	r = yyparse();
 
@@ -617,6 +612,7 @@ void npFinalCheck(){
     DestroyStack(&pilaOperadores); 
     DestroyStack(&pilaFor); 
     DestroyStack(&pilaSaltos); 
+    DestroyStack(&pilasEras); 
 
     DestroyVarTable(&globals);
     DestroyFuncTable(&functions); 
@@ -630,9 +626,12 @@ void np1(char* id){
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
     int success = 0 ;
     DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+    int size = strlen(id); 
+    char* copy = calloc(size, sizeof(char)); 
+    strcpy(copy, id); 
     if(strlen(currentFunction)>0){
         if(isParam){
-            success = functions.addParam(&functions, currentFunction, id, currentType, localsCounter++, dim);
+            success = functions.addParam(&functions, currentFunction, copy, currentType, localsCounter++, dim);
         }else{
             success = functions.addVar(&functions, currentFunction, id, currentType, localsCounter++,  dim); 
         } 
@@ -898,12 +897,15 @@ void npFunCall1(char* funID){
         //setear el currentGoSub al funID
         strcpy(currentGoSub, funID); 
         int funsize = functions.updateSize(&functions, funID); //no se bebiera llamar update size, deberia ser getSize
+        if(strcmp(currentFunction, currentGoSub) == 0) {
+            funsize = -9999; 
+            push(&pilaEras, NewVarI(quadrupleCounter)); //regresar luego aqui a rellenar
+        }
         //generarl el quad <ERA, , ,funsize> tamaño de de la funcion
         OPDUM dummy1 = NewOPDUM("    ", -1, TableNull); 
         OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
-        OPDUM pointer = NewOPDUM("erasize",  -1, TableNull); 
-        pointer.toPointer(&pointer, result->quadlinenum); 
-        SetQUAD(currentQuad, ERA, dummy1, dummy2, pointer); 
+        OPDUM erasize = NewOPDUM("erasize",  funsize, TableNull); 
+        SetQUAD(currentQuad, ERA, dummy1, dummy2, erasize); 
         currentQuad = currentQuad->next; 
         quadrupleCounter++; 
         //generar nueva temporal-> este es el resultado de la llamada
@@ -911,98 +913,60 @@ void npFunCall1(char* funID){
         char* aux = calloc(64, sizeof(char)); 
         int tempAddr = localsCounter++; 
         sprintf(aux, "t%d", tempAddr); 
-        //currentSubReturn = nueva temporal
-        currentGoSubReturn = tempAddr; //nomas guarda el address
-        strcpy(currentGoSubReturnName, aux); 
-        currentGoSubReturnType = result->returntype; 
+
+        push(&pilaOperandos, NewVarI(tempAddr)); 
+        push(&pilaTipos, NewVarI(result->returntype)); 
+        push(&pilaNombres, NewVarS(aux)); 
         //meter la nueva temporal a la tabla de variables de currentGoSub
-        functions.addVar(&functions, currentGoSub, aux, result->returntype, tempAddr, dim); 
+        functions.addVar(&functions, currentFunction, aux, result->returntype, tempAddr, dim); 
     }else{
         yyerror("Funcion no definida"); 
     }
 }
+
+
 void npFunCall2(){
-    /* esto sigue despues de un no terminal 'expr' 
-    por lo que lo ultimo en la pila debe ser el temporal */
-    
-     
-    int numparams = 0; ;
-    
-    FTE* fte = functions.lookup(&functions, currentGoSub); 
-    VTE* iter2; 
-    for(int n = 0; n<fte->params->size; n++){
-        iter2 = (fte->params->__dict+n);
-        while(iter2->isSet){
-            numparams++; 
-            iter2 = iter2->next; 
-        }
+    FTE* registro = functions.lookup(&functions, currentGoSub); 
+    Stack* firma = registro->signature; 
+    int argsize = firma->size; 
+    if(argsize != paramCounter){
+        yyerror("Numero de argumentos incorrecto"); 
+        return; 
     }
-    
-    //verificar que el argCounter < ParamTableSize de la currentGoSub
-    if(argCounter < numparams){
-    //si es? 
-        Var temp = peek(&pilaOperandos); pop(&pilaOperandos); 
-        Var temp_name = peek(&pilaNombres); pop(&pilaNombres); 
-        Var temp_type = peek(&pilaTipos); pop(&pilaTipos); 
-        
-       /*crear arg que apunte al argumento numero argCounter
-         de la tabla de parametros del currentGoSub*/ //necesitamos resolver esto
-        int currenttempdir = 3000 + argCounter; 
-        FTE* func = functions.lookup(&functions, currentGoSub); 
-        VTE* iter;
-        int found = 0; 
-        for(int n = 0; n<func->params->size; n++){
-            if(found)
-                break; 
-            iter =  (func->params->__dict+n);
-            while(iter->isSet){
-                if((iter->dir) == currenttempdir){
-                    found = 1; 
-                    break; 
-                }
-                iter = iter->next; 
-            }
-        }
-        if(!iter->isSet){
-            yyerror("no existe un parametro con esa direccion de memoria"); 
-        }
-        
-        //validar que temporal.tipo == arg.tipo 
-        if(iter->type == temp_type.data.iVal){
-           //generar quad <PARAM, temporal,  , arg>
-            OPDUM temporal = NewOPDUM(temp_name.data.sVal, temp.data.iVal, temp_type.data.iVal);
+    for(int n = argsize-1; n>=0; n--){
+        Var id = accessElement(firma, n);
+        VTE* registroparam = functions.lookupParam(&functions, currentGoSub, id.data.sVal); 
+        Var operandoTipo = peek(&pilaTipos); pop(&pilaTipos);
+        Var operandoNombre = peek(&pilaNombres); pop(&pilaNombres); 
+        Var operandoDir = peek(&pilaOperandos); pop(&pilaOperandos);
+        if(!registroparam->type == operandoTipo.data.iVal){
+            yyerror("Argumentos con tipos incorrectos"); 
+            return; 
+        }else{
+            OPDUM exprdum = NewOPDUM(operandoNombre.data.sVal, operandoDir.data.iVal, operandoTipo.data.iVal);
             OPDUM dummy = NewOPDUM("    ", -1, TableNull); 
-            OPDUM arg = NewOPDUM(iter->id, iter->dir, iter->type); 
-            SetQUAD(currentQuad, PARAM, temporal, dummy, arg); 
+            OPDUM argdum = NewOPDUM(registroparam->id, registroparam->dir, registroparam->type); 
+            SetQUAD(currentQuad, PARAM, exprdum, dummy, argdum); 
             currentQuad = currentQuad->next; 
             quadrupleCounter++; 
-           //argCounter++; 
-            argCounter++; 
-        }else{
-            yyerror("argumento no es del tipo correcto"); 
         }
-    //no es?
-    }else{
-        //genera error
-        yyerror("wrong number of params"); 
     }
-
-}
-
-void npFunCall3(){
-	/* Push tipo a pila de tipos */
-	/* Esto es después de una llamada a función, de alguna manera debe haber en la 
-	   pila de operadores el temporal con el resultado a la funcion */
-
-    /* segun yo es nomas -> */
-        //genera subaddr
-        //pointer(subaddr) = direccion de memoria donde empieza currentGoSUb
-        //genera el quad <GOSUB, , (subaddr)>
-        //generar quad <ASSIGN, pendiente, , currentGoSubReturn>
-        //meter el numero de ^ este cuadruplo a una pila de 
-            //pendingReturns
-    /* y en alguna parte del codigo cuando te topes un return 
-        rellenear el ultimo pendingReturns */
+    OPDUM godummy1 = NewOPDUM("    ", -1, TableNull); 
+    OPDUM godummy2 = NewOPDUM("    ", -1, TableNull); 
+    OPDUM gosubdum = NewOPDUM(registro->moduleid, registro->quadlinenum, registro->returntype); 
+    SetQUAD(currentQuad, GOSUB, godummy1, godummy2, gosubdum); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
+    
+    OPDUM hardcore = NewOPDUM(" 66 ", 66, TableNull); 
+    OPDUM dumdum = NewOPDUM("    ", -1, TableNull); 
+    Var ret = peek(&pilaOperandos); 
+    Var rettype = peek(&pilaTipos); 
+    Var retname = peek(&pilaNombres); 
+    OPDUM retdum = NewOPDUM(retname.data.sVal, ret.data.iVal, rettype.data.iVal); 
+    SetQUAD(currentQuad, ASSIGN, hardcore, dumdum, retdum); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
 }
 
 void npAssign1(){
@@ -1377,5 +1341,45 @@ void npFun1(char* newFunId){
 }
 
 void npFun2(){
+
+    while(!pilaEras.isEmpty(&pilaEras)){
+        int eraquadline = (peek(&pilaEras)).data.iVal; pop(&pilaEras); 
+        QUAD* iter = &listQuads; 
+        for(int n = 0; n<eraquadline; n++){
+            iter = iter->next; 
+        }
+        int funcsize =  functions.updateSize(&functions, currentFunction); 
+        iter->result.virad = funcsize; 
+    }
+    strcpy(currentGoSub, ""); 
+
     strcpy(currentFunction, ""); 
+    localsCounter = 3000; 
+    OPDUM dummy1 = NewOPDUM("    ", -1, TableNull); 
+    OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
+    OPDUM dummy3 = NewOPDUM("    ", -1, TableNull); 
+    SetQUAD(currentQuad, ENDPROC, dummy1, dummy2, dummy3); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
+}
+
+void npReturn(){
+    OPDUM dummy = NewOPDUM("    ", -1, TableNull);
+    OPDUM dummy1 = NewOPDUM("    ", -1, TableNull);
+    Var operando = peek(&pilaNombres); pop(&pilaNombres);  
+    Var operando_addr = peek(&pilaOperandos); pop(&pilaOperandos);  
+    Var operando_type = peek(&pilaTipos); pop(&pilaTipos); 
+    OPDUM result = NewOPDUM(operando.data.sVal, operando_addr.data.iVal, operando_type.data.iVal); 
+    SetQUAD(currentQuad, RETURN, dummy, dummy1, result); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
+}
+
+void npClean(){
+    while(!pilaOperadores.isEmpty(&pilaOperadores)){
+        pop(&pilaTipos); 
+        pop(&pilaNombres);
+        pop(&pilaOperandos); 
+    }
+        
 }

@@ -35,6 +35,7 @@ FTE NewFTE(){
     r.quadlinenum = -1; 
     r.bytesize = 0; 
     r.params = NULL; 
+    r.signature = NULL; 
     r.vars = NULL; 
     r.next = NULL; 
     return r; 
@@ -56,6 +57,9 @@ void SetFTE(FTE* fte, char* moduleid, TableType returntype, int quadline){
 
     fte->next = calloc(1, sizeof(FTE)); 
     *(fte->next) = NewFTE();  
+    
+    fte->signature = calloc(1, sizeof(Stack)); 
+    *(fte->signature) = NewStack(TypeInt, 8); 
 }
 
 int getBytes(TableType type, int size){
@@ -64,6 +68,7 @@ int getBytes(TableType type, int size){
         case TableFloat: 
         case TableDouble: 
         case TableChar:
+        case TableBool:
         case TableString: return size; break; 
         case TableElement: return 2*size; break; //<var, var>
         case TableVector: return 6*size; break; //<Vector, Vector, var tipo, var color>
@@ -90,7 +95,7 @@ int __update_table_total_size(FuncTable* table, char* funcid){
         }
     }
     fte->bytesize = totalBytes; 
-    return totalBytes/16; 
+    return totalBytes; 
 }
 
 void DestroyFTE(FTE* iter){
@@ -98,6 +103,7 @@ void DestroyFTE(FTE* iter){
         DestroyFTE(iter->next);  
         DestroyVarTable(iter->params); 
         DestroyVarTable(iter->vars); 
+        DestroyStack(iter->signature); 
         iter->isSet = 0; 
         free(iter->moduleid); 
     }
@@ -151,6 +157,7 @@ int __add_param_to_func_table(FuncTable* table, char* funcid, char* varid, Table
         return 0; 
     }
     VarTable* vartable = func->params;
+    push(func->signature, NewVarS(varid)); 
     return (vartable->add(vartable, varid, vartype, virtualdir, dim));
 } 
 
@@ -199,6 +206,8 @@ void DestroyFuncTable(FuncTable* table){
             free((iter+n)->vars); 
             DestroyFTE((iter+n)->next); 
             free((iter+n)->moduleid); 
+            DestroyStack((iter+n)->signature); 
+            free((iter+n)->signature); 
          }
      }
      free(table->__dict); 

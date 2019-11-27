@@ -86,6 +86,7 @@ char* QUADToStringHuman(QUAD quadruple){
         case FORCHECK: strcat(string, "FORCHECK, "); break; 
         case ERA: strcat(string, "ERA, ");break;  
         case PARAM: strcat(string, "PARAM, "); break; 
+        case RETURN: strcat(string, "RETURN, "); break; 
         default: strcat(string, "not defined"); break; 
     }
     strcat(string, quadruple.opdum1.id); 
