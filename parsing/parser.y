@@ -564,10 +564,10 @@ int main(int argc, char *argv[]) {
 	r = yyparse();
 
 	if(r == 0){
-		printf("COMPILATION SUCCESSFUL!\n");
+		//printf("COMPILATION SUCCESSFUL!\n");
 	} 
     fclose(yyin); 
-    printf("Number of errors: %d\n", errorCounter); 
+    //printf("Number of errors: %d\n", errorCounter); 
 	return 0;
 }
 
