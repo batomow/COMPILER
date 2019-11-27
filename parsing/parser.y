@@ -612,12 +612,27 @@ void npFinalCheck(){
         aux = QUADToStringMachine(*iter); 
        // aux2 = QUADToStringHuman(*iter); 
        // printf("%d|\t%s\t\t%s\n",n, aux, aux2);
-        iter->next->isSet ? printf("\n\t%s,\n", aux) : printf("\n\t%s\n\t]\n}\n", aux); 
+        iter->next->isSet ? printf("\n\t%s,\n", aux) : printf("\n\t%s\n\t],\n", aux); 
         n++; 
         free(aux); 
         //free(aux2); 
         iter = iter->next; 
     }
+    VTE* iter2; 
+    printf("\"globals\":["); 
+    for(int n = 0; n<globals.size; n++){
+        iter2 = (globals.__dict+n);
+        while(iter2->isSet){
+            if(iter2->next->isSet){
+                printf("{\n\t\"valor\": %s, \t\"memdir:\": %d},\n", iter2->id, iter2->dir); 
+            }else{
+                printf("{\n\t\"valor\": %s, \t\"memdir:\": %d}\n", iter2->id, iter2->dir); 
+            }
+            iter2 = iter2->next; 
+        }
+    }
+    printf("\t\n]\n}"); 
+
     Var* stackIter = pilaNombres.__stack; 
     for(int n = 0; n<pilaNombres.size; n++){
         if(stackIter[n].data.sVal){
