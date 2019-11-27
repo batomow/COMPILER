@@ -99,7 +99,7 @@ char* QUADToStringHuman(QUAD quadruple){
 }
 
 char* QUADToStringMachine(QUAD quadruple){
-    char* string = calloc(96, sizeof(char)); 
+    char* string = calloc(8000, sizeof(char)); 
     if(quadruple.result.isPointer){
         sprintf(string, "{\"opcode\": %d,\t\"left\": %d,\t\"right\": %d,\t\"result\": %d}", quadruple.op, quadruple.opdum1.virad, quadruple.opdum2.virad, quadruple.result.dereference); 
     }else{

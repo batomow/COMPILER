@@ -585,7 +585,8 @@ void npError(){
 }
 
 void npFinalCheck(){
-	/* revisar que existan las funciones necesarias de un script y cosas asi */ printf("Aqui van las globales\n"); 
+	/* revisar que existan las funciones necesarias de un script y cosas asi */ 
+    //printf("Aqui van las globales\n"); 
     //globals.print(&globals);  
     //printf("Aqui van las constantes\n"); 
     //constants.print(&constants); 
@@ -641,14 +642,14 @@ void npFinalCheck(){
         iter2 = (constants.__dict+n);
         while(iter2->isSet){
             if(iter2->type == TableChar){
-                 printf("\n\t{\"valor\": '%s', \t\"memdir:\": %d}, ", iter2->id, iter2->dir); 
+                 printf("\n\t{\"valor\": '%s', \t\"memdir\": %d}, ", iter2->id, iter2->dir); 
             }else{
-                 printf("\n\t{\"valor\": %s, \t\"memdir:\": %d}, ", iter2->id, iter2->dir); 
+                 printf("\n\t{\"valor\": %s, \t\"memdir\": %d}, ", iter2->id, iter2->dir); 
             }
             iter2 = iter2->next;
         }
     }
-    printf("\n\t{\"valor\": %s, \t\"memdir:\": %d} ", "\"dummy\"", -1); 
+    printf("\n\t{\"valor\": %s, \t\"memdir\": %d} ", "\"dummy\"", -1); 
     printf("\n\t\t]\n}\n"); 
 
     Var* stackIter = pilaNombres.__stack; 
