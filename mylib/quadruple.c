@@ -101,9 +101,9 @@ char* QUADToStringHuman(QUAD quadruple){
 char* QUADToStringMachine(QUAD quadruple){
     char* string = calloc(96, sizeof(char)); 
     if(quadruple.result.isPointer){
-        sprintf(string, "<%d, %d, %d, %d>", quadruple.op, quadruple.opdum1.virad, quadruple.opdum2.virad, quadruple.result.dereference); 
+        sprintf(string, "{\"opcode\":%d, \"left\":%d, \"right\":%d, \"temp\":%d}", quadruple.op, quadruple.opdum1.virad, quadruple.opdum2.virad, quadruple.result.dereference); 
     }else{
-        sprintf(string, "<%d, %d, %d, %d>", quadruple.op, quadruple.opdum1.virad, quadruple.opdum2.virad, quadruple.result.virad); 
+        sprintf(string, "{\"opcode\":%d, \"left\":%d, \"right\":%d, \"temp\":%d}", quadruple.op, quadruple.opdum1.virad, quadruple.opdum2.virad, quadruple.result.virad); 
     }
     return string; 
 }
