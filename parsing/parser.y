@@ -607,15 +607,15 @@ void npFinalCheck(){
     QUAD* iter = &listQuads;  
     char *aux, *aux2; 
     int n = 0; 
-    printf("{\r\n\"quads\":["); 
+    printf("{\"quads\":["); 
     while(iter->isSet){
         aux = QUADToStringMachine(*iter); 
        // aux2 = QUADToStringHuman(*iter); 
        // printf("%d|\t%s\t\t%s\n",n, aux, aux2);
+        iter->next->isSet ? printf("\n\t%s,\n", aux) : printf("\n\t%s\n\t]\n}\n", aux); 
         n++; 
         free(aux); 
         //free(aux2); 
-        iter->next->isSet ? printf("%s,\r\n", aux) : printf("%s\r\n\t]\r\n}", aux); 
         iter = iter->next; 
     }
     Var* stackIter = pilaNombres.__stack; 
