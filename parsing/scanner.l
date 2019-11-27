@@ -94,10 +94,6 @@ EOL			\n\r
                              for(int n = 0; n<256; n++){
                                  buffer[n] = '\0'; }//limpia los buffers
                             sscanf(yytext, "%256c", buffer); //parsea todo 
-                            char* iter; 
-                            for(iter = buffer; *iter != '\0'; iter++) //recorre todo para remover la primera comilla
-                                *iter = *(iter+1); 
-                            *(iter-2) = *iter;   //remueve la ultima comilla
                             yylval.yystring = buffer; 
                             /*printf("string(%s) ", yylval.yystring);*/ return V_STRING; /* string */ 
                         }

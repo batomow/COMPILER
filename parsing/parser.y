@@ -619,19 +619,20 @@ void npFinalCheck(){
         iter = iter->next; 
     }
     VTE* iter2; 
-    printf("\"globals\":["); 
-    for(int n = 0; n<globals.size; n++){
-        iter2 = (globals.__dict+n);
+    printf("\"globals\":[\n"); 
+    for(int n = 0; n<constants.size; n++){
+        iter2 = (constants.__dict+n);
         while(iter2->isSet){
-            if(iter2->next->isSet){
-                printf("{\n\t\"valor\": %s, \t\"memdir:\": %d},\n", iter2->id, iter2->dir); 
+            if(iter2->type == TableChar){
+                 printf("\n\t{\"valor\": '%s', \t\"memdir:\": %d}, ", iter2->id, iter2->dir); 
             }else{
-                printf("{\n\t\"valor\": %s, \t\"memdir:\": %d}\n", iter2->id, iter2->dir); 
+                 printf("\n\t{\"valor\": %s, \t\"memdir:\": %d}, ", iter2->id, iter2->dir); 
             }
-            iter2 = iter2->next; 
+            iter2 = iter2->next;
         }
     }
-    printf("\t\n]\n}"); 
+    printf("\n\t{\"valor\": %s, \t\"memdir:\": %d} ", "\"dummy\"", -1); 
+    printf("\n\t\t]\n}"); 
 
     Var* stackIter = pilaNombres.__stack; 
     for(int n = 0; n<pilaNombres.size; n++){
