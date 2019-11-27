@@ -262,10 +262,8 @@ prog:
 
 script:  
 	/* empty */
-	| assign crlf { npClean();} script 
-	| expr crlf { npClean();} script
 	| function crlf { npClean();} script
-	| generaldec crlf { npClean();} script
+	| vardec crlf { npClean();} script
 	| crlf script
 
 
@@ -587,31 +585,50 @@ void npError(){
 }
 
 void npFinalCheck(){
-	/* revisar que existan las funciones necesarias de un script y cosas asi */
-    //printf("Aqui van las globales\n"); 
+	/* revisar que existan las funciones necesarias de un script y cosas asi */ printf("Aqui van las globales\n"); 
     //globals.print(&globals);  
     //printf("Aqui van las constantes\n"); 
     //constants.print(&constants); 
     //printf("Aqui van las locales\n"); 
     //functions.print(&functions); 
-   
-    //printf("Aqui van los quadruplos!!\n");  
+     
     OPDUM dummy = NewOPDUM("    ", -1, TableNull); 
     OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
-    OPDUM dummy3 = NewOPDUM("    ", -1, TableNull); 
+    OPDUM dummy3 = NewOPDUM("    ", -1, TableNull);
     
     SetQUAD(currentQuad, ENDPROG, dummy, dummy2, dummy3);  
     currentQuad = currentQuad->next; 
     quadrupleCounter++; 
+
+    //validar que exista enter en la tabla de funcitons 
+    FTE* enterlookup = functions.lookup(&functions, "enter"); 
+    //si no existe error 
+    if(!enterlookup->isSet){
+        yyerror("falta declarar enter");  
+    }else{
+    //si existe
+        int quadline = enterlookup->quadlinenum; 
+        //sacar en que cuadruplo empieza 
+        Var salto = peek(&pilaSaltos); pop(&pilaSaltos); 
+        //sacar salto de la pila 
+        //ir a ese salto y rellenarlo con el quadlinenum de enter 
+        QUAD* rellena = &listQuads; 
+        for(int n = 0; n<salto.data.iVal; n++){
+            rellena = rellena->next; 
+        }
+        rellena->result.virad = quadline; 
+    }
     
+    
+    //printf("Aqui van los quadruplos!!\n");  
     QUAD* iter = &listQuads;  
     char *aux, *aux2; 
     int n = 0; 
     printf("{\"quads\":["); 
     while(iter->isSet){
         aux = QUADToStringMachine(*iter); 
-       // aux2 = QUADToStringHuman(*iter); 
-       // printf("%d|\t%s\t\t%s\n",n, aux, aux2);
+        //aux2 = QUADToStringHuman(*iter); 
+        //printf("%d|\t%s\t%s\n",n, aux, aux2);
         iter->next->isSet ? printf("\n\t%s,\n", aux) : printf("\n\t%s\n\t],\n", aux); 
         n++; 
         free(aux); 
@@ -632,7 +649,7 @@ void npFinalCheck(){
         }
     }
     printf("\n\t{\"valor\": %s, \t\"memdir:\": %d} ", "\"dummy\"", -1); 
-    printf("\n\t\t]\n}"); 
+    printf("\n\t\t]\n}\n"); 
 
     Var* stackIter = pilaNombres.__stack; 
     for(int n = 0; n<pilaNombres.size; n++){
