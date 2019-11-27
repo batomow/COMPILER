@@ -12,21 +12,21 @@ Grammar
     1 prog: script
     2     | error
 
-    3 script: %empty
+    3 script: /* empty */
 
-    4 $@1: %empty
+    4 $@1: /* empty */
 
     5 script: assign crlf $@1 script
 
-    6 $@2: %empty
+    6 $@2: /* empty */
 
     7 script: expr crlf $@2 script
 
-    8 $@3: %empty
+    8 $@3: /* empty */
 
     9 script: function crlf $@3 script
 
-   10 $@4: %empty
+   10 $@4: /* empty */
 
    11 script: generaldec crlf $@4 script
    12       | crlf script
@@ -34,28 +34,28 @@ Grammar
    13 crlf: CR LF
    14     | LF
 
-   15 optlf: %empty
+   15 optlf: /* empty */
    16      | crlf
 
-   17 $@5: %empty
+   17 $@5: /* empty */
 
-   18 $@6: %empty
+   18 $@6: /* empty */
 
    19 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@5 funparams SYM_CPARE $@6 optlf SYM_OCURL crlf funbody SYM_CCURL
 
-   20 funparams: %empty
+   20 funparams: /* empty */
    21          | generaldec morefunparams
 
-   22 morefunparams: %empty
+   22 morefunparams: /* empty */
    23              | SYM_COMMA generaldec morefunparams
 
-   24 funbody: %empty
+   24 funbody: /* empty */
 
-   25 $@7: %empty
+   25 $@7: /* empty */
 
    26 funbody: stmt crlf $@7 funbody
 
-   27 $@8: %empty
+   27 $@8: /* empty */
 
    28 funbody: generaldec crlf $@8 funbody
    29        | crlf funbody
@@ -66,7 +66,7 @@ Grammar
    33           | vectordec
    34           | elementdec
 
-   35 $@9: %empty
+   35 $@9: /* empty */
 
    36 generaldec: vardec $@9 MTH_SEQUA expr
    37           | arrdec MTH_SEQUA arr
@@ -80,18 +80,18 @@ Grammar
    44     | RES_MEDIT
    45     | ret
 
-   46 $@10: %empty
+   46 $@10: /* empty */
 
    47 funcall: V_ID $@10 SYM_OPARE funcallHelper SYM_CPARE
 
-   48 funcallHelper: %empty
+   48 funcallHelper: /* empty */
 
-   49 $@11: %empty
+   49 $@11: /* empty */
 
    50 funcallHelper: expr $@11 funcallHelper2
    51              | vector funcallHelper2
 
-   52 funcallHelper2: %empty
+   52 funcallHelper2: /* empty */
    53               | SYM_COMMA funcallHelper
 
    54 ret: RES_RETRN expr
@@ -113,29 +113,29 @@ Grammar
    66 var_or_cte: V_ID
    67           | basictypes
 
-   68 $@12: %empty
+   68 $@12: /* empty */
 
    69 assign: V_ID $@12 MTH_SEQUA expr
    70       | structaccess MTH_SEQUA expr
    71       | property MTH_SEQUA expr
 
-   72 $@13: %empty
+   72 $@13: /* empty */
 
    73 structaccess: V_ID SYM_OBRAC expr SYM_CBRAC $@13 structIndex
 
-   74 structIndex: %empty
+   74 structIndex: /* empty */
    75            | SYM_OBRAC expr SYM_CBRAC
 
    76 arrdec: V_ARR V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC
 
    77 arr: SYM_OBRAC arrHelper SYM_CBRAC
 
-   78 $@14: %empty
+   78 $@14: /* empty */
 
    79 arrHelper: expr SYM_COMMA $@14 arrHelper
    80          | expr
 
-   81 $@15: %empty
+   81 $@15: /* empty */
 
    82 matdec: V_MAT V_ID $@15 SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
 
@@ -152,65 +152,65 @@ Grammar
 
    89 property: V_ID SYM_DOT V_ID
 
-   90 $@16: %empty
+   90 $@16: /* empty */
 
-   91 $@17: %empty
+   91 $@17: /* empty */
 
    92 expr: logicoperation $@16 MTH_OR $@17 expr
    93     | logicoperation
 
-   94 $@18: %empty
+   94 $@18: /* empty */
 
-   95 $@19: %empty
+   95 $@19: /* empty */
 
    96 logicoperation: logicfactor $@18 MTH_AND $@19 logicoperation
    97               | logicfactor
 
-   98 $@20: %empty
+   98 $@20: /* empty */
 
    99 logicfactor: MTH_NOT $@20 comparison
   100            | comparison
 
-  101 $@21: %empty
+  101 $@21: /* empty */
 
   102 comparison: operation comp_operator $@21 operation
   103           | operation
 
-  104 $@22: %empty
+  104 $@22: /* empty */
 
-  105 $@23: %empty
+  105 $@23: /* empty */
 
   106 operation: factor $@22 MTH_PLUS $@23 operation
 
-  107 $@24: %empty
+  107 $@24: /* empty */
 
-  108 $@25: %empty
+  108 $@25: /* empty */
 
   109 operation: factor $@24 MTH_MINUS $@25 operation
   110          | factor
 
-  111 $@26: %empty
+  111 $@26: /* empty */
 
-  112 $@27: %empty
+  112 $@27: /* empty */
 
   113 factor: hvalue $@26 MTH_ASTRK $@27 factor
 
-  114 $@28: %empty
+  114 $@28: /* empty */
 
-  115 $@29: %empty
+  115 $@29: /* empty */
 
   116 factor: hvalue $@28 MTH_DIVIS $@29 factor
   117       | hvalue
 
-  118 $@30: %empty
+  118 $@30: /* empty */
 
-  119 $@31: %empty
+  119 $@31: /* empty */
 
   120 hvalue: value $@30 MTH_POWER $@31 hvalue
 
-  121 $@32: %empty
+  121 $@32: /* empty */
 
-  122 $@33: %empty
+  122 $@33: /* empty */
 
   123 hvalue: value $@32 MTH_ROOT $@33 hvalue
   124       | value
@@ -220,7 +220,7 @@ Grammar
   127      | structaccess
   128      | property
 
-  129 $@34: %empty
+  129 $@34: /* empty */
 
   130 value: SYM_OPARE $@34 expr SYM_CPARE
 
@@ -235,27 +235,27 @@ Grammar
   138            | for
   139            | while
 
-  140 $@35: %empty
+  140 $@35: /* empty */
 
   141 if: LOG_IF $@35 ifHelper ifHelper3
 
-  142 $@36: %empty
+  142 $@36: /* empty */
 
   143 ifHelper: SYM_OPARE expr SYM_CPARE $@36 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
 
-  144 ifHelper2: %empty
+  144 ifHelper2: /* empty */
 
-  145 $@37: %empty
+  145 $@37: /* empty */
 
   146 ifHelper2: LOG_ELIF $@37 ifHelper
 
-  147 ifHelper3: %empty
+  147 ifHelper3: /* empty */
 
-  148 $@38: %empty
+  148 $@38: /* empty */
 
   149 ifHelper3: LOG_ELSE $@38 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
-  150 $@39: %empty
+  150 $@39: /* empty */
 
   151 for: LOG_FOR forHelper SYM_ARROW V_ID $@39 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
@@ -264,9 +264,9 @@ Grammar
 
   154 stepfor: SYM_OBRAC expr SYM_COMMA expr SYM_COMMA expr SYM_CBRAC
 
-  155 $@40: %empty
+  155 $@40: /* empty */
 
-  156 $@41: %empty
+  156 $@41: /* empty */
 
   157 while: LOG_WHILE $@40 SYM_OPARE expr SYM_CPARE $@41 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
@@ -529,7 +529,7 @@ newline (150)
     on left: 160, on right: 158 159
 
 
-State 0
+state 0
 
     0 $accept: . prog $end
 
@@ -579,14 +579,14 @@ State 0
     value           go to state 41
 
 
-State 1
+state 1
 
     2 prog: error .
 
     $default  reduce using rule 2 (prog)
 
 
-State 2
+state 2
 
   130 value: SYM_OPARE . $@34 expr SYM_CPARE
 
@@ -595,7 +595,7 @@ State 2
     $@34  go to state 42
 
 
-State 3
+state 3
 
    99 logicfactor: MTH_NOT . $@20 comparison
 
@@ -604,21 +604,21 @@ State 3
     $@20  go to state 43
 
 
-State 4
+state 4
 
    14 crlf: LF .
 
     $default  reduce using rule 14 (crlf)
 
 
-State 5
+state 5
 
    13 crlf: CR . LF
 
     LF  shift, and go to state 44
 
 
-State 6
+state 6
 
    47 funcall: V_ID . $@10 SYM_OPARE funcallHelper SYM_CPARE
    66 var_or_cte: V_ID .
@@ -637,98 +637,98 @@ State 6
     $@12  go to state 48
 
 
-State 7
+state 7
 
    55 vardec: V_VAR . V_ID SYM_COLON vartypes
 
     V_ID  shift, and go to state 49
 
 
-State 8
+state 8
 
    56 basictypes: V_CHAR .
 
     $default  reduce using rule 56 (basictypes)
 
 
-State 9
+state 9
 
    57 basictypes: V_STRING .
 
     $default  reduce using rule 57 (basictypes)
 
 
-State 10
+state 10
 
    59 basictypes: V_INT .
 
     $default  reduce using rule 59 (basictypes)
 
 
-State 11
+state 11
 
    58 basictypes: V_DOUBLE .
 
     $default  reduce using rule 58 (basictypes)
 
 
-State 12
+state 12
 
    60 basictypes: V_BOOL .
 
     $default  reduce using rule 60 (basictypes)
 
 
-State 13
+state 13
 
    76 arrdec: V_ARR . V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC
 
     V_ID  shift, and go to state 50
 
 
-State 14
+state 14
 
    82 matdec: V_MAT . V_ID $@15 SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
 
     V_ID  shift, and go to state 51
 
 
-State 15
+state 15
 
    87 vectordec: V_VECTOR . V_ID
 
     V_ID  shift, and go to state 52
 
 
-State 16
+state 16
 
    86 elementdec: V_ELEM . V_ID
 
     V_ID  shift, and go to state 53
 
 
-State 17
+state 17
 
    19 function: RES_ORDER . V_ID SYM_COLON vartypes SYM_OPARE $@5 funparams SYM_CPARE $@6 optlf SYM_OCURL crlf funbody SYM_CCURL
 
     V_ID  shift, and go to state 54
 
 
-State 18
+state 18
 
     0 $accept: prog . $end
 
     $end  shift, and go to state 55
 
 
-State 19
+state 19
 
     1 prog: script .
 
     $default  reduce using rule 1 (prog)
 
 
-State 20
+state 20
 
    12 script: crlf . script
 
@@ -776,7 +776,7 @@ State 20
     value           go to state 41
 
 
-State 21
+state 21
 
     9 script: function . crlf $@3 script
 
@@ -786,7 +786,7 @@ State 21
     crlf  go to state 57
 
 
-State 22
+state 22
 
    11 script: generaldec . crlf $@4 script
 
@@ -796,14 +796,14 @@ State 22
     crlf  go to state 58
 
 
-State 23
+state 23
 
   126 value: funcall .
 
     $default  reduce using rule 126 (value)
 
 
-State 24
+state 24
 
    30 generaldec: vardec .
    36           | vardec . $@9 MTH_SEQUA expr
@@ -814,21 +814,21 @@ State 24
     $@9  go to state 59
 
 
-State 25
+state 25
 
    67 var_or_cte: basictypes .
 
     $default  reduce using rule 67 (var_or_cte)
 
 
-State 26
+state 26
 
   125 value: var_or_cte .
 
     $default  reduce using rule 125 (value)
 
 
-State 27
+state 27
 
     5 script: assign . crlf $@1 script
 
@@ -838,7 +838,7 @@ State 27
     crlf  go to state 60
 
 
-State 28
+state 28
 
    70 assign: structaccess . MTH_SEQUA expr
   127 value: structaccess .
@@ -848,7 +848,7 @@ State 28
     $default  reduce using rule 127 (value)
 
 
-State 29
+state 29
 
    31 generaldec: arrdec .
    37           | arrdec . MTH_SEQUA arr
@@ -858,7 +858,7 @@ State 29
     $default  reduce using rule 31 (generaldec)
 
 
-State 30
+state 30
 
    32 generaldec: matdec .
    38           | matdec . MTH_SEQUA mat
@@ -868,7 +868,7 @@ State 30
     $default  reduce using rule 32 (generaldec)
 
 
-State 31
+state 31
 
    34 generaldec: elementdec .
    40           | elementdec . MTH_SEQUA funcall
@@ -878,7 +878,7 @@ State 31
     $default  reduce using rule 34 (generaldec)
 
 
-State 32
+state 32
 
    33 generaldec: vectordec .
    39           | vectordec . MTH_SEQUA vector
@@ -888,7 +888,7 @@ State 32
     $default  reduce using rule 33 (generaldec)
 
 
-State 33
+state 33
 
    71 assign: property . MTH_SEQUA expr
   128 value: property .
@@ -898,7 +898,7 @@ State 33
     $default  reduce using rule 128 (value)
 
 
-State 34
+state 34
 
     7 script: expr . crlf $@2 script
 
@@ -908,7 +908,7 @@ State 34
     crlf  go to state 67
 
 
-State 35
+state 35
 
    92 expr: logicoperation . $@16 MTH_OR $@17 expr
    93     | logicoperation .
@@ -919,7 +919,7 @@ State 35
     $@16  go to state 68
 
 
-State 36
+state 36
 
    96 logicoperation: logicfactor . $@18 MTH_AND $@19 logicoperation
    97               | logicfactor .
@@ -930,14 +930,14 @@ State 36
     $@18  go to state 69
 
 
-State 37
+state 37
 
   100 logicfactor: comparison .
 
     $default  reduce using rule 100 (logicfactor)
 
 
-State 38
+state 38
 
   102 comparison: operation . comp_operator $@21 operation
   103           | operation .
@@ -954,7 +954,7 @@ State 38
     comp_operator  go to state 76
 
 
-State 39
+state 39
 
   106 operation: factor . $@22 MTH_PLUS $@23 operation
   109          | factor . $@24 MTH_MINUS $@25 operation
@@ -968,7 +968,7 @@ State 39
     $@24  go to state 78
 
 
-State 40
+state 40
 
   113 factor: hvalue . $@26 MTH_ASTRK $@27 factor
   116       | hvalue . $@28 MTH_DIVIS $@29 factor
@@ -982,7 +982,7 @@ State 40
     $@28  go to state 80
 
 
-State 41
+state 41
 
   120 hvalue: value . $@30 MTH_POWER $@31 hvalue
   123       | value . $@32 MTH_ROOT $@33 hvalue
@@ -996,7 +996,7 @@ State 41
     $@32  go to state 82
 
 
-State 42
+state 42
 
   130 value: SYM_OPARE $@34 . expr SYM_CPARE
 
@@ -1024,7 +1024,7 @@ State 42
     value           go to state 41
 
 
-State 43
+state 43
 
    99 logicfactor: MTH_NOT $@20 . comparison
 
@@ -1048,14 +1048,14 @@ State 43
     value         go to state 41
 
 
-State 44
+state 44
 
    13 crlf: CR LF .
 
     $default  reduce using rule 13 (crlf)
 
 
-State 45
+state 45
 
    73 structaccess: V_ID SYM_OBRAC . expr SYM_CBRAC $@13 structIndex
 
@@ -1083,42 +1083,42 @@ State 45
     value           go to state 41
 
 
-State 46
+state 46
 
    89 property: V_ID SYM_DOT . V_ID
 
     V_ID  shift, and go to state 89
 
 
-State 47
+state 47
 
    47 funcall: V_ID $@10 . SYM_OPARE funcallHelper SYM_CPARE
 
     SYM_OPARE  shift, and go to state 90
 
 
-State 48
+state 48
 
    69 assign: V_ID $@12 . MTH_SEQUA expr
 
     MTH_SEQUA  shift, and go to state 91
 
 
-State 49
+state 49
 
    55 vardec: V_VAR V_ID . SYM_COLON vartypes
 
     SYM_COLON  shift, and go to state 92
 
 
-State 50
+state 50
 
    76 arrdec: V_ARR V_ID . SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC
 
     SYM_COLON  shift, and go to state 93
 
 
-State 51
+state 51
 
    82 matdec: V_MAT V_ID . $@15 SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
 
@@ -1127,42 +1127,42 @@ State 51
     $@15  go to state 94
 
 
-State 52
+state 52
 
    87 vectordec: V_VECTOR V_ID .
 
     $default  reduce using rule 87 (vectordec)
 
 
-State 53
+state 53
 
    86 elementdec: V_ELEM V_ID .
 
     $default  reduce using rule 86 (elementdec)
 
 
-State 54
+state 54
 
    19 function: RES_ORDER V_ID . SYM_COLON vartypes SYM_OPARE $@5 funparams SYM_CPARE $@6 optlf SYM_OCURL crlf funbody SYM_CCURL
 
     SYM_COLON  shift, and go to state 95
 
 
-State 55
+state 55
 
     0 $accept: prog $end .
 
     $default  accept
 
 
-State 56
+state 56
 
    12 script: crlf script .
 
     $default  reduce using rule 12 (script)
 
 
-State 57
+state 57
 
     9 script: function crlf . $@3 script
 
@@ -1171,7 +1171,7 @@ State 57
     $@3  go to state 96
 
 
-State 58
+state 58
 
    11 script: generaldec crlf . $@4 script
 
@@ -1180,14 +1180,14 @@ State 58
     $@4  go to state 97
 
 
-State 59
+state 59
 
    36 generaldec: vardec $@9 . MTH_SEQUA expr
 
     MTH_SEQUA  shift, and go to state 98
 
 
-State 60
+state 60
 
     5 script: assign crlf . $@1 script
 
@@ -1196,7 +1196,7 @@ State 60
     $@1  go to state 99
 
 
-State 61
+state 61
 
    70 assign: structaccess MTH_SEQUA . expr
 
@@ -1224,7 +1224,7 @@ State 61
     value           go to state 41
 
 
-State 62
+state 62
 
    37 generaldec: arrdec MTH_SEQUA . arr
 
@@ -1233,7 +1233,7 @@ State 62
     arr  go to state 102
 
 
-State 63
+state 63
 
    38 generaldec: matdec MTH_SEQUA . mat
 
@@ -1242,7 +1242,7 @@ State 63
     mat  go to state 104
 
 
-State 64
+state 64
 
    40 generaldec: elementdec MTH_SEQUA . funcall
 
@@ -1251,7 +1251,7 @@ State 64
     funcall  go to state 106
 
 
-State 65
+state 65
 
    39 generaldec: vectordec MTH_SEQUA . vector
 
@@ -1260,7 +1260,7 @@ State 65
     vector  go to state 108
 
 
-State 66
+state 66
 
    71 assign: property MTH_SEQUA . expr
 
@@ -1288,7 +1288,7 @@ State 66
     value           go to state 41
 
 
-State 67
+state 67
 
     7 script: expr crlf . $@2 script
 
@@ -1297,63 +1297,63 @@ State 67
     $@2  go to state 110
 
 
-State 68
+state 68
 
    92 expr: logicoperation $@16 . MTH_OR $@17 expr
 
     MTH_OR  shift, and go to state 111
 
 
-State 69
+state 69
 
    96 logicoperation: logicfactor $@18 . MTH_AND $@19 logicoperation
 
     MTH_AND  shift, and go to state 112
 
 
-State 70
+state 70
 
   135 comp_operator: MTH_DEQUA .
 
     $default  reduce using rule 135 (comp_operator)
 
 
-State 71
+state 71
 
   131 comp_operator: MTH_GT .
 
     $default  reduce using rule 131 (comp_operator)
 
 
-State 72
+state 72
 
   133 comp_operator: MTH_LT .
 
     $default  reduce using rule 133 (comp_operator)
 
 
-State 73
+state 73
 
   132 comp_operator: MTH_GTEQ .
 
     $default  reduce using rule 132 (comp_operator)
 
 
-State 74
+state 74
 
   134 comp_operator: MTH_LTEQ .
 
     $default  reduce using rule 134 (comp_operator)
 
 
-State 75
+state 75
 
   136 comp_operator: MTH_NOTEQ .
 
     $default  reduce using rule 136 (comp_operator)
 
 
-State 76
+state 76
 
   102 comparison: operation comp_operator . $@21 operation
 
@@ -1362,49 +1362,49 @@ State 76
     $@21  go to state 113
 
 
-State 77
+state 77
 
   106 operation: factor $@22 . MTH_PLUS $@23 operation
 
     MTH_PLUS  shift, and go to state 114
 
 
-State 78
+state 78
 
   109 operation: factor $@24 . MTH_MINUS $@25 operation
 
     MTH_MINUS  shift, and go to state 115
 
 
-State 79
+state 79
 
   113 factor: hvalue $@26 . MTH_ASTRK $@27 factor
 
     MTH_ASTRK  shift, and go to state 116
 
 
-State 80
+state 80
 
   116 factor: hvalue $@28 . MTH_DIVIS $@29 factor
 
     MTH_DIVIS  shift, and go to state 117
 
 
-State 81
+state 81
 
   120 hvalue: value $@30 . MTH_POWER $@31 hvalue
 
     MTH_POWER  shift, and go to state 118
 
 
-State 82
+state 82
 
   123 hvalue: value $@32 . MTH_ROOT $@33 hvalue
 
     MTH_ROOT  shift, and go to state 119
 
 
-State 83
+state 83
 
    47 funcall: V_ID . $@10 SYM_OPARE funcallHelper SYM_CPARE
    66 var_or_cte: V_ID .
@@ -1420,49 +1420,49 @@ State 83
     $@10  go to state 47
 
 
-State 84
+state 84
 
   127 value: structaccess .
 
     $default  reduce using rule 127 (value)
 
 
-State 85
+state 85
 
   128 value: property .
 
     $default  reduce using rule 128 (value)
 
 
-State 86
+state 86
 
   130 value: SYM_OPARE $@34 expr . SYM_CPARE
 
     SYM_CPARE  shift, and go to state 120
 
 
-State 87
+state 87
 
    99 logicfactor: MTH_NOT $@20 comparison .
 
     $default  reduce using rule 99 (logicfactor)
 
 
-State 88
+state 88
 
    73 structaccess: V_ID SYM_OBRAC expr . SYM_CBRAC $@13 structIndex
 
     SYM_CBRAC  shift, and go to state 121
 
 
-State 89
+state 89
 
    89 property: V_ID SYM_DOT V_ID .
 
     $default  reduce using rule 89 (property)
 
 
-State 90
+state 90
 
    47 funcall: V_ID $@10 SYM_OPARE . funcallHelper SYM_CPARE
 
@@ -1495,7 +1495,7 @@ State 90
     value           go to state 41
 
 
-State 91
+state 91
 
    69 assign: V_ID $@12 MTH_SEQUA . expr
 
@@ -1523,7 +1523,7 @@ State 91
     value           go to state 41
 
 
-State 92
+state 92
 
    55 vardec: V_VAR V_ID SYM_COLON . vartypes
 
@@ -1536,7 +1536,7 @@ State 92
     vartypes  go to state 131
 
 
-State 93
+state 93
 
    76 arrdec: V_ARR V_ID SYM_COLON . vartypes SYM_OBRAC V_INT SYM_CBRAC
 
@@ -1549,14 +1549,14 @@ State 93
     vartypes  go to state 132
 
 
-State 94
+state 94
 
    82 matdec: V_MAT V_ID $@15 . SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
 
     SYM_COLON  shift, and go to state 133
 
 
-State 95
+state 95
 
    19 function: RES_ORDER V_ID SYM_COLON . vartypes SYM_OPARE $@5 funparams SYM_CPARE $@6 optlf SYM_OCURL crlf funbody SYM_CCURL
 
@@ -1569,7 +1569,7 @@ State 95
     vartypes  go to state 134
 
 
-State 96
+state 96
 
     9 script: function crlf $@3 . script
 
@@ -1617,7 +1617,7 @@ State 96
     value           go to state 41
 
 
-State 97
+state 97
 
    11 script: generaldec crlf $@4 . script
 
@@ -1665,7 +1665,7 @@ State 97
     value           go to state 41
 
 
-State 98
+state 98
 
    36 generaldec: vardec $@9 MTH_SEQUA . expr
 
@@ -1693,7 +1693,7 @@ State 98
     value           go to state 41
 
 
-State 99
+state 99
 
     5 script: assign crlf $@1 . script
 
@@ -1741,14 +1741,14 @@ State 99
     value           go to state 41
 
 
-State 100
+state 100
 
    70 assign: structaccess MTH_SEQUA expr .
 
     $default  reduce using rule 70 (assign)
 
 
-State 101
+state 101
 
    77 arr: SYM_OBRAC . arrHelper SYM_CBRAC
 
@@ -1777,14 +1777,14 @@ State 101
     value           go to state 41
 
 
-State 102
+state 102
 
    37 generaldec: arrdec MTH_SEQUA arr .
 
     $default  reduce using rule 37 (generaldec)
 
 
-State 103
+state 103
 
    83 mat: SYM_OBRAC . optlf matHelper SYM_CBRAC
 
@@ -1797,14 +1797,14 @@ State 103
     optlf  go to state 142
 
 
-State 104
+state 104
 
    38 generaldec: matdec MTH_SEQUA mat .
 
     $default  reduce using rule 38 (generaldec)
 
 
-State 105
+state 105
 
    47 funcall: V_ID . $@10 SYM_OPARE funcallHelper SYM_CPARE
 
@@ -1813,14 +1813,14 @@ State 105
     $@10  go to state 47
 
 
-State 106
+state 106
 
    40 generaldec: elementdec MTH_SEQUA funcall .
 
     $default  reduce using rule 40 (generaldec)
 
 
-State 107
+state 107
 
    88 vector: SYM_OCURL . expr SYM_COMMA expr SYM_CCURL
 
@@ -1848,21 +1848,21 @@ State 107
     value           go to state 41
 
 
-State 108
+state 108
 
    39 generaldec: vectordec MTH_SEQUA vector .
 
     $default  reduce using rule 39 (generaldec)
 
 
-State 109
+state 109
 
    71 assign: property MTH_SEQUA expr .
 
     $default  reduce using rule 71 (assign)
 
 
-State 110
+state 110
 
     7 script: expr crlf $@2 . script
 
@@ -1910,7 +1910,7 @@ State 110
     value           go to state 41
 
 
-State 111
+state 111
 
    92 expr: logicoperation $@16 MTH_OR . $@17 expr
 
@@ -1919,7 +1919,7 @@ State 111
     $@17  go to state 145
 
 
-State 112
+state 112
 
    96 logicoperation: logicfactor $@18 MTH_AND . $@19 logicoperation
 
@@ -1928,7 +1928,7 @@ State 112
     $@19  go to state 146
 
 
-State 113
+state 113
 
   102 comparison: operation comp_operator $@21 . operation
 
@@ -1951,7 +1951,7 @@ State 113
     value         go to state 41
 
 
-State 114
+state 114
 
   106 operation: factor $@22 MTH_PLUS . $@23 operation
 
@@ -1960,7 +1960,7 @@ State 114
     $@23  go to state 148
 
 
-State 115
+state 115
 
   109 operation: factor $@24 MTH_MINUS . $@25 operation
 
@@ -1969,7 +1969,7 @@ State 115
     $@25  go to state 149
 
 
-State 116
+state 116
 
   113 factor: hvalue $@26 MTH_ASTRK . $@27 factor
 
@@ -1978,7 +1978,7 @@ State 116
     $@27  go to state 150
 
 
-State 117
+state 117
 
   116 factor: hvalue $@28 MTH_DIVIS . $@29 factor
 
@@ -1987,7 +1987,7 @@ State 117
     $@29  go to state 151
 
 
-State 118
+state 118
 
   120 hvalue: value $@30 MTH_POWER . $@31 hvalue
 
@@ -1996,7 +1996,7 @@ State 118
     $@31  go to state 152
 
 
-State 119
+state 119
 
   123 hvalue: value $@32 MTH_ROOT . $@33 hvalue
 
@@ -2005,14 +2005,14 @@ State 119
     $@33  go to state 153
 
 
-State 120
+state 120
 
   130 value: SYM_OPARE $@34 expr SYM_CPARE .
 
     $default  reduce using rule 130 (value)
 
 
-State 121
+state 121
 
    73 structaccess: V_ID SYM_OBRAC expr SYM_CBRAC . $@13 structIndex
 
@@ -2021,14 +2021,14 @@ State 121
     $@13  go to state 154
 
 
-State 122
+state 122
 
    47 funcall: V_ID $@10 SYM_OPARE funcallHelper . SYM_CPARE
 
     SYM_CPARE  shift, and go to state 155
 
 
-State 123
+state 123
 
    51 funcallHelper: vector . funcallHelper2
 
@@ -2039,7 +2039,7 @@ State 123
     funcallHelper2  go to state 157
 
 
-State 124
+state 124
 
    50 funcallHelper: expr . $@11 funcallHelper2
 
@@ -2048,63 +2048,63 @@ State 124
     $@11  go to state 158
 
 
-State 125
+state 125
 
    69 assign: V_ID $@12 MTH_SEQUA expr .
 
     $default  reduce using rule 69 (assign)
 
 
-State 126
+state 126
 
    65 vartypes: T_BOOL .
 
     $default  reduce using rule 65 (vartypes)
 
 
-State 127
+state 127
 
    61 vartypes: T_INT .
 
     $default  reduce using rule 61 (vartypes)
 
 
-State 128
+state 128
 
    62 vartypes: T_DOUBLE .
 
     $default  reduce using rule 62 (vartypes)
 
 
-State 129
+state 129
 
    63 vartypes: T_CHAR .
 
     $default  reduce using rule 63 (vartypes)
 
 
-State 130
+state 130
 
    64 vartypes: T_STRING .
 
     $default  reduce using rule 64 (vartypes)
 
 
-State 131
+state 131
 
    55 vardec: V_VAR V_ID SYM_COLON vartypes .
 
     $default  reduce using rule 55 (vardec)
 
 
-State 132
+state 132
 
    76 arrdec: V_ARR V_ID SYM_COLON vartypes . SYM_OBRAC V_INT SYM_CBRAC
 
     SYM_OBRAC  shift, and go to state 159
 
 
-State 133
+state 133
 
    82 matdec: V_MAT V_ID $@15 SYM_COLON . vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
 
@@ -2117,49 +2117,49 @@ State 133
     vartypes  go to state 160
 
 
-State 134
+state 134
 
    19 function: RES_ORDER V_ID SYM_COLON vartypes . SYM_OPARE $@5 funparams SYM_CPARE $@6 optlf SYM_OCURL crlf funbody SYM_CCURL
 
     SYM_OPARE  shift, and go to state 161
 
 
-State 135
+state 135
 
     9 script: function crlf $@3 script .
 
     $default  reduce using rule 9 (script)
 
 
-State 136
+state 136
 
    11 script: generaldec crlf $@4 script .
 
     $default  reduce using rule 11 (script)
 
 
-State 137
+state 137
 
    36 generaldec: vardec $@9 MTH_SEQUA expr .
 
     $default  reduce using rule 36 (generaldec)
 
 
-State 138
+state 138
 
     5 script: assign crlf $@1 script .
 
     $default  reduce using rule 5 (script)
 
 
-State 139
+state 139
 
    77 arr: SYM_OBRAC arrHelper . SYM_CBRAC
 
     SYM_CBRAC  shift, and go to state 162
 
 
-State 140
+state 140
 
    79 arrHelper: expr . SYM_COMMA $@14 arrHelper
    80          | expr .
@@ -2169,14 +2169,14 @@ State 140
     $default  reduce using rule 80 (arrHelper)
 
 
-State 141
+state 141
 
    16 optlf: crlf .
 
     $default  reduce using rule 16 (optlf)
 
 
-State 142
+state 142
 
    83 mat: SYM_OBRAC optlf . matHelper SYM_CBRAC
 
@@ -2186,21 +2186,21 @@ State 142
     matHelper  go to state 165
 
 
-State 143
+state 143
 
    88 vector: SYM_OCURL expr . SYM_COMMA expr SYM_CCURL
 
     SYM_COMMA  shift, and go to state 166
 
 
-State 144
+state 144
 
     7 script: expr crlf $@2 script .
 
     $default  reduce using rule 7 (script)
 
 
-State 145
+state 145
 
    92 expr: logicoperation $@16 MTH_OR $@17 . expr
 
@@ -2228,7 +2228,7 @@ State 145
     value           go to state 41
 
 
-State 146
+state 146
 
    96 logicoperation: logicfactor $@18 MTH_AND $@19 . logicoperation
 
@@ -2255,14 +2255,14 @@ State 146
     value           go to state 41
 
 
-State 147
+state 147
 
   102 comparison: operation comp_operator $@21 operation .
 
     $default  reduce using rule 102 (comparison)
 
 
-State 148
+state 148
 
   106 operation: factor $@22 MTH_PLUS $@23 . operation
 
@@ -2285,7 +2285,7 @@ State 148
     value         go to state 41
 
 
-State 149
+state 149
 
   109 operation: factor $@24 MTH_MINUS $@25 . operation
 
@@ -2308,7 +2308,7 @@ State 149
     value         go to state 41
 
 
-State 150
+state 150
 
   113 factor: hvalue $@26 MTH_ASTRK $@27 . factor
 
@@ -2330,7 +2330,7 @@ State 150
     value         go to state 41
 
 
-State 151
+state 151
 
   116 factor: hvalue $@28 MTH_DIVIS $@29 . factor
 
@@ -2352,7 +2352,7 @@ State 151
     value         go to state 41
 
 
-State 152
+state 152
 
   120 hvalue: value $@30 MTH_POWER $@31 . hvalue
 
@@ -2373,7 +2373,7 @@ State 152
     value         go to state 41
 
 
-State 153
+state 153
 
   123 hvalue: value $@32 MTH_ROOT $@33 . hvalue
 
@@ -2394,7 +2394,7 @@ State 153
     value         go to state 41
 
 
-State 154
+state 154
 
    73 structaccess: V_ID SYM_OBRAC expr SYM_CBRAC $@13 . structIndex
 
@@ -2405,14 +2405,14 @@ State 154
     structIndex  go to state 176
 
 
-State 155
+state 155
 
    47 funcall: V_ID $@10 SYM_OPARE funcallHelper SYM_CPARE .
 
     $default  reduce using rule 47 (funcall)
 
 
-State 156
+state 156
 
    53 funcallHelper2: SYM_COMMA . funcallHelper
 
@@ -2445,14 +2445,14 @@ State 156
     value           go to state 41
 
 
-State 157
+state 157
 
    51 funcallHelper: vector funcallHelper2 .
 
     $default  reduce using rule 51 (funcallHelper)
 
 
-State 158
+state 158
 
    50 funcallHelper: expr $@11 . funcallHelper2
 
@@ -2463,21 +2463,21 @@ State 158
     funcallHelper2  go to state 178
 
 
-State 159
+state 159
 
    76 arrdec: V_ARR V_ID SYM_COLON vartypes SYM_OBRAC . V_INT SYM_CBRAC
 
     V_INT  shift, and go to state 179
 
 
-State 160
+state 160
 
    82 matdec: V_MAT V_ID $@15 SYM_COLON vartypes . SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
 
     SYM_OBRAC  shift, and go to state 180
 
 
-State 161
+state 161
 
    19 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE . $@5 funparams SYM_CPARE $@6 optlf SYM_OCURL crlf funbody SYM_CCURL
 
@@ -2486,14 +2486,14 @@ State 161
     $@5  go to state 181
 
 
-State 162
+state 162
 
    77 arr: SYM_OBRAC arrHelper SYM_CBRAC .
 
     $default  reduce using rule 77 (arr)
 
 
-State 163
+state 163
 
    79 arrHelper: expr SYM_COMMA . $@14 arrHelper
 
@@ -2502,7 +2502,7 @@ State 163
     $@14  go to state 182
 
 
-State 164
+state 164
 
    84 matHelper: arr . SYM_COMMA optlf matHelper
    85          | arr . optlf
@@ -2517,14 +2517,14 @@ State 164
     optlf  go to state 184
 
 
-State 165
+state 165
 
    83 mat: SYM_OBRAC optlf matHelper . SYM_CBRAC
 
     SYM_CBRAC  shift, and go to state 185
 
 
-State 166
+state 166
 
    88 vector: SYM_OCURL expr SYM_COMMA . expr SYM_CCURL
 
@@ -2552,63 +2552,63 @@ State 166
     value           go to state 41
 
 
-State 167
+state 167
 
    92 expr: logicoperation $@16 MTH_OR $@17 expr .
 
     $default  reduce using rule 92 (expr)
 
 
-State 168
+state 168
 
    96 logicoperation: logicfactor $@18 MTH_AND $@19 logicoperation .
 
     $default  reduce using rule 96 (logicoperation)
 
 
-State 169
+state 169
 
   106 operation: factor $@22 MTH_PLUS $@23 operation .
 
     $default  reduce using rule 106 (operation)
 
 
-State 170
+state 170
 
   109 operation: factor $@24 MTH_MINUS $@25 operation .
 
     $default  reduce using rule 109 (operation)
 
 
-State 171
+state 171
 
   113 factor: hvalue $@26 MTH_ASTRK $@27 factor .
 
     $default  reduce using rule 113 (factor)
 
 
-State 172
+state 172
 
   116 factor: hvalue $@28 MTH_DIVIS $@29 factor .
 
     $default  reduce using rule 116 (factor)
 
 
-State 173
+state 173
 
   120 hvalue: value $@30 MTH_POWER $@31 hvalue .
 
     $default  reduce using rule 120 (hvalue)
 
 
-State 174
+state 174
 
   123 hvalue: value $@32 MTH_ROOT $@33 hvalue .
 
     $default  reduce using rule 123 (hvalue)
 
 
-State 175
+state 175
 
    75 structIndex: SYM_OBRAC . expr SYM_CBRAC
 
@@ -2636,42 +2636,42 @@ State 175
     value           go to state 41
 
 
-State 176
+state 176
 
    73 structaccess: V_ID SYM_OBRAC expr SYM_CBRAC $@13 structIndex .
 
     $default  reduce using rule 73 (structaccess)
 
 
-State 177
+state 177
 
    53 funcallHelper2: SYM_COMMA funcallHelper .
 
     $default  reduce using rule 53 (funcallHelper2)
 
 
-State 178
+state 178
 
    50 funcallHelper: expr $@11 funcallHelper2 .
 
     $default  reduce using rule 50 (funcallHelper)
 
 
-State 179
+state 179
 
    76 arrdec: V_ARR V_ID SYM_COLON vartypes SYM_OBRAC V_INT . SYM_CBRAC
 
     SYM_CBRAC  shift, and go to state 188
 
 
-State 180
+state 180
 
    82 matdec: V_MAT V_ID $@15 SYM_COLON vartypes SYM_OBRAC . V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
 
     V_INT  shift, and go to state 189
 
 
-State 181
+state 181
 
    19 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@5 . funparams SYM_CPARE $@6 optlf SYM_OCURL crlf funbody SYM_CCURL
 
@@ -2692,7 +2692,7 @@ State 181
     vectordec   go to state 32
 
 
-State 182
+state 182
 
    79 arrHelper: expr SYM_COMMA $@14 . arrHelper
 
@@ -2721,7 +2721,7 @@ State 182
     value           go to state 41
 
 
-State 183
+state 183
 
    84 matHelper: arr SYM_COMMA . optlf matHelper
 
@@ -2734,56 +2734,56 @@ State 183
     optlf  go to state 193
 
 
-State 184
+state 184
 
    85 matHelper: arr optlf .
 
     $default  reduce using rule 85 (matHelper)
 
 
-State 185
+state 185
 
    83 mat: SYM_OBRAC optlf matHelper SYM_CBRAC .
 
     $default  reduce using rule 83 (mat)
 
 
-State 186
+state 186
 
    88 vector: SYM_OCURL expr SYM_COMMA expr . SYM_CCURL
 
     SYM_CCURL  shift, and go to state 194
 
 
-State 187
+state 187
 
    75 structIndex: SYM_OBRAC expr . SYM_CBRAC
 
     SYM_CBRAC  shift, and go to state 195
 
 
-State 188
+state 188
 
    76 arrdec: V_ARR V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC .
 
     $default  reduce using rule 76 (arrdec)
 
 
-State 189
+state 189
 
    82 matdec: V_MAT V_ID $@15 SYM_COLON vartypes SYM_OBRAC V_INT . SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
 
     SYM_CBRAC  shift, and go to state 196
 
 
-State 190
+state 190
 
    19 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@5 funparams . SYM_CPARE $@6 optlf SYM_OCURL crlf funbody SYM_CCURL
 
     SYM_CPARE  shift, and go to state 197
 
 
-State 191
+state 191
 
    21 funparams: generaldec . morefunparams
 
@@ -2794,14 +2794,14 @@ State 191
     morefunparams  go to state 199
 
 
-State 192
+state 192
 
    79 arrHelper: expr SYM_COMMA $@14 arrHelper .
 
     $default  reduce using rule 79 (arrHelper)
 
 
-State 193
+state 193
 
    84 matHelper: arr SYM_COMMA optlf . matHelper
 
@@ -2811,28 +2811,28 @@ State 193
     matHelper  go to state 200
 
 
-State 194
+state 194
 
    88 vector: SYM_OCURL expr SYM_COMMA expr SYM_CCURL .
 
     $default  reduce using rule 88 (vector)
 
 
-State 195
+state 195
 
    75 structIndex: SYM_OBRAC expr SYM_CBRAC .
 
     $default  reduce using rule 75 (structIndex)
 
 
-State 196
+state 196
 
    82 matdec: V_MAT V_ID $@15 SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC . SYM_OBRAC V_INT SYM_CBRAC
 
     SYM_OBRAC  shift, and go to state 201
 
 
-State 197
+state 197
 
    19 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@5 funparams SYM_CPARE . $@6 optlf SYM_OCURL crlf funbody SYM_CCURL
 
@@ -2841,7 +2841,7 @@ State 197
     $@6  go to state 202
 
 
-State 198
+state 198
 
    23 morefunparams: SYM_COMMA . generaldec morefunparams
 
@@ -2859,28 +2859,28 @@ State 198
     vectordec   go to state 32
 
 
-State 199
+state 199
 
    21 funparams: generaldec morefunparams .
 
     $default  reduce using rule 21 (funparams)
 
 
-State 200
+state 200
 
    84 matHelper: arr SYM_COMMA optlf matHelper .
 
     $default  reduce using rule 84 (matHelper)
 
 
-State 201
+state 201
 
    82 matdec: V_MAT V_ID $@15 SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC . V_INT SYM_CBRAC
 
     V_INT  shift, and go to state 204
 
 
-State 202
+state 202
 
    19 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@5 funparams SYM_CPARE $@6 . optlf SYM_OCURL crlf funbody SYM_CCURL
 
@@ -2893,7 +2893,7 @@ State 202
     optlf  go to state 205
 
 
-State 203
+state 203
 
    23 morefunparams: SYM_COMMA generaldec . morefunparams
 
@@ -2904,35 +2904,35 @@ State 203
     morefunparams  go to state 206
 
 
-State 204
+state 204
 
    82 matdec: V_MAT V_ID $@15 SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT . SYM_CBRAC
 
     SYM_CBRAC  shift, and go to state 207
 
 
-State 205
+state 205
 
    19 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@5 funparams SYM_CPARE $@6 optlf . SYM_OCURL crlf funbody SYM_CCURL
 
     SYM_OCURL  shift, and go to state 208
 
 
-State 206
+state 206
 
    23 morefunparams: SYM_COMMA generaldec morefunparams .
 
     $default  reduce using rule 23 (morefunparams)
 
 
-State 207
+state 207
 
    82 matdec: V_MAT V_ID $@15 SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC .
 
     $default  reduce using rule 82 (matdec)
 
 
-State 208
+state 208
 
    19 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@5 funparams SYM_CPARE $@6 optlf SYM_OCURL . crlf funbody SYM_CCURL
 
@@ -2942,7 +2942,7 @@ State 208
     crlf  go to state 209
 
 
-State 209
+state 209
 
    19 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@5 funparams SYM_CPARE $@6 optlf SYM_OCURL crlf . funbody SYM_CCURL
 
@@ -2999,7 +2999,7 @@ State 209
     while           go to state 225
 
 
-State 210
+state 210
 
   141 if: LOG_IF . $@35 ifHelper ifHelper3
 
@@ -3008,7 +3008,7 @@ State 210
     $@35  go to state 226
 
 
-State 211
+state 211
 
   151 for: LOG_FOR . forHelper SYM_ARROW V_ID $@39 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
@@ -3019,7 +3019,7 @@ State 211
     stepfor    go to state 230
 
 
-State 212
+state 212
 
   157 while: LOG_WHILE . $@40 SYM_OPARE expr SYM_CPARE $@41 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
@@ -3028,14 +3028,14 @@ State 212
     $@40  go to state 231
 
 
-State 213
+state 213
 
    44 stmt: RES_MEDIT .
 
     $default  reduce using rule 44 (stmt)
 
 
-State 214
+state 214
 
    54 ret: RES_RETRN . expr
 
@@ -3063,7 +3063,7 @@ State 214
     value           go to state 41
 
 
-State 215
+state 215
 
    29 funbody: crlf . funbody
 
@@ -3120,14 +3120,14 @@ State 215
     while           go to state 225
 
 
-State 216
+state 216
 
    19 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@5 funparams SYM_CPARE $@6 optlf SYM_OCURL crlf funbody . SYM_CCURL
 
     SYM_CCURL  shift, and go to state 234
 
 
-State 217
+state 217
 
    28 funbody: generaldec . crlf $@8 funbody
 
@@ -3137,7 +3137,7 @@ State 217
     crlf  go to state 235
 
 
-State 218
+state 218
 
    26 funbody: stmt . crlf $@7 funbody
 
@@ -3147,56 +3147,56 @@ State 218
     crlf  go to state 236
 
 
-State 219
+state 219
 
    45 stmt: ret .
 
     $default  reduce using rule 45 (stmt)
 
 
-State 220
+state 220
 
    41 stmt: assign .
 
     $default  reduce using rule 41 (stmt)
 
 
-State 221
+state 221
 
    42 stmt: expr .
 
     $default  reduce using rule 42 (stmt)
 
 
-State 222
+state 222
 
    43 stmt: logicstruct .
 
     $default  reduce using rule 43 (stmt)
 
 
-State 223
+state 223
 
   137 logicstruct: if .
 
     $default  reduce using rule 137 (logicstruct)
 
 
-State 224
+state 224
 
   138 logicstruct: for .
 
     $default  reduce using rule 138 (logicstruct)
 
 
-State 225
+state 225
 
   139 logicstruct: while .
 
     $default  reduce using rule 139 (logicstruct)
 
 
-State 226
+state 226
 
   141 if: LOG_IF $@35 . ifHelper ifHelper3
 
@@ -3205,7 +3205,7 @@ State 226
     ifHelper  go to state 238
 
 
-State 227
+state 227
 
   154 stepfor: SYM_OBRAC . expr SYM_COMMA expr SYM_COMMA expr SYM_CBRAC
 
@@ -3233,56 +3233,56 @@ State 227
     value           go to state 41
 
 
-State 228
+state 228
 
   152 forHelper: V_ID .
 
     $default  reduce using rule 152 (forHelper)
 
 
-State 229
+state 229
 
   151 for: LOG_FOR forHelper . SYM_ARROW V_ID $@39 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
     SYM_ARROW  shift, and go to state 240
 
 
-State 230
+state 230
 
   153 forHelper: stepfor .
 
     $default  reduce using rule 153 (forHelper)
 
 
-State 231
+state 231
 
   157 while: LOG_WHILE $@40 . SYM_OPARE expr SYM_CPARE $@41 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
     SYM_OPARE  shift, and go to state 241
 
 
-State 232
+state 232
 
    54 ret: RES_RETRN expr .
 
     $default  reduce using rule 54 (ret)
 
 
-State 233
+state 233
 
    29 funbody: crlf funbody .
 
     $default  reduce using rule 29 (funbody)
 
 
-State 234
+state 234
 
    19 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@5 funparams SYM_CPARE $@6 optlf SYM_OCURL crlf funbody SYM_CCURL .
 
     $default  reduce using rule 19 (function)
 
 
-State 235
+state 235
 
    28 funbody: generaldec crlf . $@8 funbody
 
@@ -3291,7 +3291,7 @@ State 235
     $@8  go to state 242
 
 
-State 236
+state 236
 
    26 funbody: stmt crlf . $@7 funbody
 
@@ -3300,7 +3300,7 @@ State 236
     $@7  go to state 243
 
 
-State 237
+state 237
 
   143 ifHelper: SYM_OPARE . expr SYM_CPARE $@36 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
 
@@ -3328,7 +3328,7 @@ State 237
     value           go to state 41
 
 
-State 238
+state 238
 
   141 if: LOG_IF $@35 ifHelper . ifHelper3
 
@@ -3339,21 +3339,21 @@ State 238
     ifHelper3  go to state 246
 
 
-State 239
+state 239
 
   154 stepfor: SYM_OBRAC expr . SYM_COMMA expr SYM_COMMA expr SYM_CBRAC
 
     SYM_COMMA  shift, and go to state 247
 
 
-State 240
+state 240
 
   151 for: LOG_FOR forHelper SYM_ARROW . V_ID $@39 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
     V_ID  shift, and go to state 248
 
 
-State 241
+state 241
 
   157 while: LOG_WHILE $@40 SYM_OPARE . expr SYM_CPARE $@41 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
@@ -3381,7 +3381,7 @@ State 241
     value           go to state 41
 
 
-State 242
+state 242
 
    28 funbody: generaldec crlf $@8 . funbody
 
@@ -3438,7 +3438,7 @@ State 242
     while           go to state 225
 
 
-State 243
+state 243
 
    26 funbody: stmt crlf $@7 . funbody
 
@@ -3495,14 +3495,14 @@ State 243
     while           go to state 225
 
 
-State 244
+state 244
 
   143 ifHelper: SYM_OPARE expr . SYM_CPARE $@36 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
 
     SYM_CPARE  shift, and go to state 252
 
 
-State 245
+state 245
 
   149 ifHelper3: LOG_ELSE . $@38 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
@@ -3511,14 +3511,14 @@ State 245
     $@38  go to state 253
 
 
-State 246
+state 246
 
   141 if: LOG_IF $@35 ifHelper ifHelper3 .
 
     $default  reduce using rule 141 (if)
 
 
-State 247
+state 247
 
   154 stepfor: SYM_OBRAC expr SYM_COMMA . expr SYM_COMMA expr SYM_CBRAC
 
@@ -3546,7 +3546,7 @@ State 247
     value           go to state 41
 
 
-State 248
+state 248
 
   151 for: LOG_FOR forHelper SYM_ARROW V_ID . $@39 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
@@ -3555,28 +3555,28 @@ State 248
     $@39  go to state 255
 
 
-State 249
+state 249
 
   157 while: LOG_WHILE $@40 SYM_OPARE expr . SYM_CPARE $@41 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
     SYM_CPARE  shift, and go to state 256
 
 
-State 250
+state 250
 
    28 funbody: generaldec crlf $@8 funbody .
 
     $default  reduce using rule 28 (funbody)
 
 
-State 251
+state 251
 
    26 funbody: stmt crlf $@7 funbody .
 
     $default  reduce using rule 26 (funbody)
 
 
-State 252
+state 252
 
   143 ifHelper: SYM_OPARE expr SYM_CPARE . $@36 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
 
@@ -3585,7 +3585,7 @@ State 252
     $@36  go to state 257
 
 
-State 253
+state 253
 
   149 ifHelper3: LOG_ELSE $@38 . optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
@@ -3598,14 +3598,14 @@ State 253
     optlf  go to state 258
 
 
-State 254
+state 254
 
   154 stepfor: SYM_OBRAC expr SYM_COMMA expr . SYM_COMMA expr SYM_CBRAC
 
     SYM_COMMA  shift, and go to state 259
 
 
-State 255
+state 255
 
   151 for: LOG_FOR forHelper SYM_ARROW V_ID $@39 . optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
@@ -3618,7 +3618,7 @@ State 255
     optlf  go to state 260
 
 
-State 256
+state 256
 
   157 while: LOG_WHILE $@40 SYM_OPARE expr SYM_CPARE . $@41 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
@@ -3627,7 +3627,7 @@ State 256
     $@41  go to state 261
 
 
-State 257
+state 257
 
   143 ifHelper: SYM_OPARE expr SYM_CPARE $@36 . optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
 
@@ -3640,14 +3640,14 @@ State 257
     optlf  go to state 262
 
 
-State 258
+state 258
 
   149 ifHelper3: LOG_ELSE $@38 optlf . SYM_OCURL crlf newlineCicle SYM_CCURL
 
     SYM_OCURL  shift, and go to state 263
 
 
-State 259
+state 259
 
   154 stepfor: SYM_OBRAC expr SYM_COMMA expr SYM_COMMA . expr SYM_CBRAC
 
@@ -3675,14 +3675,14 @@ State 259
     value           go to state 41
 
 
-State 260
+state 260
 
   151 for: LOG_FOR forHelper SYM_ARROW V_ID $@39 optlf . SYM_OCURL crlf newlineCicle SYM_CCURL
 
     SYM_OCURL  shift, and go to state 265
 
 
-State 261
+state 261
 
   157 while: LOG_WHILE $@40 SYM_OPARE expr SYM_CPARE $@41 . optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
@@ -3695,14 +3695,14 @@ State 261
     optlf  go to state 266
 
 
-State 262
+state 262
 
   143 ifHelper: SYM_OPARE expr SYM_CPARE $@36 optlf . SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
 
     SYM_OCURL  shift, and go to state 267
 
 
-State 263
+state 263
 
   149 ifHelper3: LOG_ELSE $@38 optlf SYM_OCURL . crlf newlineCicle SYM_CCURL
 
@@ -3712,14 +3712,14 @@ State 263
     crlf  go to state 268
 
 
-State 264
+state 264
 
   154 stepfor: SYM_OBRAC expr SYM_COMMA expr SYM_COMMA expr . SYM_CBRAC
 
     SYM_CBRAC  shift, and go to state 269
 
 
-State 265
+state 265
 
   151 for: LOG_FOR forHelper SYM_ARROW V_ID $@39 optlf SYM_OCURL . crlf newlineCicle SYM_CCURL
 
@@ -3729,14 +3729,14 @@ State 265
     crlf  go to state 270
 
 
-State 266
+state 266
 
   157 while: LOG_WHILE $@40 SYM_OPARE expr SYM_CPARE $@41 optlf . SYM_OCURL crlf newlineCicle SYM_CCURL
 
     SYM_OCURL  shift, and go to state 271
 
 
-State 267
+state 267
 
   143 ifHelper: SYM_OPARE expr SYM_CPARE $@36 optlf SYM_OCURL . crlf newlineCicle SYM_CCURL ifHelper2
 
@@ -3746,7 +3746,7 @@ State 267
     crlf  go to state 272
 
 
-State 268
+state 268
 
   149 ifHelper3: LOG_ELSE $@38 optlf SYM_OCURL crlf . newlineCicle SYM_CCURL
 
@@ -3788,14 +3788,14 @@ State 268
     newline         go to state 275
 
 
-State 269
+state 269
 
   154 stepfor: SYM_OBRAC expr SYM_COMMA expr SYM_COMMA expr SYM_CBRAC .
 
     $default  reduce using rule 154 (stepfor)
 
 
-State 270
+state 270
 
   151 for: LOG_FOR forHelper SYM_ARROW V_ID $@39 optlf SYM_OCURL crlf . newlineCicle SYM_CCURL
 
@@ -3837,7 +3837,7 @@ State 270
     newline         go to state 275
 
 
-State 271
+state 271
 
   157 while: LOG_WHILE $@40 SYM_OPARE expr SYM_CPARE $@41 optlf SYM_OCURL . crlf newlineCicle SYM_CCURL
 
@@ -3847,7 +3847,7 @@ State 271
     crlf  go to state 277
 
 
-State 272
+state 272
 
   143 ifHelper: SYM_OPARE expr SYM_CPARE $@36 optlf SYM_OCURL crlf . newlineCicle SYM_CCURL ifHelper2
 
@@ -3889,7 +3889,7 @@ State 272
     newline         go to state 275
 
 
-State 273
+state 273
 
   160 newline: stmt . crlf
 
@@ -3899,14 +3899,14 @@ State 273
     crlf  go to state 279
 
 
-State 274
+state 274
 
   149 ifHelper3: LOG_ELSE $@38 optlf SYM_OCURL crlf newlineCicle . SYM_CCURL
 
     SYM_CCURL  shift, and go to state 280
 
 
-State 275
+state 275
 
   158 newlineCicle: newline .
   159             | newline . newlineCicle
@@ -3951,14 +3951,14 @@ State 275
     newline         go to state 275
 
 
-State 276
+state 276
 
   151 for: LOG_FOR forHelper SYM_ARROW V_ID $@39 optlf SYM_OCURL crlf newlineCicle . SYM_CCURL
 
     SYM_CCURL  shift, and go to state 282
 
 
-State 277
+state 277
 
   157 while: LOG_WHILE $@40 SYM_OPARE expr SYM_CPARE $@41 optlf SYM_OCURL crlf . newlineCicle SYM_CCURL
 
@@ -4000,49 +4000,49 @@ State 277
     newline         go to state 275
 
 
-State 278
+state 278
 
   143 ifHelper: SYM_OPARE expr SYM_CPARE $@36 optlf SYM_OCURL crlf newlineCicle . SYM_CCURL ifHelper2
 
     SYM_CCURL  shift, and go to state 284
 
 
-State 279
+state 279
 
   160 newline: stmt crlf .
 
     $default  reduce using rule 160 (newline)
 
 
-State 280
+state 280
 
   149 ifHelper3: LOG_ELSE $@38 optlf SYM_OCURL crlf newlineCicle SYM_CCURL .
 
     $default  reduce using rule 149 (ifHelper3)
 
 
-State 281
+state 281
 
   159 newlineCicle: newline newlineCicle .
 
     $default  reduce using rule 159 (newlineCicle)
 
 
-State 282
+state 282
 
   151 for: LOG_FOR forHelper SYM_ARROW V_ID $@39 optlf SYM_OCURL crlf newlineCicle SYM_CCURL .
 
     $default  reduce using rule 151 (for)
 
 
-State 283
+state 283
 
   157 while: LOG_WHILE $@40 SYM_OPARE expr SYM_CPARE $@41 optlf SYM_OCURL crlf newlineCicle . SYM_CCURL
 
     SYM_CCURL  shift, and go to state 285
 
 
-State 284
+state 284
 
   143 ifHelper: SYM_OPARE expr SYM_CPARE $@36 optlf SYM_OCURL crlf newlineCicle SYM_CCURL . ifHelper2
 
@@ -4053,14 +4053,14 @@ State 284
     ifHelper2  go to state 287
 
 
-State 285
+state 285
 
   157 while: LOG_WHILE $@40 SYM_OPARE expr SYM_CPARE $@41 optlf SYM_OCURL crlf newlineCicle SYM_CCURL .
 
     $default  reduce using rule 157 (while)
 
 
-State 286
+state 286
 
   146 ifHelper2: LOG_ELIF . $@37 ifHelper
 
@@ -4069,14 +4069,14 @@ State 286
     $@37  go to state 288
 
 
-State 287
+state 287
 
   143 ifHelper: SYM_OPARE expr SYM_CPARE $@36 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2 .
 
     $default  reduce using rule 143 (ifHelper)
 
 
-State 288
+state 288
 
   146 ifHelper2: LOG_ELIF $@37 . ifHelper
 
@@ -4085,7 +4085,7 @@ State 288
     ifHelper  go to state 289
 
 
-State 289
+state 289
 
   146 ifHelper2: LOG_ELIF $@37 ifHelper .
 
