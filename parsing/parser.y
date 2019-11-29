@@ -95,8 +95,7 @@
     int paramCounter;  
 
     //Global Variables
-    char currentFunction[96];  
-    char currentGoSub[96]; 
+    char currentFunction[96];   
     TableType currentType;  //tipo de variable
     int isParam; // true si la variable que se esta parseando es parametro
     int isVector; 
@@ -117,6 +116,7 @@
     Stack pilaSaltos; 
     Stack pilaFor; 
     Stack pilaEras; 
+    Stack pilaGoSubs;
     
     QUAD listQuads;   
     QUAD* currentQuad; 
@@ -238,7 +238,6 @@
 }
 
 %union{
-	/* TODO: Define data types for vars and ids */
     TableType tabletype; 
     int yyint; 
     double yydouble; 
@@ -314,7 +313,7 @@ stmt:
 	| ret
 
 funcall: 
-	V_ID { npFunCall1($1);} SYM_OPARE funcallHelper SYM_CPARE { npFunCall2(); paramCounter = 0; }
+	V_ID { npFunCall1($1); npExpr6(); } SYM_OPARE funcallHelper SYM_CPARE { npFunCall2(); paramCounter = 0; npExpr7(); }
 
 funcallHelper:
 	/* empty */
@@ -528,6 +527,8 @@ int main(int argc, char *argv[]) {
     pilaSaltos = NewStack(TypeInt, 64); 
     pilaFor = NewStack(TypeInt, 64); 
     pilaEras = NewStack(TypeInt, 32); 
+    pilaGoSubs = NewStack(TypeString, 16);   
+
     cubo = NewCubo(); 
 
     constCounter = 1000; 
@@ -550,7 +551,9 @@ int main(int argc, char *argv[]) {
     SetQUAD(currentQuad, GOTO, dummy1, dummy2, ondesalto); 
     currentQuad = currentQuad->next; 
     push(&pilaSaltos, NewVarI(quadrupleCounter)); 
-    quadrupleCounter++; 
+    quadrupleCounter++;
+
+	functions.add(&functions, "print", TableInt, -5); 
 
 	extern FILE *yyin;
 	++argv;
@@ -666,6 +669,7 @@ void npFinalCheck(){
     DestroyStack(&pilaFor); 
     DestroyStack(&pilaSaltos); 
     DestroyStack(&pilaEras); 
+    DestroyStack(&pilaGoSubs);
 
     DestroyVarTable(&globals);
     DestroyFuncTable(&functions); 
@@ -766,104 +770,130 @@ void npExpr1_1(char* varid){
     }
 }
 void npExpr1_2_char(char constChar){
+	char* aux = calloc(2, sizeof(char)); 
+	sprintf(aux, "%c", constChar);
+	int constAddr; 
+	
 	/* Revisar si existe en tabla de constantes */
-    char* aux = calloc(2, sizeof(char)); 
-    sprintf(aux, "%c", constChar); 
-    /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
-    DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-    if(constants.add(&constants, aux, TableChar, constCounter, dim)){
-        constCounter++; 
-    }else{
-        DestroyDIM(dim); 
-    }
-    /* Push a pila de operandos */
-    push(&pilaNombres, NewVarS(aux)); 
-    push(&pilaOperandos, NewVarI(constCounter-1)); 
-    /* Push tipo a pila de tipos */
-    push(&pilaTipos, NewVarI(TableChar)); 
+	/* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
+	DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+	if(constants.add(&constants, aux, TableChar, constCounter, dim)){
+		constAddr = constCounter;
+		constCounter++; 
+	}else{
+		VTE* result = constants.lookup(&constants, aux); 
+		constAddr = result->dir;
+		DestroyDIM(dim); 
+	}
+	/* Push a pila de operandos */
+	push(&pilaNombres, NewVarS(aux)); 
+	push(&pilaOperandos, NewVarI(constAddr)); 
+	/* Push tipo a pila de tipos */
+	push(&pilaTipos, NewVarI(TableChar)); 
     
 }
 void npExpr1_2_string(char* constString){
+	char* aux = calloc(64, sizeof(char));
+	strcpy(aux, constString);
+	int constAddr;
+
 	/* Revisar si existe en tabla de constantes */
 	/* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
+	DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+	if(constants.add(&constants, aux, TableString, constCounter, dim)){
+		constAddr = constCounter;		
+		constCounter++; 
+	}else{
+		VTE* result = constants.lookup(&constants, aux);
+		constAddr = result->dir;
+		DestroyDIM(dim); 
+	}
+	/* Push a pila de operandos */
+	Var name = NewVarS(constString); 
+	push(&pilaNombres, name); 
 
-    DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-    if(constants.add(&constants, constString, TableString, constCounter, dim)){
-        constCounter++; 
-    }else{
-        DestroyDIM(dim); 
-    }
-    /* Push a pila de operandos */
-    Var name = NewVarS(constString); 
-    push(&pilaNombres, name); 
-   
-    push(&pilaOperandos, NewVarI(constCounter-1)); 
-    /* Push tipo a pila de tipos */
-    Var type = NewVarI(TableString); 
-    push(&pilaTipos, type); 
+	push(&pilaOperandos, NewVarI(constAddr)); 
+	/* Push tipo a pila de tipos */
+	Var type = NewVarI(TableString); 
+	push(&pilaTipos, type); 
      
 }
 void npExpr1_2_double(double constDouble){
-	/* Revisar si existe en tabla de constantes */
-     char* aux = calloc(32, sizeof(char)); 
-     sprintf(aux, "%lf", constDouble); 
-     /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
-     DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-     if(constants.add(&constants, aux, TableDouble, constCounter, dim)){
-         constCounter++; 
-     }else{
-         DestroyDIM(dim); 
-     }
-     /* Push a pila de operandos */
-     Var name = NewVarS(aux); 
-     push(&pilaNombres, name); 
+	char* aux = calloc(32, sizeof(char)); 
+	sprintf(aux, "%lf", constDouble); 
+	int constAddr;
 
-     push(&pilaOperandos, NewVarI(constCounter-1)); 
-     /* Push tipo a pila de tipos */
-     Var type = NewVarI(TableDouble); 
-     push(&pilaTipos, type); 
+	/* Revisar si existe en tabla de constantes */
+	/* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
+	DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+	if(constants.add(&constants, aux, TableDouble, constCounter, dim)){
+		constAddr = constCounter;
+		constCounter++; 
+	}else{
+		VTE* result = constants.lookup(&constants, aux);
+		constAddr = result->dir;
+		DestroyDIM(dim); 
+	}
+	/* Push a pila de operandos */
+	Var name = NewVarS(aux); 
+	push(&pilaNombres, name); 
+
+	push(&pilaOperandos, NewVarI(constAddr)); 
+	/* Push tipo a pila de tipos */
+	Var type = NewVarI(TableDouble); 
+	push(&pilaTipos, type); 
     
 }
 void npExpr1_2_int(int constInt){
+	char* aux =  calloc(32, sizeof(char)); 
+	sprintf(aux, "%d", constInt);
+	int constAddr;
+
 	/* Revisar si existe en tabla de constantes */
-    char* aux =  calloc(32, sizeof(char)); 
-    sprintf(aux, "%d", constInt); 
-    /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
-    DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-    if(constants.add(&constants, aux, TableInt, constCounter, dim)){
-        constCounter++; 
-    }else{
-        DestroyDIM(dim); 
-    }
-    /* Push a pila de operandos */
-    Var name = NewVarS(aux); 
-    push(&pilaNombres, name); 
-    
-    push(&pilaOperandos, NewVarI(constCounter-1)); 
-    /* Push tipo a pila de tipos */
-    Var type = NewVarI(TableInt); 
-    push(&pilaTipos, type); 
+	/* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
+	DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+	if(constants.add(&constants, aux, TableInt, constCounter, dim)){
+		constAddr = constCounter; 
+		constCounter++; 
+	}else{
+		VTE* result = constants.lookup(&constants, aux);
+		constAddr = result->dir;
+		DestroyDIM(dim); 
+	}
+	/* Push a pila de operandos */
+	Var name = NewVarS(aux); 
+	push(&pilaNombres, name); 
+
+	push(&pilaOperandos, NewVarI(constAddr)); 
+	/* Push tipo a pila de tipos */
+	Var type = NewVarI(TableInt); 
+	push(&pilaTipos, type); 
     
 }
 void npExpr1_2_bool(int constBool){
+	char* aux =  calloc(32, sizeof(char)); 
+	sprintf(aux, "%d", constBool);
+	int constAddr; 
+	
 	/* Revisar si existe en tabla de constantes */
-    char* aux =  calloc(32, sizeof(char)); 
-    sprintf(aux, "%d", constBool); 
-    /* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
-    DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-    if(constants.add(&constants, aux, TableBool, constCounter, dim)){
-        constCounter++; 
-    }else{
-        DestroyDIM(dim); 
-    }
-    /* Push a pila de operandos */
-    Var name = NewVarS(aux); 
-    push(&pilaNombres, name); 
-    
-    push(&pilaOperandos, NewVarI(constCounter-1)); 
-    /* Push tipo a pila de tipos */
-    Var type = NewVarI(TableBool); 
-    push(&pilaTipos, type); 
+	/* Si existe continuar; sino agregarlo, asignandole un espacio de memoria */
+	DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+	if(constants.add(&constants, aux, TableBool, constCounter, dim)){
+		constAddr = constCounter;
+		constCounter++; 
+	}else{
+		VTE* result = constants.lookup(&constants, aux);
+		constAddr = result->dir;
+		DestroyDIM(dim); 
+	}
+	/* Push a pila de operandos */
+	Var name = NewVarS(aux); 
+	push(&pilaNombres, name); 
+
+	push(&pilaOperandos, NewVarI(constAddr)); 
+	/* Push tipo a pila de tipos */
+	Var type = NewVarI(TableBool); 
+	push(&pilaTipos, type); 
     
 }
 void npExpr1_4(){
@@ -926,7 +956,7 @@ void npExpr5(OP* opes, int opesSize){
                 push(&pilaTipos, NewVarI(tipoRetorno)); 
                 
             }else{
-    	    	yyerror("ERROR: error de tipos"); 
+		yyerror("ERROR: error de tipos"); 
             }
         }
     }
@@ -943,83 +973,119 @@ void npExpr7(){
 }
 
 void npFunCall1(char* funID){
-    /*revisar que exista el id de la funcion en la tabla de 
-        funciones*/
-    FTE* result = functions.lookup(&functions, funID); 
-    if(result->isSet){
-        //setear el currentGoSub al funID
-        strcpy(currentGoSub, funID); 
-        int funsize = functions.updateSize(&functions, funID); //no se bebiera llamar update size, deberia ser getSize
-        if(strcmp(currentFunction, currentGoSub) == 0) {
-            funsize = -9999; 
-            push(&pilaEras, NewVarI(quadrupleCounter)); //regresar luego aqui a rellenar
-        }
-        //generarl el quad <ERA, , ,funsize> tamaño de de la funcion
-        OPDUM dummy1 = NewOPDUM("    ", -1, TableNull); 
-        OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
-        OPDUM erasize = NewOPDUM("erasize",  funsize, TableNull); 
-        SetQUAD(currentQuad, ERA, dummy1, dummy2, erasize); 
-        currentQuad = currentQuad->next; 
-        quadrupleCounter++; 
-        //generar nueva temporal-> este es el resultado de la llamada
-        DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-        char* aux = calloc(64, sizeof(char)); 
-        int tempAddr = localsCounter++; 
-        sprintf(aux, "t%d", tempAddr); 
+	/*revisar que exista el id de la funcion en la tabla de funciones*/
+	FTE* result = functions.lookup(&functions, funID); 
+	if(result->isSet){
+		// push de funID a la pila de GoSubs 
+		char* funAux = calloc(64, sizeof(char));
+		strcpy(funAux, funID);
+		push(&pilaGoSubs, NewVarS(funAux));
+		
+		if(strcmp(funID, "print") == 0){
+			// do nothing for now
+		}
+		else{ 
+		        int funsize = functions.updateSize(&functions, funID);
+		        if(strcmp(currentFunction, funID) == 0) {
+				funsize = -9999; 
+				push(&pilaEras, NewVarI(quadrupleCounter)); //regresar luego aqui a rellenar
+		        }
+	        
+			//generar el quad <ERA, , ,funsize> tamaño de de la funcion
+			OPDUM dummy1 = NewOPDUM("    ", -1, TableNull); 
+			OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
+			OPDUM erasize = NewOPDUM("erasize",  funsize, TableNull); 
 
-        push(&pilaOperandos, NewVarI(tempAddr)); 
-        push(&pilaTipos, NewVarI(result->returntype)); 
-        push(&pilaNombres, NewVarS(aux)); 
-        //meter la nueva temporal a la tabla de variables de currentGoSub
-        functions.addVar(&functions, currentFunction, aux, result->returntype, tempAddr, dim); 
-    }else{
-        yyerror("Funcion no definida"); 
-    }
+			SetQUAD(currentQuad, ERA, dummy1, dummy2, erasize); 
+			currentQuad = currentQuad->next; 
+			quadrupleCounter++;
+		}
+		
+		//generar nueva temporal-> este es el resultado de la llamada
+		DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+		char* aux = calloc(64, sizeof(char)); 
+		int tempAddr = localsCounter++; 
+		sprintf(aux, "t%d", tempAddr); 
+		
+		push(&pilaOperandos, NewVarI(tempAddr)); 
+		push(&pilaTipos, NewVarI(result->returntype)); 
+		push(&pilaNombres, NewVarS(aux));
+ 
+		//meter la nueva temporal a la tabla de variables de currentFunction
+		functions.addVar(&functions, currentFunction, aux, result->returntype, tempAddr, dim); 
+	}else{
+		yyerror("Funcion no definida"); 
+	}
 }
 
 
 void npFunCall2(){
-    FTE* registro = functions.lookup(&functions, currentGoSub); 
-    Stack* firma = registro->signature; 
-    int argsize = firma->size; 
-    if(argsize != paramCounter){
-        yyerror("Numero de argumentos incorrecto"); 
-        return; 
-    }
-    for(int n = argsize-1; n>=0; n--){
-        Var id = accessElement(firma, n);
-        VTE* registroparam = functions.lookupParam(&functions, currentGoSub, id.data.sVal); 
-        Var operandoTipo = peek(&pilaTipos); pop(&pilaTipos);
-        Var operandoNombre = peek(&pilaNombres); pop(&pilaNombres); 
-        Var operandoDir = peek(&pilaOperandos); pop(&pilaOperandos);
-        if(!registroparam->type == operandoTipo.data.iVal){
-            yyerror("Argumentos con tipos incorrectos"); 
-            return; 
-        }else{
-            OPDUM exprdum = NewOPDUM(operandoNombre.data.sVal, operandoDir.data.iVal, operandoTipo.data.iVal);
-            OPDUM dummy = NewOPDUM("    ", -1, TableNull); 
-            OPDUM argdum = NewOPDUM(registroparam->id, registroparam->dir, registroparam->type); 
-            SetQUAD(currentQuad, PARAM, exprdum, dummy, argdum); 
-            currentQuad = currentQuad->next; 
-            quadrupleCounter++; 
-        }
-    }
-    OPDUM godummy1 = NewOPDUM("    ", -1, TableNull); 
-    OPDUM godummy2 = NewOPDUM("    ", -1, TableNull); 
-    OPDUM gosubdum = NewOPDUM(registro->moduleid, registro->quadlinenum, registro->returntype); 
-    SetQUAD(currentQuad, GOSUB, godummy1, godummy2, gosubdum); 
-    currentQuad = currentQuad->next; 
-    quadrupleCounter++; 
-    
-    OPDUM hardcore = NewOPDUM(" 66 ", 66, TableNull); 
-    OPDUM dumdum = NewOPDUM("    ", -1, TableNull); 
-    Var ret = peek(&pilaOperandos); 
-    Var rettype = peek(&pilaTipos); 
-    Var retname = peek(&pilaNombres); 
-    OPDUM retdum = NewOPDUM(retname.data.sVal, ret.data.iVal, rettype.data.iVal); 
-    SetQUAD(currentQuad, ASSIGN, hardcore, dumdum, retdum); 
-    currentQuad = currentQuad->next; 
-    quadrupleCounter++; 
+	Var currentGoSub = peek(&pilaGoSubs); pop(&pilaGoSubs);
+	
+	if(strcmp(currentGoSub.data.sVal, "print") == 0){
+		if(paramCounter != 1){
+			yyerror("Numero de argumentos incorrecto");
+			return;
+		}
+		Var toPrint_dir = peek(&pilaOperandos); pop(&pilaOperandos);
+		Var toPrint_name = peek(&pilaNombres); pop(&pilaNombres);
+		Var toPrint_type = peek(&pilaTipos); pop(&pilaTipos);
+
+		OPDUM printDummy1 = NewOPDUM("    ", -1, TableNull);
+		OPDUM printDummy2 = NewOPDUM("    ", -1, TableNull);
+		OPDUM printArg = NewOPDUM(toPrint_name.data.sVal, toPrint_dir.data.iVal, toPrint_type.data.iVal);
+
+		SetQUAD(currentQuad, PRINT, printDummy1, printDummy2, printArg);
+		currentQuad = currentQuad->next;
+		quadrupleCounter++;
+		
+	}
+	else {
+		FTE* registro = functions.lookup(&functions, currentGoSub.data.sVal); 
+		Stack* firma = registro->signature; 
+		int argsize = firma->size; 
+		if(argsize != paramCounter){
+			yyerror("Numero de argumentos incorrecto"); 
+			return; 
+		}
+	    
+		for(int n = argsize-1; n>=0; n--){
+			Var id = accessElement(firma, n);
+			VTE* registroparam = functions.lookupParam(&functions, currentGoSub.data.sVal, id.data.sVal); 
+			Var operandoTipo = peek(&pilaTipos); pop(&pilaTipos);
+			Var operandoNombre = peek(&pilaNombres); pop(&pilaNombres); 
+			Var operandoDir = peek(&pilaOperandos); pop(&pilaOperandos);
+		
+			if(!registroparam->type == operandoTipo.data.iVal){
+				yyerror("Argumentos con tipos incorrectos"); 
+				return; 
+			}else{
+				OPDUM exprdum = NewOPDUM(operandoNombre.data.sVal, operandoDir.data.iVal, operandoTipo.data.iVal);
+				OPDUM dummy = NewOPDUM("    ", -1, TableNull); 
+				OPDUM argdum = NewOPDUM(registroparam->id, registroparam->dir, registroparam->type); 
+				SetQUAD(currentQuad, PARAM, exprdum, dummy, argdum); 
+				currentQuad = currentQuad->next; 
+				quadrupleCounter++; 
+			}
+		}
+
+		OPDUM godummy1 = NewOPDUM("    ", -1, TableNull); 
+		OPDUM godummy2 = NewOPDUM("    ", -1, TableNull); 
+		OPDUM gosubdum = NewOPDUM(registro->moduleid, registro->quadlinenum, registro->returntype); 
+		SetQUAD(currentQuad, GOSUB, godummy1, godummy2, gosubdum); 
+		currentQuad = currentQuad->next; 
+		quadrupleCounter++; 
+	} 
+
+	OPDUM hardcore = NewOPDUM(" 66 ", 66, TableNull); 
+	OPDUM dumdum = NewOPDUM("    ", -1, TableNull); 
+	Var ret = peek(&pilaOperandos); 
+	Var rettype = peek(&pilaTipos); 
+	Var retname = peek(&pilaNombres); 
+	OPDUM retdum = NewOPDUM(retname.data.sVal, ret.data.iVal, rettype.data.iVal); 
+	SetQUAD(currentQuad, ASSIGN, hardcore, dumdum, retdum); 
+	currentQuad = currentQuad->next; 
+	quadrupleCounter++;
 }
 
 void npAssign1(){
@@ -1132,7 +1198,7 @@ void npIf1(){
             return; 
 	    }
     }
-	Var result = peek(&pilaOperadores); pop(&pilaOperadores);
+	Var result = peek(&pilaOperandos); pop(&pilaOperandos);
     Var result_name = peek(&pilaNombres); pop(&pilaNombres); 
     Var result_type = peek(&pilaTipos); pop(&pilaTipos); 
     
@@ -1404,7 +1470,6 @@ void npFun2(){
         int funcsize =  functions.updateSize(&functions, currentFunction); 
         iter->result.virad = funcsize; 
     }
-    strcpy(currentGoSub, ""); 
 
     strcpy(currentFunction, ""); 
     localsCounter = 3000; 
