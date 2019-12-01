@@ -143,7 +143,8 @@
             case SUM: return "SUM"; case RES: return "RES"; case DIV: return "DIV"; case MULT: return "MULT"; case POW: return "POW"; 
             case ROOT: return "ROOT"; case EEQ: return "EEQ"; case NEQ: return "NEQ"; case LT: return "LT"; case GT: return "GT"; 
             case GTE: return "GTE"; case LTE: return "LTE"; case NEG: return "NEG"; case FORCHECK: return "FORCHECK"; 
-            case ERA: return "ERA"; case PARAM: return "PARAM"; case RETURN: return "RETURN"; default: return "(undefined)";  
+            case ERA: return "ERA"; case PARAM: return "PARAM"; case RETURN: return "RETURN"; 
+            case SCAN: return "SCAN"; case SCANALL: return "SCANALL"; default: return "(undefined)";  
         }
     }
     char* TABLETYPE2STRING(TableType t){
@@ -553,7 +554,9 @@ int main(int argc, char *argv[]) {
     push(&pilaSaltos, NewVarI(quadrupleCounter)); 
     quadrupleCounter++;
 
-	functions.add(&functions, "print", TableInt, -5); 
+	functions.add(&functions, "vision", TableInt, -5); 
+    functions.add(&functions, "scan", TableInt, -5); 
+    functions.add(&functions, "scanall", TableInt, -5); 
 
 	extern FILE *yyin;
 	++argv;
@@ -981,7 +984,7 @@ void npFunCall1(char* funID){
 		strcpy(funAux, funID);
 		push(&pilaGoSubs, NewVarS(funAux));
 		
-		if(strcmp(funID, "print") == 0){
+		if(strcmp(funID, "vision") == 0 || strcmp(funID, "scan") ==0 || strcmp(funID, "scanall") == 0){
 			// do nothing for now
 		}
 		else{ 
@@ -1022,7 +1025,7 @@ void npFunCall1(char* funID){
 void npFunCall2(){
 	Var currentGoSub = peek(&pilaGoSubs); pop(&pilaGoSubs);
 	
-	if(strcmp(currentGoSub.data.sVal, "print") == 0){
+	if(strcmp(currentGoSub.data.sVal, "vision") == 0){
 		if(paramCounter != 1){
 			yyerror("Numero de argumentos incorrecto");
 			return;
@@ -1040,6 +1043,43 @@ void npFunCall2(){
 		quadrupleCounter++;
 		
 	}
+    else if (strcmp(currentGoSub.data.sVal, "scan") == 0){
+        if(paramCounter != 1){
+            yyerror("Numero de argumentos incorrecto"); 
+            return; 
+        }
+        Var toScan_dir = peek(&pilaOperandos); pop(&pilaOperandos); 
+        Var toScan_name = peek(&pilaNombres); pop(&pilaNombres); 
+        Var toScan_type = peek(&pilaTipos); pop(&pilaTipos); 
+        
+        OPDUM scanDummy = NewOPDUM("    ", -1, TableNull); 
+        OPDUM scanDummy2 = NewOPDUM("    ", -1, TableNull); 
+        OPDUM scanArg = NewOPDUM(toScan_name.data.sVal, toScan_dir.data.iVal, toScan_type.data.iVal); 
+        SetQUAD(currentQuad, SCAN, scanDummy, scanDummy2, scanArg); 
+        currentQuad = currentQuad->next; 
+        quadrupleCounter++; 
+    }
+    else if(strcmp(currentGoSub.data.sVal, "scanall") == 0){
+        if(paramCounter != 1){
+            yyerror("Numero de argumentos incorrecto"); 
+            return; 
+        }
+        Var toScanAll_dir = peek(&pilaOperandos); pop(&pilaOperandos); 
+        Var toScanAll_name = peek(&pilaNombres); pop(&pilaNombres); 
+        Var toScanAll_type = peek(&pilaTipos); pop(&pilaTipos); 
+        
+        OPDUM scanAllDummy = NewOPDUM("    ", -1, TableNull); 
+        int size = 0; 
+        VTE* result = globals.lookup(&globals, toScanAll_name.data.sVal); 
+        if(!result->isSet)
+            result = functions.lookupParam(&functions, currentFunction, toScanAll_name.data.sVal); 
+        if(!result->isSet)
+            result = functions.lookupVar(&functions, currentFunction, toScanAll_name.data.sVal); 
+            
+        OPDUM scanAllSize = NewOPDUM("size", result->dim->size, TableInt); 
+        OPDUM scanAllArg = NewOPDUM(toScanAll_name.data.sVal, toScanAll_dir.data.iVal, toScanAll_type.data.iVal); 
+        SetQUAD(currentQuad, SCANALL, scanAllDummy, scanAllSize, scanAllArg); 
+    }
 	else {
 		FTE* registro = functions.lookup(&functions, currentGoSub.data.sVal); 
 		Stack* firma = registro->signature; 

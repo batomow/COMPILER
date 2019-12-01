@@ -71,7 +71,7 @@ char* QUADToStringHuman(QUAD quadruple){
         case GOSUB: strcat(string, "GOSUB, "); break; 
         case ASSIGN: strcat(string, "ASSIGN, "); break; 
         case PRINT: strcat(string, "PRINT, "); break; 
-        case READ: strcat(string, "READ, "); break; 
+        case SCAN: strcat(string, "READ, "); break; 
         case LT: strcat(string, "LT, "); break; 
         case GT: strcat(string, "GT, "); break; 
         case LTE: strcat(string, "LTE, "); break; 
@@ -87,6 +87,7 @@ char* QUADToStringHuman(QUAD quadruple){
         case ERA: strcat(string, "ERA, ");break;  
         case PARAM: strcat(string, "PARAM, "); break; 
         case RETURN: strcat(string, "RETURN, "); break; 
+        case SCANALL: strcat(string, "SCANALL, "); break; 
         default: strcat(string, "not defined"); break; 
     }
     strcat(string, quadruple.opdum1.id); 

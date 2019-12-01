@@ -224,7 +224,7 @@ typedef enum OP{
     GOSUB, //9
     ASSIGN, //10
     PRINT, //11
-    READ, //12
+    SCAN, //12
     LT, //13
     GT, //14
     LTE, //15
@@ -239,7 +239,8 @@ typedef enum OP{
     FORCHECK,  //24
     ERA, //25
     PARAM, //26
-    RETURN // 27
+    RETURN, // 27
+    SCANALL //29 
 } OP; 
 
 typedef struct Operandum OPDUM; 
