@@ -25,7 +25,7 @@
 
 	{"opcode": 21,	"left": -1,	"right": -1,	"result": -1},
 
-	{"opcode": 12,	"left": -1,	"right": -1,	"result": 3000},
+	{"opcode": 12,	"left": 0,	"right": -1,	"result": 3000},
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3001},
 

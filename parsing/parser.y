@@ -1053,9 +1053,9 @@ void npFunCall2(){
         Var toScan_type = peek(&pilaTipos); pop(&pilaTipos); 
         
         OPDUM scanDummy = NewOPDUM("    ", -1, TableNull); 
-        OPDUM scanDummy2 = NewOPDUM("    ", -1, TableNull); 
+        OPDUM scanType = NewOPDUM("argtype", toScan_type.data.iVal, TableNull); 
         OPDUM scanArg = NewOPDUM(toScan_name.data.sVal, toScan_dir.data.iVal, toScan_type.data.iVal); 
-        SetQUAD(currentQuad, SCAN, scanDummy, scanDummy2, scanArg); 
+        SetQUAD(currentQuad, SCAN, scanType, scanDummy, scanArg); 
         currentQuad = currentQuad->next; 
         quadrupleCounter++; 
     }
@@ -1068,7 +1068,7 @@ void npFunCall2(){
         Var toScanAll_name = peek(&pilaNombres); pop(&pilaNombres); 
         Var toScanAll_type = peek(&pilaTipos); pop(&pilaTipos); 
         
-        OPDUM scanAllDummy = NewOPDUM("    ", -1, TableNull); 
+        OPDUM scanAllType = NewOPDUM("    ", toScanAll_type.data.iVal, TableNull); 
         int size = 0; 
         VTE* result = globals.lookup(&globals, toScanAll_name.data.sVal); 
         if(!result->isSet)
@@ -1078,7 +1078,7 @@ void npFunCall2(){
             
         OPDUM scanAllSize = NewOPDUM("size", result->dim->size, TableInt); 
         OPDUM scanAllArg = NewOPDUM(toScanAll_name.data.sVal, toScanAll_dir.data.iVal, toScanAll_type.data.iVal); 
-        SetQUAD(currentQuad, SCANALL, scanAllDummy, scanAllSize, scanAllArg); 
+        SetQUAD(currentQuad, SCANALL, scanAllType, scanAllSize, scanAllArg); 
     }
 	else {
 		FTE* registro = functions.lookup(&functions, currentGoSub.data.sVal); 
