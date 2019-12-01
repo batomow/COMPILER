@@ -24,4 +24,18 @@ margin_right = -13.0
 margin_bottom = -7.0
 scroll_following = true
 
+[node name="background2" type="Panel" parent="UI"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -294.339
+margin_top = -52.9236
+margin_right = -10.3389
+margin_bottom = -12.9236
+
+[node name="input" type="LineEdit" parent="UI/background2"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
 [node name="Game" type="Node2D" parent="."]
