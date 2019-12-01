@@ -1,6 +1,7 @@
-extends Node2D
+extends Node
+###-- gameplay stuff -- ###
+var console:RichTextLabel
 var quads:Array = []
-# warning-ignore:unused_class_variable
 var globals_counter:int = 0
 var globals := []
 var localsArray := []
@@ -14,13 +15,16 @@ const DEBUGGING = 0
 var return_buffer:int
 
 func _ready():
+	# Initialize console object
+	console = get_node("UI/background/console")
+	
 	# Initialize pointer stack, used to know where we are reading
-	stackPointer.append(0)
+	stackPointer.push_back(0)
 	
 	# Initialize localsArray, the structure used to hold the memory arrays with local memory
 	var mainLocal = []
 	mainLocal.resize(100)
-	localsArray.append(mainLocal)
+	localsArray.push_back(mainLocal)
 	
 	# Initialize Global memory
 	globals.resize(100)
@@ -40,8 +44,8 @@ func _load():
 	quads = input.quads
 	
 	if(DEBUGGING):
-		for i in range(quads.size() - 1):
-			print(i, ": ", quads[i])
+		for i in range(quads.size()):
+			console.text += ">>\t%s : %s\n" % [String(i), String(quads[i])]
 	
 	# Set constants in memory
 	var constantAux = input.globals
@@ -85,7 +89,7 @@ func _physics_process(delta):
 		elif quad.opcode == 22: # END PROGRAM 
 			flag = false
 			if DEBUGGING:
-				print("Globals: ", globals, "\nConstants: ", constants)
+				console.text += ">>\tGlobals: %s\n>>\tConstants: %s\n" % [String(globals), String(constants)]
 		elif quad.opcode == 25: # ERA
 			_op_era(quad)
 		elif quad.opcode == 26: # PARAM
@@ -104,17 +108,17 @@ func _get_mem_val(addr, local = -1):
 		return return_buffer
 	if (addr < 2000): #is a constant
 		if DEBUGGING:
-			print("_get_mem_val|Constants: ", constants)
+			console.text += ">>\t_get_mem_val|Constants: %s\n" % String(constants)
 		var i = addr - 1000
 		return constants[i]
 	if(addr >= 2000 && addr < 3000): #is global
 		if DEBUGGING:
-			print("_get_mem_val|Globals: ", globals)
+			console.text += ">>\t_get_mem_val|Globals: %s\n" % String(globals)
 		var i = addr - 2000
 		return globals[i]
 	if(addr >= 3000): # is local
 		if DEBUGGING:
-			print("_get_mem_val|Locals: ", localsArray)
+			console.text += ">>\t_get_mem_val|Locals: %s\n" % String(localsArray)
 		var i = addr - 3000
 		return localsArray[local][i]
 
@@ -122,46 +126,46 @@ func _set_mem_addr(addr, val, isParam = 0):
 	if isParam:
 		eraArray[-1][addr-3000] = val
 		if DEBUGGING:
-			print("_set_mem_addr|Eras: ", eraArray)
+			console.text += ">>\t_set_mem_addr|Eras: %s\n" % String(eraArray)
 	else:
 		if(addr == 66 ): #return buffer
 			return_buffer = val
 		elif (addr < 2000): #is a constant
 			if DEBUGGING:
-				print("_set_mem_addr|Constants: ", constants)
+				console.text += ">>\t_set_mem_addr|Constants: %s\n" % String(constants)
 			if constants[addr-100] == 0:
 				constants_counter += 1
 			constants[addr-1000] = val
 		elif(addr >= 2000 && addr < 3000): #is global
 			if DEBUGGING:
-				print("_set_mem_addr|Globals: ", globals)
+				console.text += ">>\t_set_mem_addr|Globals: %s\n" % String(globals)
 			if globals[addr-2000] == 0:
 				globals_counter += 1
 			globals[addr-2000] = val
 		elif(addr >= 3000): # is local
 			if DEBUGGING:
-				print("_set_mem_addr|Locals: ", localsArray)
+				console.text += ">>\t_set_mem_addr|Locals: %s\n" % String(localsArray)
 			localsArray[-1][addr-3000] = val
 		
 
 func _op_sum(quad):
 	if DEBUGGING:
-		print("SUM: ", quad)
+		console.text += ">>\tSUM: %s\n" % String(quad)
 	var left = _get_mem_val(quad.left)
 	var right = _get_mem_val(quad.right)
 	_set_mem_addr(quad.result, left + right)
 	if DEBUGGING:
-		print(left, " + ", right, " = ", _get_mem_val(quad.result))
+		console.text += ">>\t%s + %s = %s\n" % [String(left), String(right), String(_get_mem_val(quad.result))]
 
 # warning-ignore:unused_argument
 func _op_res(quad):
 	if DEBUGGING:
-		print("RES: ", quad)
+		console.text += ">>\tRES: %s\n" % String(quad)
 	var left = _get_mem_val(quad.left)
 	var right = _get_mem_val(quad.right)
 	_set_mem_addr(quad.result, left - right)
 	if DEBUGGING:
-		print(left, " - ", right, " = ", _get_mem_val(quad.result))
+		console.text += ">>\t%s - %s = %s\n" % [String(left), String(right), String(_get_mem_val(quad.result))]
 
 # warning-ignore:unused_argument
 func _op_root(quad):
@@ -174,12 +178,12 @@ func _op_div(quad):
 # warning-ignore:unused_argument
 func _op_mult(quad):
 	if DEBUGGING:
-		print("MULT: ", quad)
+		console.text += ">>\tMULT: %s\n" % String(quad)
 	var left = _get_mem_val(quad.left)
 	var right = _get_mem_val(quad.right)
 	_set_mem_addr(quad.result, left * right)
 	if DEBUGGING:
-		print(left, " * ", right, " = ", _get_mem_val(quad.result))
+		console.text += ">>\t%s * %s = %s\n" % [String(left), String(right), String(_get_mem_val(quad.result))]
 
 # warning-ignore:unused_argument
 func _op_pow(quad):
@@ -188,22 +192,22 @@ func _op_pow(quad):
 # warning-ignore:unused_argument
 func _op_goto(quad):
 	if DEBUGGING:
-		print("GOTO: ", quad)
+		console.text += ">>\tGOTO: %s\n" % String(quad)
 	var jump = quad.result
 	stackPointer[-1] = jump - 1
 	if DEBUGGING:
-		print("Jumped to ", stackPointer[-1])
+		console.text += ">>\tJumped to %s\n" % String(stackPointer.back())
 
 # warning-ignore:unused_argument
 func _op_gotof(quad):
 	if DEBUGGING:
-		print("GOTOF: ", quad)
+		console.text += ">>\tGOTOF: %s\n" % String(quad)
 	var left = _get_mem_val(quad.left)
 	if(!left):
 		var jump = quad.result
 		stackPointer[-1] = jump - 1
 	if DEBUGGING:	
-		print("Jumped to ", stackPointer[-1])
+		console.text += ">>\tJumped to %s\n" % String(stackPointer.back())
 
 # warning-ignore:unused_argument
 func _op_gotov(quad):
@@ -212,28 +216,28 @@ func _op_gotov(quad):
 # warning-ignore:unused_argument
 func _op_gosub(quad):
 	if DEBUGGING:
-		print("GOSUB: ", quad)
-	localsArray.append(eraArray.back())
+		console.text += "GOSUB: %s" % String(quad)
+	localsArray.push_back(eraArray.back())
 	eraArray.pop_back()
-	stackPointer.append(quad.result - 1)
+	stackPointer.push_back(quad.result - 1)
 	if DEBUGGING:
-		print("Jumped to ", stackPointer[-1], " to start procedure")
+		console.text += ">>\tJumped to %s to start procedure\n" % String(stackPointer.front())
 
 func _op_assign(quad):
 	if DEBUGGING:
-		print("ASSIGN: ", quad)
+		console.text += ">>\tASSIGN: %s\n" % String(quad)
 	var left = _get_mem_val(quad.left)
 	var res = quad.result
 	
 	_set_mem_addr(res, left)
 	if DEBUGGING:
-		print(res, " = ", left, " (check: ", _get_mem_val(res), ")")
+		console.text += ">>\t%s = %s (check: %s )\n" % [String(res), String(left), String(_get_meme_val(res))]
 
 # warning-ignore:unused_argument
 func _op_print(quad):
 	if DEBUGGING:
-		print("PRINT: ", quad)
-	print(">> ", _get_mem_val(quad.result));
+		console.text += ">>\tPRINT: %s\n" % String(quad)
+	console.text = ">>\t%s\n" % String(_get_mem_val(quad.result))
 
 # warning-ignore:unused_argument
 func _op_read(quad):
@@ -246,13 +250,13 @@ func _op_lt(quad):
 # warning-ignore:unused_argument
 func _op_gt(quad):
 	if DEBUGGING:
-		print("GT: ", quad)
+		console.text += ">>\tGT: %s\n" % String(quad)
 	var left = _get_mem_val(quad.left)
 	var right = _get_mem_val(quad.right)
 	_set_mem_addr(quad.result, left > right)
 	
 	if DEBUGGING:
-		print(left, " > ", right, " = ", _get_mem_val(quad.result))
+		console.text += ">>\t%s > %s = %s\n"% [String(left), String(right), String(_get_mem_val(quad.result))]
 
 # warning-ignore:unused_argument
 func _op_lte(quad):
@@ -273,13 +277,13 @@ func _op_or(quad):
 # warning-ignore:unused_argument
 func _op_eeq(quad):
 	if DEBUGGING:
-		print("EQUALS: ", quad)
+		console.text += ">>\tEQUALS: %s\n" % String(quad)
 	var left = _get_mem_val(quad.left)
 	var right = _get_mem_val(quad.right)
 	_set_mem_addr(quad.result, left == right)
 	
 	if DEBUGGING:
-		print(left, " == ", right, " = ", _get_mem_val(quad.result))
+		console.text +=  ">>\t%s == %s = %s\n" % [String(left), String(right), String(_get_mem_val(quad.result))]
 
 # warning-ignore:unused_argument
 func _op_neq(quad):
@@ -288,17 +292,17 @@ func _op_neq(quad):
 # warning-ignore:unused_argument
 func _op_endproc(quad):
 	if DEBUGGING:
-		print("ENDPROC: ", quad)
+		console.text += ">>\tENDPROC: %s\n" % String(quad)
 	return_buffer = -1
 	stackPointer.pop_back()
 	localsArray.pop_back()
 	if DEBUGGING:
-		print("Control now to: ", stackPointer[-1], ", Returned: ", return_buffer)
+		console.text += ">>\tControl now to: %s\n>>\tReturned: %s\n" % [String(stackPointer[-1]), String(return_buffer)]
 
 # warning-ignore:unused_argument
 func _op_endprog(quad):
 	if DEBUGGING:
-		print("ENDPROG: ", quad)
+		console.text += ">>\tENDPROG: %s\n" % String(quad)
 	flag = false
 
 # warning-ignore:unused_argument
@@ -312,34 +316,33 @@ func _op_forcheck(quad):
 # warning-ignore:unused_argument
 func _op_era(quad):
 	if DEBUGGING:
-		print("ERA: ", quad)
+		console.text += ">>\tERA: %s\n" % String(quad)
 	var newLocal = []
 	newLocal.resize(quad.result)
 	eraArray.append(newLocal)
 	if DEBUGGING:
-		print("Added new memory chunk of size ", localsArray[-1].size(), "to ERA array")
+		console.text += ">>\tAdded new memory chunk of size %s to ERA array\n" % localsArray.back().size()
 
 # warning-ignore:unused_argument
 func _op_param(quad):
 	if DEBUGGING:
-		print("PARAM: ", quad)
+		console.text += ">>\tPARAM: %s\n" % String(quad)
 	var left = _get_mem_val(quad.left)
 	if DEBUGGING:
-		print (quad.left,  " = ", left)
+		console.text += ">>\t%s = %s\n" % [String(quad.left),  String(left)]
 	_set_mem_addr(quad.result, left, 1)
 	if DEBUGGING:
-		print("Assigned parameter in ", quad.result, " as ", _get_mem_val(quad.result))
+		console.text += ">>\tAssigned parameter in %s as %s\n" % [String(quad.result), String(_get_mem_val(quad.result))]
 
 # warning-ignore:unused_argument
 func _op_return(quad):
 	if DEBUGGING:
-		print("RETURN: ", quad)
+		console.text += ">>\tRETURN: %s\n" % String(quad)
 	return_buffer = _get_mem_val(quad.result)
 	stackPointer.pop_back()
 	localsArray.pop_back()
 	if DEBUGGING:
 		if stackPointer.empty() :
-			print("Program finished");
+			console.text += ">>\tProgram finished\n"
 		else:
-			print("Control now to: ", stackPointer[-1], ", Returned: ", return_buffer)
-	
+			console.text += ">>\tControl now to: %s\n>>\tReturned: %s\n" % [String(stackPointer.back()), String(return_buffer)]
