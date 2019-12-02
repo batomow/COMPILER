@@ -1,4 +1,4 @@
-array arr:int[10]
+array arr:int[20]
 
 order find:int(var n:int){
     vision("Introduce el elemento al buscar")

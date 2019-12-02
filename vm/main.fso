@@ -31,7 +31,7 @@
 
 	{"opcode": 7,	"left": 8,	"right": -1,	"result": 40},
 
-	{"opcode": 30,	"left": 3007,	"right": -1,	"result": 10},
+	{"opcode": 30,	"left": 3007,	"right": -1,	"result": 20},
 
 	{"opcode": 0,	"left": 3007,	"right": 1004,	"result": 3014},
 
@@ -45,7 +45,7 @@
 
 	{"opcode": 6,	"left": -1,	"right": -1,	"result": 36},
 
-	{"opcode": 30,	"left": 3007,	"right": -1,	"result": 10},
+	{"opcode": 30,	"left": 3007,	"right": -1,	"result": 20},
 
 	{"opcode": 0,	"left": 3007,	"right": 1004,	"result": 3017},
 
@@ -105,7 +105,7 @@
 
 	{"opcode": 7,	"left": 3003,	"right": -1,	"result": 58},
 
-	{"opcode": 30,	"left": 3001,	"right": -1,	"result": 10},
+	{"opcode": 30,	"left": 3001,	"right": -1,	"result": 20},
 
 	{"opcode": 0,	"left": 3001,	"right": 1004,	"result": 3005},
 
@@ -141,13 +141,13 @@
 
 	{"opcode": 7,	"left": 3013,	"right": -1,	"result": 92},
 
-	{"opcode": 30,	"left": 3011,	"right": -1,	"result": 10},
+	{"opcode": 30,	"left": 3011,	"right": -1,	"result": 20},
 
 	{"opcode": 0,	"left": 3011,	"right": 1004,	"result": 3014},
 
 	{"opcode": 0,	"left": 3011,	"right": 1002,	"result": 3015},
 
-	{"opcode": 30,	"left": 3015,	"right": -1,	"result": 10},
+	{"opcode": 30,	"left": 3015,	"right": -1,	"result": 20},
 
 	{"opcode": 0,	"left": 3015,	"right": 1004,	"result": 3016},
 
@@ -155,19 +155,19 @@
 
 	{"opcode": 7,	"left": 3017,	"right": -1,	"result": 91},
 
-	{"opcode": 30,	"left": 3011,	"right": -1,	"result": 10},
+	{"opcode": 30,	"left": 3011,	"right": -1,	"result": 20},
 
 	{"opcode": 0,	"left": 3011,	"right": 1004,	"result": 3018},
 
 	{"opcode": 10,	"left": -3018,	"right": -1,	"result": 3006},
 
-	{"opcode": 30,	"left": 3011,	"right": -1,	"result": 10},
+	{"opcode": 30,	"left": 3011,	"right": -1,	"result": 20},
 
 	{"opcode": 0,	"left": 3011,	"right": 1004,	"result": 3019},
 
 	{"opcode": 0,	"left": 3011,	"right": 1002,	"result": 3020},
 
-	{"opcode": 30,	"left": 3020,	"right": -1,	"result": 10},
+	{"opcode": 30,	"left": 3020,	"right": -1,	"result": 20},
 
 	{"opcode": 0,	"left": 3020,	"right": 1004,	"result": 3021},
 
@@ -175,7 +175,7 @@
 
 	{"opcode": 0,	"left": 3011,	"right": 1002,	"result": 3022},
 
-	{"opcode": 30,	"left": 3022,	"right": -1,	"result": 10},
+	{"opcode": 30,	"left": 3022,	"right": -1,	"result": 20},
 
 	{"opcode": 0,	"left": 3022,	"right": 1004,	"result": 3023},
 
@@ -201,7 +201,7 @@
 
 	{"opcode": 7,	"left": 3027,	"right": -1,	"result": 106},
 
-	{"opcode": 30,	"left": 3025,	"right": -1,	"result": 10},
+	{"opcode": 30,	"left": 3025,	"right": -1,	"result": 20},
 
 	{"opcode": 0,	"left": 3025,	"right": 1004,	"result": 3029},
 
