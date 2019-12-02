@@ -4,6 +4,7 @@ var console:RichTextLabel
 var input:LineEdit
 enum TableTypes {TableInt, TableFloat, TableChar, TableString, TableElement, TableVector, TableNull, TableDouble, TableBool, TableMat}
 var scanQuad
+var object_list:Dictionary = {}
 ###---------------------###
 var quads:Array = []
 var globals_counter:int = 0
@@ -14,7 +15,7 @@ var constants_counter:int = 0
 var constants := []
 var flag = true
 var stackPointer= []
-const DEBUGGING = 0
+const DEBUGGING = 1
 
 var return_buffer:int
 
@@ -108,11 +109,51 @@ func _physics_process(delta):
 			_op_param(quad)
 		elif quad.opcode == 27: # RETURN
 			_op_return(quad)
+		elif quad.opcode == 29: #REGISTER
+			_op_register(quad)
 		
 		if stackPointer.empty():
 			flag = false
 		else:
 			stackPointer[-1] += 1
+
+func _op_register(quad):
+	var llave = quad.result - 3000
+	if object_list.has(llave):
+		console.text += ">>\tLlave ya existe\n"
+	else:
+		var isKinematic = localsArray[-1][llave]
+		var type:int = localsArray[-1][llave+1]
+		var color = localsArray[-1][llave+2]
+		var position := Vector2()
+		position.x = localsArray[-1][llave+3]
+		position.y = localsArray[-1][llave+4]
+		var scale := Vector2()
+		scale.x = localsArray[-1][llave+5]
+		scale.y = localsArray[-1][llave+6]
+		
+		var new_object:Sprite = Sprite.new()
+		match(type):
+			0 : new_object.texture = load("res://basic.png")
+			1 : new_object.texture = load("res://basic2.png")
+			_ : print("THIS SHIT FAILED")
+		
+		new_object.position = position
+		new_object.scale = scale
+		match(color):
+			0 : new_object.modulate = Color.white
+			1 : new_object.modulate = Color.red
+			2 : new_object.modulate = Color.green
+			3 : new_object.modulate = Color.blue
+			4 : new_object.modulate = Color.yellow
+			5 : new_object.modulate = Color.cyan
+			6 : new_object.modulate = Color.magenta
+			7 : new_object.modulate = Color.black
+		
+		get_node("Game").add_child(new_object)
+	
+
+
 
 func _get_mem_val(addr, local = -1):
 	
