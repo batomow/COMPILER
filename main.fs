@@ -23,7 +23,7 @@ order fibonacciSecuencial:int(){
         } else { 
             next = first + second
             first = second
-            secodn = next
+            second = next
         }
     }
     return next

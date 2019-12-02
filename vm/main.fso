@@ -1,5 +1,3 @@
-
-ERROR: ERROR: variable no declarada
 {"quads":[
 	{"opcode": 6,	"left": -1,	"right": -1,	"result": 41},
 
@@ -75,7 +73,7 @@ ERROR: ERROR: variable no declarada
 
 	{"opcode": 10,	"left": 3001,	"right": -1,	"result": 3000},
 
-	{"opcode": 10,	"left": 3002,	"right": -1,	"result": 3005},
+	{"opcode": 10,	"left": 3002,	"right": -1,	"result": 3001},
 
 	{"opcode": 6,	"left": -1,	"right": -1,	"result": 27},
 
