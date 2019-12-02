@@ -55,6 +55,24 @@
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3008},
 
+	{"opcode": 12,	"left": 0,	"right": -1,	"result": 3000},
+
+	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3009},
+
+	{"opcode": 25,	"left": -1,	"right": -1,	"result": 5},
+
+	{"opcode": 26,	"left": 3000,	"right": -1,	"result": 3000},
+
+	{"opcode": 9,	"left": -1,	"right": -1,	"result": 1},
+
+	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3011},
+
+	{"opcode": 10,	"left": 3011,	"right": -1,	"result": 3010},
+
+	{"opcode": 11,	"left": -1,	"right": -1,	"result": 3010},
+
+	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3012},
+
 	{"opcode": 27,	"left": -1,	"right": -1,	"result": 1000},
 
 	{"opcode": 21,	"left": -1,	"right": -1,	"result": -1},
