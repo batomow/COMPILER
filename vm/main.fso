@@ -29,7 +29,7 @@
 
 	{"opcode": 17,	"left": 3011,	"right": 3012,	"result": 3013},
 
-	{"opcode": 7,	"left": 8,	"right": -1,	"result": 40},
+	{"opcode": 7,	"left": 3013,	"right": -1,	"result": 40},
 
 	{"opcode": 30,	"left": 3007,	"right": -1,	"result": 10},
 

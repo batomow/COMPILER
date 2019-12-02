@@ -1850,7 +1850,7 @@ void npWhile2(){
             return; 
 	    }
     }
-	Var result = peek(&pilaOperadores); pop(&pilaOperadores);
+	Var result = peek(&pilaOperandos); pop(&pilaOperandos);
     Var result_name = peek(&pilaNombres); pop(&pilaNombres); 
     Var result_type = peek(&pilaTipos); pop(&pilaTipos); 
 
