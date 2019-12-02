@@ -4,8 +4,6 @@ order factorialSecuencial:int(){
     vision("Introduce el factorial a calcular...")
     var n:int = 0
     scan(n)
-    vision("El numero introducido fue")
-    vision(n)
     for[1,1,n]->iter{
         result = result * iter
     }
@@ -13,20 +11,22 @@ order factorialSecuencial:int(){
 }
 
 order fibonacciSecuencial:int(){
-    var actual:int = 1
-    var anterior:int = 1
-    var result:int = 0
+    var first:int = 0
+    var second:int = 1
+    var next:int
     vision("Introduce el numero fibonacci a calcular")
-    var n:int = 0
+    var n:int 
     scan(n)
-    vision("El numero introducido fue") 
-    vision(n)
     for[0,1,n]->iter{
-        result = anterior + actual
-        anterior = actual 
-        actual = result
+        if(iter <= 1){
+            next = iter
+        } else { 
+            next = first + second
+            first = second
+            secodn = next
+        }
     }
-    return result
+    return next
 }
 
 
