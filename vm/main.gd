@@ -77,12 +77,20 @@ func _physics_process(delta):
 			_op_sum(quad)
 		elif quad.opcode == 1: # SUBSTRACT
 			_op_res(quad)
+		elif quad.opcode == 2: # ROOT (!)
+			_op_root(quad)
+		elif quad.opcode == 3: # DIVISION
+			_op_div(quad)
 		elif quad.opcode == 4: # MULT
 			_op_mult(quad)
+		elif quad.opcode == 5: # POWER
+			_op_pow(quad)
 		elif quad.opcode == 6: # GOTO
 			_op_goto(quad)
 		elif quad.opcode == 7: # GOTOF
 			_op_gotof(quad)
+		elif quad.opcode == 8: # GOTOV
+			_op_gotov(quad)
 		elif quad.opcode == 9: # GOSUB
 			_op_gosub(quad)
 		elif quad.opcode == 10: # ASSIGN
@@ -93,18 +101,30 @@ func _physics_process(delta):
 			stackPointer[-1] -= 1 
 			scanQuad = quad
 			input.get_parent().visible = true
+		elif quad.opcode == 13: # LESS THAN
+			_op_lt(quad)
 		elif quad.opcode == 14: # GREATER THAN
 			_op_gt(quad)
 		elif quad.opcode == 15: # LESS THAN OR EQUAL 
 			_op_lte(quad)
+		elif quad.opcode == 16: # GREATER THAN OR EQUAL 
+			_op_gte(quad)
+		elif quad.opcode == 17: # AND 
+			_op_and(quad)
+		elif quad.opcode == 18: # OR
+			_op_or(quad)
 		elif quad.opcode == 19: # EQUALS
 			_op_eeq(quad)
+		elif quad.opcode == 20: # NOT EQUALS
+			_op_neq(quad)
 		elif quad.opcode == 21: # END PROCEDURE
 			_op_endproc(quad)
 		elif quad.opcode == 22: # END PROGRAM 
 			flag = false
 			if DEBUGGING:
 				print("Globals: ", globals, "\nConstants: ", constants)
+		elif quad.opcode == 23: # NEGATION (!)
+			_op_neg(quad)
 		elif quad.opcode == 24: # FORCHECK
 			_op_forcheck(quad)
 		elif quad.opcode == 25: # ERA
@@ -225,6 +245,10 @@ func _op_sum(quad):
 		print("SUM: ", quad)
 	var left = _get_mem_val(quad.left)
 	var right = _get_mem_val(quad.right)
+	if(left == null || right == null):
+		console.text += "!!\tERROR: Operation on null not valid\n"
+		flag = false
+		return
 	_set_mem_addr(quad.result, left + right)
 	if DEBUGGING:
 		print(left, " + ", right, " = ", _get_mem_val(quad.result))
@@ -235,6 +259,10 @@ func _op_res(quad):
 		print("RES: ", quad)
 	var left = _get_mem_val(quad.left)
 	var right = _get_mem_val(quad.right)
+	if(left == null || right == null):
+		console.text += "!!\tERROR: Operation on null not valid\n"
+		flag = false
+		return
 	_set_mem_addr(quad.result, left - right)
 	if DEBUGGING:
 		print(left, " - ", right, " = ", _get_mem_val(quad.result))
@@ -245,7 +273,21 @@ func _op_root(quad):
 
 # warning-ignore:unused_argument
 func _op_div(quad):
-	pass
+	if DEBUGGING:
+		print("DIVISION: ", quad)
+	var left = _get_mem_val(quad.left)
+	var right = _get_mem_val(quad.right)
+	if(left == null || right == null):
+		console.text += "!!\tERROR: Operation on null not valid\n"
+		flag = false
+		return
+	if(right == 0):
+		console.text += "!!\tERROR: Math error\n"
+		flag = false
+		return
+	_set_mem_addr(quad.result, left / right)
+	if DEBUGGING:
+		print(left, " / ", right, " = ", _get_mem_val(quad.result))
 
 # warning-ignore:unused_argument
 func _op_mult(quad):
@@ -253,12 +295,27 @@ func _op_mult(quad):
 		print("MULT: ", quad)
 	var left = _get_mem_val(quad.left)
 	var right = _get_mem_val(quad.right)
+	if(left == null || right == null):
+		console.text += "!!\tERROR: Operation on null not valid\n"
+		flag = false
+		return
 	_set_mem_addr(quad.result, left * right)
 	if DEBUGGING:
 		print(left, " * ", right, " = ", _get_mem_val(quad.result))
 
 # warning-ignore:unused_argument
 func _op_pow(quad):
+	if DEBUGGING:
+		print("POWER: ", quad)
+	var left = _get_mem_val(quad.left)
+	var right = _get_mem_val(quad.right)
+	if(left == null || right == null):
+		console.text += "!!\tERROR: Operation on null not valid\n"
+		flag = false
+		return
+	_set_mem_addr(quad.result, pow(left, right))
+	if DEBUGGING:
+		print(left, " ^ ", right, " = ", _get_mem_val(quad.result))
 	pass
 
 # warning-ignore:unused_argument
@@ -283,7 +340,14 @@ func _op_gotof(quad):
 
 # warning-ignore:unused_argument
 func _op_gotov(quad):
-	pass
+	if DEBUGGING:
+		print("GOTOV: ", quad)
+	var left = _get_mem_val(quad.left)
+	if(left):
+		var jump = quad.result
+		stackPointer[-1] = jump - 1
+	if DEBUGGING:	
+		print("Jumped to ", stackPointer[-1])
 
 # warning-ignore:unused_argument
 func _op_gosub(quad):
@@ -336,11 +400,20 @@ func _op_scan(var scanned_text):
 	_set_mem_addr(scanQuad.result, parsed_data)
 	stackPointer[-1] += 1
 
-
-
 # warning-ignore:unused_argument
 func _op_lt(quad):
-	pass
+	if DEBUGGING:
+		print("LT: ", quad)
+	var left = _get_mem_val(quad.left)
+	var right = _get_mem_val(quad.right)
+	if(left == null || right == null):
+		console.text += "!!\tERROR: Operation on null not valid\n"
+		flag = false
+		return
+	_set_mem_addr(quad.result, left < right)
+	
+	if DEBUGGING:
+		print(left, " < ", right, " = ", _get_mem_val(quad.result))
 
 # warning-ignore:unused_argument
 func _op_gt(quad):
@@ -348,6 +421,10 @@ func _op_gt(quad):
 		print("GT: ", quad)
 	var left = _get_mem_val(quad.left)
 	var right = _get_mem_val(quad.right)
+	if(left == null || right == null):
+		console.text += "!!\tERROR: Operation on null not valid\n"
+		flag = false
+		return
 	_set_mem_addr(quad.result, left > right)
 	
 	if DEBUGGING:
@@ -359,6 +436,10 @@ func _op_lte(quad):
 		print("LTE: ", quad)
 	var left = _get_mem_val(quad.left)
 	var right = _get_mem_val(quad.right)
+	if(left == null || right == null):
+		console.text += "!!\tERROR: Operation on null not valid\n"
+		flag = false
+		return
 	_set_mem_addr(quad.result, left <= right)
 	
 	if DEBUGGING:
@@ -366,17 +447,48 @@ func _op_lte(quad):
 
 # warning-ignore:unused_argument
 func _op_gte(quad):
+	if DEBUGGING:
+		print("GTE: ", quad)
 	var left = _get_mem_val(quad.left)
 	var right = _get_mem_val(quad.right)
+	if(left == null || right == null):
+		console.text += "!!\tERROR: Operation on null not valid\n"
+		flag = false
+		return
 	_set_mem_addr(quad.result, left >= right)
+	
+	if DEBUGGING:
+		print(left, " >= ", right, " = ", _get_mem_val(quad.result))
 
 # warning-ignore:unused_argument
 func _op_and(quad):
-	pass
+	if DEBUGGING:
+		print("AND: ", quad)
+	var left = _get_mem_val(quad.left)
+	var right = _get_mem_val(quad.right)
+	if(left == null || right == null):
+		console.text += "!!\tERROR: Operation on null not valid\n"
+		flag = false
+		return
+	_set_mem_addr(quad.result, left && right)
+	
+	if DEBUGGING:
+		print(left, " && ", right, " = ", _get_mem_val(quad.result))
 
 # warning-ignore:unused_argument
 func _op_or(quad):
-	pass
+	if DEBUGGING:
+		print("OR: ", quad)
+	var left = _get_mem_val(quad.left)
+	var right = _get_mem_val(quad.right)
+	if(left == null || right == null):
+		console.text += "!!\tERROR: Operation on null not valid\n"
+		flag = false
+		return
+	_set_mem_addr(quad.result, left || right)
+	
+	if DEBUGGING:
+		print(left, " || ", right, " = ", _get_mem_val(quad.result))
 
 # warning-ignore:unused_argument
 func _op_eeq(quad):
@@ -384,6 +496,10 @@ func _op_eeq(quad):
 		print("EQUALS: ", quad)
 	var left = _get_mem_val(quad.left)
 	var right = _get_mem_val(quad.right)
+	if(left == null || right == null):
+		console.text += "!!\tERROR: Operation on null not valid\n"
+		flag = false
+		return
 	_set_mem_addr(quad.result, left == right)
 	
 	if DEBUGGING:
@@ -391,7 +507,18 @@ func _op_eeq(quad):
 
 # warning-ignore:unused_argument
 func _op_neq(quad):
-	pass
+	if DEBUGGING:
+		print("NOT EQUALS: ", quad)
+	var left = _get_mem_val(quad.left)
+	var right = _get_mem_val(quad.right)
+	if(left == null || right == null):
+		console.text += "!!\tERROR: Operation on null not valid\n"
+		flag = false
+		return
+	_set_mem_addr(quad.result, left != right)
+	
+	if DEBUGGING:
+		print(left, " != ", right, " = ", _get_mem_val(quad.result))
 
 # warning-ignore:unused_argument
 func _op_endproc(quad):
