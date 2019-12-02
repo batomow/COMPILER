@@ -1,18 +1,39 @@
-/*order factorial:int(var n:int){
-	if(n == 0){
-		return 1
-	} else {
-		return n * factorial(n - 1)
-	}
-}*/
+
+order factorialSecuencial:int(){
+    var result:int = 1
+    vision("Introduce el factorial a calcular...")
+    var n:int = 0
+    scan(n)
+    for[1,1,n]->iter{
+        result = result * iter
+    }
+    return result
+}
+
+order fibonacciSecuencial:int(){
+    var actual:int = 1
+    var anterior:int = 1
+    var result:int = 0
+    vision("Introduce el numero fibonacci a calcular")
+    var n:int = 0
+    scan(n)
+    for[0,1,n]->iter{
+        result = anterior + actual
+        anterior = actual 
+        actual = result
+    }
+    return result
+}
+
 
 order enter:int(){
-    element caja = {1, 0, 0, 100, 100, 1, 1}
-    element circulo = {1, 1, 7, 200, 100, 1, 1}
+    var result:int = factorialSecuencial()
+    vision("El resultado del factorial es...")
+    vision(result)
 
-    vector algo = (4.4, 7.7)
-    vision(algo.x)
-    vision(algo.y)
+    result = fibonacciSecuencial()
+    vision("El numero de fibonacci es...")
+    vision(result)
 
     return 0
 }
