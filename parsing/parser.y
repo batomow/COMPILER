@@ -1070,7 +1070,7 @@ void npArrExpr1(char* id){
 	// Meter a pila de dimensionadas (nombre, dir, tipo)
 	char* aux = calloc(64, sizeof(char));
 	strcpy(aux, id);
-	push(&pilaDimNombres, NewVarS(id));
+	push(&pilaDimNombres, NewVarS(aux));
 	push(&pilaDimOperandos, NewVarI(lookup->dir));
 	push(&pilaDimTipos, NewVarI(lookup->type));
 	
@@ -1227,18 +1227,18 @@ void npArrExpr2(){
                     globals.add(&globals, aux4, struct_type.data.iVal, struct_type.data.iVal, dim4);  
                 }
 
-		//Crear cuadruplo de multiplicación index2 + size1 = t1
-		OPDUM index2opdum = NewOPDUM(index2_name.data.sVal, index2_dir.data.iVal, index2_type.data.iVal);
+		//Crear cuadruplo de multiplicación index1 + size1 = t1
+		OPDUM index1opdum = NewOPDUM(index1_name.data.sVal, index1_dir.data.iVal, index1_type.data.iVal);
 		OPDUM size1opdum = NewOPDUM(size1_name.data.sVal, size1_dir.data.iVal, size1_type.data.iVal);
 		OPDUM t1opdum = NewOPDUM(aux1, tempAddr1, TableInt);
-		SetQUAD(currentQuad, MULT, index2opdum, size1opdum, t1opdum);
+		SetQUAD(currentQuad, MULT, index1opdum, size1opdum, t1opdum);
 		currentQuad = currentQuad->next;
 		quadrupleCounter++;
 
-		//Crear cuadruplo de suma index1 + t1 = t2
-		OPDUM index1opdum = NewOPDUM(index1_name.data.sVal, index1_dir.data.iVal, index1_type.data.iVal);
+		//Crear cuadruplo de suma index2 + t1 = t2
+		OPDUM index2opdum = NewOPDUM(index2_name.data.sVal, index2_dir.data.iVal, index2_type.data.iVal);
 		OPDUM t2opdum = NewOPDUM(aux2, tempAddr2, TableInt);
-		SetQUAD(currentQuad, SUM, index1opdum, t1opdum, t2opdum);
+		SetQUAD(currentQuad, SUM, index2opdum, t1opdum, t2opdum);
 		currentQuad = currentQuad->next;
 		quadrupleCounter++;
 
@@ -1261,6 +1261,7 @@ void npArrExpr2(){
 		push(&pilaNombres, NewVarS(aux4));
 		push(&pilaTipos, struct_type);		
 	}
+	pop(&pilaOperadores);
 }
 void npArrExpr3(int indexDim){
 	Var value_name = peek(&pilaNombres);
@@ -1456,7 +1457,7 @@ void npAssign1(){
 	
 }
 void npAssign2(){
-	if(pilaOperandos.isEmpty)
+	if(pilaOperandos.isEmpty(&pilaOperandos))
 		return;	
 	
 	Var struct_dir = peek(&pilaOperandos); pop(&pilaOperandos);
@@ -1491,10 +1492,12 @@ void npAssign2(){
 	Var value_name;
 	Var value_type;
 	OPDUM from;
-	OPDUM dummy = NewOPDUM("    ", -1, TableNull);
-	OPDUM to = NewOPDUM(struct_name.data.sVal, struct_dir.data.iVal, struct_type.data.iVal);
-	
-	while(!(filaArrOperandos.isEmpty)){
+	OPDUM to;
+	OPDUM dummy;
+		
+	if(size2 == 0){ j =-1; }
+
+	while(!(filaArrOperandos.isEmpty(&filaArrOperandos))){
 		value_dir = peekFront(&filaArrOperandos); popFront(&filaArrOperandos);
 		if(value_dir.data.iVal == -10){
 			i = 0;
@@ -1505,6 +1508,8 @@ void npAssign2(){
 			value_type = peekFront(&filaArrTipos); popFront(&filaArrTipos);
 			if(i < size1 && j < size2){
 				from = NewOPDUM(value_name.data.sVal, value_dir.data.iVal, value_type.data.iVal);			
+				to = NewOPDUM(struct_name.data.sVal, currentCell, struct_type.data.iVal);
+				dummy = NewOPDUM("    ", -1, TableNull);
 				SetQUAD(currentQuad, ASSIGN, from, dummy, to);
 				currentQuad = currentQuad->next;
 				quadrupleCounter++;
@@ -1869,7 +1874,7 @@ void npReturn(){
 }
 
 void npClean(){
-    while(!pilaOperadores.isEmpty(&pilaOperadores)){
+    while(!(pilaOperadores.isEmpty(&pilaOperadores))){
         pop(&pilaTipos); 
         pop(&pilaNombres);
         pop(&pilaOperandos); 
