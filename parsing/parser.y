@@ -146,7 +146,7 @@
             case ROOT: return "ROOT"; case EEQ: return "EEQ"; case NEQ: return "NEQ"; case LT: return "LT"; case GT: return "GT"; 
             case GTE: return "GTE"; case LTE: return "LTE"; case NEG: return "NEG"; case FORCHECK: return "FORCHECK"; 
             case ERA: return "ERA"; case PARAM: return "PARAM"; case RETURN: return "RETURN"; 
-            case SCAN: return "SCAN"; case SCANALL: return "SCANALL"; default: return "(undefined)";  
+            case SCAN: return "SCAN"; case SCANALL: return "SCANALL"; case REGISTER: return "REGISTER"; default: return "(undefined)";  
         }
     }
     char* TABLETYPE2STRING(TableType t){
@@ -306,7 +306,7 @@ generaldec: /* declaras o declaras y assignas */
 	| arrdec MTH_SEQUA arr { npAssign2(); }
 	| matdec MTH_SEQUA mat { npAssign2(); }
 	| vectordec MTH_SEQUA vector {npAssign3();}
-	| elementdec MTH_SEQUA funcall {npAssign4();}
+	| elementdec MTH_SEQUA element {npAssign4();}
 
 stmt: 
 	  assign 
@@ -398,7 +398,10 @@ matHelper:
 /* ------- ELEMENTS ------- */
 
 elementdec:
-	V_ELEM V_ID { isElement = 1; np1($2); isElement = 0; }
+	V_ELEM V_ID { np5($2); }
+
+element:
+    SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
 
 
 /* Geometric vector */
@@ -407,8 +410,7 @@ vectordec:
 	V_VECTOR V_ID {np4($2);}
 
 vector:
-	SYM_OCURL expr SYM_COMMA expr SYM_CCURL
-
+	SYM_OPARE expr SYM_COMMA expr SYM_CPARE
 
 /* Property access */
 property:
@@ -599,8 +601,8 @@ void npFinalCheck(){
     //globals.print(&globals);  
     //printf("Aqui van las constantes\n"); 
     //constants.print(&constants); 
-    //printf("Aqui van las locales\n"); 
-    //functions.print(&functions); 
+   // printf("Aqui van las locales\n"); 
+   // functions.print(&functions); 
      
     OPDUM dummy = NewOPDUM("    ", -1, TableNull); 
     OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
@@ -746,7 +748,6 @@ void np4(char* id){
     if(!result->isSet){
 	    /* Recuerda que este vector es un pair, asi que haz las modificaciones necesarias */
         DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
-        SetDIM(dim, 2, 1); 
         if(strlen(currentFunction) > 0){//agregala a las locales
             functions.addVar(&functions, currentFunction, id, TableVector, localsCounter, dim); 
             localsCounter += 2; 
@@ -768,12 +769,36 @@ void np4(char* id){
     }
 }
 
-void np5(){
+void np5(char* id){
 	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
+
+    VTE* result = globals.lookup(&globals, id); 
+    if(!(result->isSet))
+        result = functions.lookupParam(&functions, currentFunction, id); 
+    if(!(result->isSet))
+        result = functions.lookupVar(&functions, currentFunction, id); 
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
-	/* Recuerda que un elemento es una clase de "objeto" asi que no tengo idea como se debe almacenar */
-	/* Push de nombre a pila de Operandos */
-	/* Push tipo a pila de "Tipos */
+    if(!result->isSet){
+        DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+        if(strlen(currentFunction) > 0){//agregala a las locales
+            functions.addVar(&functions, currentFunction, id, TableElement, localsCounter, dim); 
+            localsCounter += 7;
+        }else{
+            globals.add(&globals, id, TableElement, globalsCounter, dim); 
+            globalsCounter += 7;
+        }
+        /* push el nombre a la pila de nombres */
+        int auxsize = strlen(id); 
+        char* aux = calloc(auxsize+1, sizeof(char)); 
+        strcpy(aux, id); 
+        push(&pilaNombres, NewVarS(aux));
+	    /* Push el dir a pila de Operandos */
+        push(&pilaOperandos, NewVarI(result->dir)); 
+	    /* Push tipo a pila de Tipos */
+        push(&pilaTipos, NewVarI(TableVector)); 
+    }else{
+        yyerror("Ese vector ya esta definido"); 
+    }
 }
 
 
@@ -949,7 +974,7 @@ void npExpr1_6(char* pid){
     if(result->isSet){
 	    // Revisar que ese vector o elemento tenga esa propiedad
         char* vector_properties[] = {"x", "y"};
-        char* element_properties[] = {"type", "color", "positionX", "positionY", "sizeX", "sizeY"};
+        char* element_properties[] = {"isKinematic", "type", "color", "posx", "posy", "sizeX", "sizeY"};
         int found = 0; 
         int found_index = 0; 
         if(result->type == TableVector){
@@ -959,10 +984,10 @@ void npExpr1_6(char* pid){
                     found_index = n; 
                 }
         }else if (result->type == TableElement){
-            for(int n = 0; n<3; n++)
+            for(int n = 0; n<7; n++)
                 if(strcmp(pid, element_properties[n]) == 0){
                     found = 1; 
-                    found_index = 0; 
+                    found_index = n; 
                 }
         }else{
             yyerror("Esta variable no es vector ni elemento"); 
@@ -985,6 +1010,7 @@ void npExpr1_6(char* pid){
         yyerror("Ese vector o elemento no existe"); 
     }
 }
+
 void npExpr3(OP newOpe){
 	/* Push de operador a pila de operadores */
     push(&pilaOperadores, NewVarI(newOpe)); 
@@ -1262,12 +1288,15 @@ void npAssign2(){
 void npAssign3(){
     Var y = peek(&pilaOperandos); pop(&pilaOperandos); 
     Var y_type = peek(&pilaTipos); pop(&pilaTipos); 
+    pop(&pilaNombres); 
 
     Var x = peek(&pilaOperandos); pop(&pilaOperandos); 
     Var x_type = peek(&pilaTipos); pop(&pilaTipos); 
+    pop(&pilaNombres); 
 
     Var vec = peek(&pilaOperandos); pop(&pilaOperandos); 
     Var vec_type = peek(&pilaTipos); pop(&pilaTipos); 
+    pop(&pilaNombres); 
 
     if(y_type.data.iVal != TableInt && y_type.data.iVal != TableDouble ||
         x_type.data.iVal != TableInt && x_type.data.iVal != TableDouble){
@@ -1288,11 +1317,104 @@ void npAssign3(){
     currentQuad = currentQuad->next; 
     quadrupleCounter++; 
 }
+
 void npAssign4(){
-	/* 
-	Aquí asignas el resultado de la función de generacion de elemento al memory address del elemento.
-	No se como planeas implementar los elements, asi que no se cómo darte instrucciones precisas 
-	*/
+    Var isKinematic = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var isKinematic_type = peek(&pilaTipos); pop(&pilaTipos);  
+    pop(&pilaNombres); 
+    
+    Var type = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var type_type = peek(&pilaTipos); pop(&pilaTipos); 
+    pop(&pilaNombres); 
+     
+    Var color = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var color_type = peek(&pilaTipos); pop(&pilaTipos); 
+    pop(&pilaNombres); 
+
+    Var positionx = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var positionx_type = peek(&pilaTipos); pop(&pilaTipos); 
+    pop(&pilaNombres); 
+
+    Var positiony = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var positiony_type = peek(&pilaTipos); pop(&pilaTipos); 
+    pop(&pilaNombres); 
+
+    Var sizex = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var sizex_type = peek(&pilaTipos); pop(&pilaTipos); 
+    pop(&pilaNombres); 
+
+    Var sizey = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var sizey_type = peek(&pilaTipos); pop(&pilaTipos); 
+    pop(&pilaNombres); 
+
+    Var element = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var element_type = peek(&pilaTipos); pop(&pilaTipos); 
+    pop(&pilaNombres); 
+
+    if(isKinematic_type.data.iVal != TableInt || type_type.data.iVal != TableInt || color_type.data.iVal != TableInt ||
+        (positionx_type.data.iVal != TableInt && positionx_type.data.iVal != TableDouble) ||
+        (positiony_type.data.iVal != TableInt && positiony_type.data.iVal != TableDouble) ||
+        (sizex_type.data.iVal != TableInt && sizex_type.data.iVal != TableDouble) ||
+        (sizey_type.data.iVal != TableInt && sizey_type.data.iVal != TableDouble)){
+        yyerror("Type Missmatch"); 
+        return; 
+    }
+    
+    OPDUM dumkinematic = NewOPDUM("isKinematic", isKinematic.data.iVal, isKinematic_type.data.iVal); 
+    OPDUM kinematicdummy = NewOPDUM("    ", -1, TableNull); 
+    OPDUM kinematicres = NewOPDUM("kinematicdir", element.data.iVal, element_type.data.iVal); 
+    SetQUAD(currentQuad, ASSIGN, dumkinematic, kinematicdummy, kinematicres); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
+   
+    OPDUM dumtype = NewOPDUM("type", type.data.iVal, type_type.data.iVal); 
+    OPDUM typedummy = NewOPDUM("    ", -1, TableNull); 
+    OPDUM typeres = NewOPDUM("typedir", (element.data.iVal +1), element_type.data.iVal); 
+    SetQUAD(currentQuad, ASSIGN, dumtype, typedummy, typeres); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
+    
+    OPDUM dumcolor = NewOPDUM("color", color.data.iVal, color_type.data.iVal); 
+    OPDUM colordummy = NewOPDUM("    ", -1, TableNull); 
+    OPDUM colorres = NewOPDUM("colordir", (element.data.iVal + 2), element_type.data.iVal); 
+    SetQUAD(currentQuad, ASSIGN, dumcolor, colordummy, colorres); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
+
+    OPDUM dumposx = NewOPDUM("posx", positionx.data.iVal, positionx_type.data.iVal); 
+    OPDUM posxdummy = NewOPDUM("    ", -1, TableNull); 
+    OPDUM posxres = NewOPDUM("posxdir", (element.data.iVal +3), element_type.data.iVal); 
+    SetQUAD(currentQuad, ASSIGN, dumposx, posxdummy, posxres); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
+
+    OPDUM dumposy = NewOPDUM("posy", positiony.data.iVal, positiony_type.data.iVal); 
+    OPDUM posydummy = NewOPDUM("    ", -1, TableNull); 
+    OPDUM posyres = NewOPDUM("posydir", (element.data.iVal +4), element_type.data.iVal); 
+    SetQUAD(currentQuad, ASSIGN, dumposy, posydummy, posyres); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
+
+    OPDUM dumsizex = NewOPDUM("sizex", sizex.data.iVal, sizex_type.data.iVal); 
+    OPDUM sizexdummy = NewOPDUM("    ", -1, TableNull); 
+    OPDUM sizexres = NewOPDUM("sizexdir", (element.data.iVal +5), element_type.data.iVal); 
+    SetQUAD(currentQuad, ASSIGN, dumsizex, sizexdummy, sizexres); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
+
+    OPDUM dumsizey = NewOPDUM("sizey", sizey.data.iVal, sizey_type.data.iVal); 
+    OPDUM sizeydummy = NewOPDUM("    ", -1, TableNull); 
+    OPDUM sizeyres = NewOPDUM("sizeydir", (element.data.iVal +6), element_type.data.iVal); 
+    SetQUAD(currentQuad, ASSIGN, dumsizey, sizeydummy, sizeyres); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
+
+    OPDUM registerdummy = NewOPDUM("    ", -1, TableNull); 
+    OPDUM registerdummy2 = NewOPDUM("    ", -1, TableNull); 
+    OPDUM dumregister = NewOPDUM("elemBaseAdr", element.data.iVal, element_type.data.iVal); 
+    SetQUAD(currentQuad, REGISTER, registerdummy, registerdummy2, dumregister); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
 }
 
 void npArrGen1(){
