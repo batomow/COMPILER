@@ -283,6 +283,7 @@ script:
 	| function crlf { npClean();} script
 	| vardec crlf { npClean();} script
     | arrdec crlf { npClean();} script
+    | matdec crlf {npClean();} script
 	| crlf script
 
 
@@ -1611,7 +1612,7 @@ void npAssign2(){
 		} else {
 			value_name = peekFront(&filaArrNombres); popFront(&filaArrNombres);
 			value_type = peekFront(&filaArrTipos); popFront(&filaArrTipos);
-			if(i < size1 && j < size2){
+			if(i < size2 && j < size1){
 				from = NewOPDUM(value_name.data.sVal, value_dir.data.iVal, value_type.data.iVal);			
 				to = NewOPDUM(struct_name.data.sVal, currentCell, struct_type.data.iVal);
 				dummy = NewOPDUM("    ", -1, TableNull);

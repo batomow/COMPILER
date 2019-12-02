@@ -31,7 +31,7 @@
 
 	{"opcode": 7,	"left": 8,	"right": -1,	"result": 40},
 
-	{"opcode": 30,	"left": 3007,	"right": -1,	"result": 20},
+	{"opcode": 30,	"left": 3007,	"right": -1,	"result": 10},
 
 	{"opcode": 0,	"left": 3007,	"right": 1004,	"result": 3014},
 
@@ -45,7 +45,7 @@
 
 	{"opcode": 6,	"left": -1,	"right": -1,	"result": 36},
 
-	{"opcode": 30,	"left": 3007,	"right": -1,	"result": 20},
+	{"opcode": 30,	"left": 3007,	"right": -1,	"result": 10},
 
 	{"opcode": 0,	"left": 3007,	"right": 1004,	"result": 3017},
 
@@ -105,7 +105,7 @@
 
 	{"opcode": 7,	"left": 3003,	"right": -1,	"result": 58},
 
-	{"opcode": 30,	"left": 3001,	"right": -1,	"result": 20},
+	{"opcode": 30,	"left": 3001,	"right": -1,	"result": 10},
 
 	{"opcode": 0,	"left": 3001,	"right": 1004,	"result": 3005},
 
@@ -141,13 +141,13 @@
 
 	{"opcode": 7,	"left": 3013,	"right": -1,	"result": 92},
 
-	{"opcode": 30,	"left": 3011,	"right": -1,	"result": 20},
+	{"opcode": 30,	"left": 3011,	"right": -1,	"result": 10},
 
 	{"opcode": 0,	"left": 3011,	"right": 1004,	"result": 3014},
 
 	{"opcode": 0,	"left": 3011,	"right": 1002,	"result": 3015},
 
-	{"opcode": 30,	"left": 3015,	"right": -1,	"result": 20},
+	{"opcode": 30,	"left": 3015,	"right": -1,	"result": 10},
 
 	{"opcode": 0,	"left": 3015,	"right": 1004,	"result": 3016},
 
@@ -155,19 +155,19 @@
 
 	{"opcode": 7,	"left": 3017,	"right": -1,	"result": 91},
 
-	{"opcode": 30,	"left": 3011,	"right": -1,	"result": 20},
+	{"opcode": 30,	"left": 3011,	"right": -1,	"result": 10},
 
 	{"opcode": 0,	"left": 3011,	"right": 1004,	"result": 3018},
 
 	{"opcode": 10,	"left": -3018,	"right": -1,	"result": 3006},
 
-	{"opcode": 30,	"left": 3011,	"right": -1,	"result": 20},
+	{"opcode": 30,	"left": 3011,	"right": -1,	"result": 10},
 
 	{"opcode": 0,	"left": 3011,	"right": 1004,	"result": 3019},
 
 	{"opcode": 0,	"left": 3011,	"right": 1002,	"result": 3020},
 
-	{"opcode": 30,	"left": 3020,	"right": -1,	"result": 20},
+	{"opcode": 30,	"left": 3020,	"right": -1,	"result": 10},
 
 	{"opcode": 0,	"left": 3020,	"right": 1004,	"result": 3021},
 
@@ -175,7 +175,7 @@
 
 	{"opcode": 0,	"left": 3011,	"right": 1002,	"result": 3022},
 
-	{"opcode": 30,	"left": 3022,	"right": -1,	"result": 20},
+	{"opcode": 30,	"left": 3022,	"right": -1,	"result": 10},
 
 	{"opcode": 0,	"left": 3022,	"right": 1004,	"result": 3023},
 
@@ -189,7 +189,7 @@
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3024},
 
-	{"opcode": 24,	"left": 1001,	"right": 1011,	"result": -3},
+	{"opcode": 24,	"left": 1001,	"right": 1008,	"result": -3},
 
 	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3026},
 
@@ -197,11 +197,11 @@
 
 	{"opcode": 0,	"left": 3025,	"right": 1002,	"result": 3025},
 
-	{"opcode": 15,	"left": 3025,	"right": 1011,	"result": 3027},
+	{"opcode": 15,	"left": 3025,	"right": 1008,	"result": 3027},
 
 	{"opcode": 7,	"left": 3027,	"right": -1,	"result": 106},
 
-	{"opcode": 30,	"left": 3025,	"right": -1,	"result": 20},
+	{"opcode": 30,	"left": 3025,	"right": -1,	"result": 10},
 
 	{"opcode": 0,	"left": 3025,	"right": 1004,	"result": 3029},
 
@@ -215,7 +215,7 @@
 
 	{"opcode": 10,	"left": 1002,	"right": -1,	"result": 3000},
 
-	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1012},
+	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1011},
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3001},
 
@@ -251,7 +251,7 @@
 
 	{"opcode": 10,	"left": 1002,	"right": -1,	"result": 3001},
 
-	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1013},
+	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1012},
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3003},
 
@@ -297,11 +297,11 @@
 
 	{"opcode": 10,	"left": 1002,	"right": -1,	"result": 3001},
 
-	{"opcode": 10,	"left": 1014,	"right": -1,	"result": 3002},
+	{"opcode": 10,	"left": 1013,	"right": -1,	"result": 3002},
 
-	{"opcode": 10,	"left": 1015,	"right": -1,	"result": 3003},
+	{"opcode": 10,	"left": 1014,	"right": -1,	"result": 3003},
 
-	{"opcode": 10,	"left": 1015,	"right": -1,	"result": 3004},
+	{"opcode": 10,	"left": 1014,	"right": -1,	"result": 3004},
 
 	{"opcode": 10,	"left": 1002,	"right": -1,	"result": 3005},
 
@@ -315,9 +315,9 @@
 
 	{"opcode": 10,	"left": 1003,	"right": -1,	"result": 3009},
 
-	{"opcode": 10,	"left": 1016,	"right": -1,	"result": 3010},
+	{"opcode": 10,	"left": 1015,	"right": -1,	"result": 3010},
 
-	{"opcode": 10,	"left": 1015,	"right": -1,	"result": 3011},
+	{"opcode": 10,	"left": 1014,	"right": -1,	"result": 3011},
 
 	{"opcode": 10,	"left": 1002,	"right": -1,	"result": 3012},
 
@@ -325,9 +325,9 @@
 
 	{"opcode": 29,	"left": -1,	"right": -1,	"result": 3007},
 
-	{"opcode": 10,	"left": 1017,	"right": -1,	"result": 3014},
+	{"opcode": 10,	"left": 1016,	"right": -1,	"result": 3014},
 
-	{"opcode": 10,	"left": 1018,	"right": -1,	"result": 3015},
+	{"opcode": 10,	"left": 1017,	"right": -1,	"result": 3015},
 
 	{"opcode": 11,	"left": -1,	"right": -1,	"result": 3014},
 
@@ -345,7 +345,7 @@
 
 	{"opcode": 10,	"left": 3019,	"right": -1,	"result": 3018},
 
-	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1019},
+	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1018},
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3020},
 
@@ -361,7 +361,7 @@
 
 	{"opcode": 10,	"left": 3022,	"right": -1,	"result": 3018},
 
-	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1020},
+	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1019},
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3023},
 
@@ -369,7 +369,7 @@
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3024},
 
-	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1021},
+	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1020},
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3025},
 
@@ -379,6 +379,200 @@
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3026},
 
+	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1021},
+
+	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3027},
+
+	{"opcode": 25,	"left": -1,	"right": -1,	"result": 27},
+
+	{"opcode": 26,	"left": 1022,	"right": -1,	"result": 3000},
+
+	{"opcode": 9,	"left": -1,	"right": -1,	"result": 1},
+
+	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3028},
+
+	{"opcode": 10,	"left": 1002,	"right": -1,	"result": 3029},
+
+	{"opcode": 10,	"left": 1003,	"right": -1,	"result": 3030},
+
+	{"opcode": 10,	"left": 1013,	"right": -1,	"result": 3031},
+
+	{"opcode": 10,	"left": 1023,	"right": -1,	"result": 3031},
+
+	{"opcode": 10,	"left": 1024,	"right": -1,	"result": 3032},
+
+	{"opcode": 10,	"left": 1025,	"right": -1,	"result": 3033},
+
+	{"opcode": 10,	"left": 1026,	"right": -1,	"result": 3035},
+
+	{"opcode": 10,	"left": 1027,	"right": -1,	"result": 3036},
+
+	{"opcode": 10,	"left": 1028,	"right": -1,	"result": 3037},
+
+	{"opcode": 10,	"left": 1029,	"right": -1,	"result": 3038},
+
+	{"opcode": 10,	"left": 1030,	"right": -1,	"result": 3038},
+
+	{"opcode": 10,	"left": 1031,	"right": -1,	"result": 3039},
+
+	{"opcode": 10,	"left": 1032,	"right": -1,	"result": 3040},
+
+	{"opcode": 10,	"left": 1033,	"right": -1,	"result": 3041},
+
+	{"opcode": 10,	"left": 1034,	"right": -1,	"result": 3041},
+
+	{"opcode": 10,	"left": 1035,	"right": -1,	"result": 3042},
+
+	{"opcode": 10,	"left": 1036,	"right": -1,	"result": 3043},
+
+	{"opcode": 10,	"left": 1037,	"right": -1,	"result": 3044},
+
+	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3047},
+
+	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3048},
+
+	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3049},
+
+	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3050},
+
+	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3049},
+
+	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3050},
+
+	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3051},
+
+	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3052},
+
+	{"opcode": 24,	"left": 1001,	"right": 1002,	"result": -3},
+
+	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3056},
+
+	{"opcode": 10,	"left": 3056,	"right": -1,	"result": 3055},
+
+	{"opcode": 0,	"left": 3055,	"right": 1002,	"result": 3055},
+
+	{"opcode": 15,	"left": 3055,	"right": 1002,	"result": 3057},
+
+	{"opcode": 7,	"left": 3057,	"right": -1,	"result": 266},
+
+	{"opcode": 24,	"left": 1001,	"right": 1013,	"result": -3},
+
+	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3059},
+
+	{"opcode": 10,	"left": 3059,	"right": -1,	"result": 3058},
+
+	{"opcode": 0,	"left": 3058,	"right": 1002,	"result": 3058},
+
+	{"opcode": 15,	"left": 3058,	"right": 1013,	"result": 3060},
+
+	{"opcode": 7,	"left": 3060,	"right": -1,	"result": 265},
+
+	{"opcode": 24,	"left": 1001,	"right": 1003,	"result": -3},
+
+	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3062},
+
+	{"opcode": 10,	"left": 3062,	"right": -1,	"result": 3061},
+
+	{"opcode": 0,	"left": 3061,	"right": 1002,	"result": 3061},
+
+	{"opcode": 15,	"left": 3061,	"right": 1003,	"result": 3063},
+
+	{"opcode": 7,	"left": 3063,	"right": -1,	"result": 264},
+
+	{"opcode": 30,	"left": 3055,	"right": -1,	"result": 2},
+
+	{"opcode": 30,	"left": 3058,	"right": -1,	"result": 4},
+
+	{"opcode": 4,	"left": 3055,	"right": 1003,	"result": 3064},
+
+	{"opcode": 0,	"left": 3058,	"right": 3064,	"result": 3065},
+
+	{"opcode": 0,	"left": 1038,	"right": 3065,	"result": 3066},
+
+	{"opcode": 30,	"left": 3055,	"right": -1,	"result": 2},
+
+	{"opcode": 30,	"left": 3058,	"right": -1,	"result": 4},
+
+	{"opcode": 4,	"left": 3055,	"right": 1003,	"result": 3067},
+
+	{"opcode": 0,	"left": 3058,	"right": 3067,	"result": 3068},
+
+	{"opcode": 0,	"left": 1038,	"right": 3068,	"result": 3069},
+
+	{"opcode": 30,	"left": 3055,	"right": -1,	"result": 2},
+
+	{"opcode": 30,	"left": 3061,	"right": -1,	"result": 3},
+
+	{"opcode": 4,	"left": 3055,	"right": 1003,	"result": 3070},
+
+	{"opcode": 0,	"left": 3061,	"right": 3070,	"result": 3071},
+
+	{"opcode": 0,	"left": 1039,	"right": 3071,	"result": 3072},
+
+	{"opcode": 30,	"left": 3061,	"right": -1,	"result": 3},
+
+	{"opcode": 30,	"left": 3058,	"right": -1,	"result": 4},
+
+	{"opcode": 4,	"left": 3061,	"right": 1013,	"result": 3073},
+
+	{"opcode": 0,	"left": 3058,	"right": 3073,	"result": 3074},
+
+	{"opcode": 0,	"left": 1040,	"right": 3074,	"result": 3075},
+
+	{"opcode": 4,	"left": -3072,	"right": -3075,	"result": 3076},
+
+	{"opcode": 0,	"left": -3069,	"right": 3076,	"result": 3077},
+
+	{"opcode": 10,	"left": 3077,	"right": -1,	"result": -3066},
+
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 237},
+
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 231},
+
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 225},
+
+	{"opcode": 24,	"left": 1001,	"right": 1002,	"result": -3},
+
+	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3079},
+
+	{"opcode": 10,	"left": 3079,	"right": -1,	"result": 3078},
+
+	{"opcode": 0,	"left": 3078,	"right": 1002,	"result": 3078},
+
+	{"opcode": 15,	"left": 3078,	"right": 1002,	"result": 3080},
+
+	{"opcode": 7,	"left": 3080,	"right": -1,	"result": 287},
+
+	{"opcode": 24,	"left": 1001,	"right": 1013,	"result": -3},
+
+	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3082},
+
+	{"opcode": 10,	"left": 3082,	"right": -1,	"result": 3081},
+
+	{"opcode": 0,	"left": 3081,	"right": 1002,	"result": 3081},
+
+	{"opcode": 15,	"left": 3081,	"right": 1013,	"result": 3083},
+
+	{"opcode": 7,	"left": 3083,	"right": -1,	"result": 286},
+
+	{"opcode": 30,	"left": 3078,	"right": -1,	"result": 2},
+
+	{"opcode": 30,	"left": 3081,	"right": -1,	"result": 4},
+
+	{"opcode": 4,	"left": 3078,	"right": 1003,	"result": 3085},
+
+	{"opcode": 0,	"left": 3081,	"right": 3085,	"result": 3086},
+
+	{"opcode": 0,	"left": 1038,	"right": 3086,	"result": 3087},
+
+	{"opcode": 11,	"left": -1,	"right": -1,	"result": -3087},
+
+	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3084},
+
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 275},
+
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 269},
+
 	{"opcode": 27,	"left": -1,	"right": -1,	"result": 1001},
 
 	{"opcode": 21,	"left": -1,	"right": -1,	"result": -1},
@@ -387,27 +581,46 @@
 	],
 "globals":[
 
-	{"valor": "El resultado del factorial es...", 	"memdir": 1019}, 
-	{"valor": "---Bubble Sort---", 	"memdir": 1021}, 
+	{"valor": "El resultado del factorial es...", 	"memdir": 1018}, 
+	{"valor": 20, 	"memdir": 1035}, 
+	{"valor": 21, 	"memdir": 1036}, 
+	{"valor": 22, 	"memdir": 1037}, 
+	{"valor": "---Bubble Sort---", 	"memdir": 1020}, 
+	{"valor": 3029, 	"memdir": 1039}, 
 	{"valor": 0, 	"memdir": 1001}, 
 	{"valor": 1, 	"memdir": 1002}, 
+	{"valor": "introduce 10 elementos aleatorios", 	"memdir": 1007}, 
 	{"valor": 2, 	"memdir": 1003}, 
-	{"valor": 3, 	"memdir": 1014}, 
+	{"valor": 3, 	"memdir": 1013}, 
 	{"valor": "Introduce el elemento al buscar", 	"memdir": 1000}, 
-	{"valor": 100, 	"memdir": 1015}, 
-	{"valor": 9, 	"memdir": 1011}, 
-	{"valor": 10.200000, 	"memdir": 1017}, 
-	{"valor": 9.100000, 	"memdir": 1018}, 
-	{"valor": "El numero de fibonacci es...", 	"memdir": 1020}, 
-	{"valor": "introduce 20 elementos aleatorios", 	"memdir": 1007}, 
+	{"valor": 100, 	"memdir": 1014}, 
+	{"valor": 66, 	"memdir": 1022}, 
+	{"valor": 4, 	"memdir": 1023}, 
+	{"valor": 5, 	"memdir": 1024}, 
+	{"valor": 6, 	"memdir": 1025}, 
+	{"valor": 8, 	"memdir": 1009}, 
+	{"valor": 9, 	"memdir": 1008}, 
+	{"valor": 10.200000, 	"memdir": 1016}, 
+	{"valor": 9.100000, 	"memdir": 1017}, 
+	{"valor": "El numero de fibonacci es...", 	"memdir": 1019}, 
+	{"valor": 3035, 	"memdir": 1040}, 
 	{"valor": "Aqui van ordenados", 	"memdir": 1010}, 
-	{"valor": "Introduce el numero fibonacci a calcular", 	"memdir": 1013}, 
+	{"valor": "Introduce el numero fibonacci a calcular", 	"memdir": 1012}, 
 	{"valor": 2000, 	"memdir": 1004}, 
-	{"valor": 200, 	"memdir": 1016}, 
+	{"valor": 3047, 	"memdir": 1038}, 
+	{"valor": 200, 	"memdir": 1015}, 
 	{"valor": "El numero no se encontro en el arreglo", 	"memdir": 1006}, 
-	{"valor": "Introduce el factorial a calcular...", 	"memdir": 1012}, 
-	{"valor": 18, 	"memdir": 1009}, 
-	{"valor": 19, 	"memdir": 1008}, 
+	{"valor": "--- Find ----", 	"memdir": 1021}, 
+	{"valor": 11, 	"memdir": 1026}, 
+	{"valor": "Introduce el factorial a calcular...", 	"memdir": 1011}, 
+	{"valor": 12, 	"memdir": 1027}, 
+	{"valor": 13, 	"memdir": 1028}, 
+	{"valor": 14, 	"memdir": 1029}, 
+	{"valor": 15, 	"memdir": 1030}, 
+	{"valor": 16, 	"memdir": 1031}, 
+	{"valor": 17, 	"memdir": 1032}, 
+	{"valor": 18, 	"memdir": 1033}, 
+	{"valor": 19, 	"memdir": 1034}, 
 	{"valor": "El numero se encontro en la posicion..", 	"memdir": 1005}, 
 	{"valor": "dummy", 	"memdir": -1} 
 		]

@@ -1,4 +1,5 @@
-array arr:int[20]
+array arr:int[10]
+
 
 order find:int(var n:int){
     vision("Introduce el elemento al buscar")
@@ -27,15 +28,15 @@ order find:int(var n:int){
 }
 
 order bubbleSort:int(){
-    vision("introduce 20 elementos aleatorios")
-    for[0,1,19]->iter{
+    vision("introduce 10 elementos aleatorios")
+    for[0,1,9]->iter{
         scan(arr[iter])
     }
     /* -- bubble
         sort ---  */
     var temp:int
-    for[0, 1, 18]->i{
-        for[0,1,18-i]->j {
+    for[0, 1, 8]->i{
+        for[0,1,8-i]->j {
             if(arr[j] > arr[j + 1]) {
                 temp = arr[j]
                 arr[j] = arr[j + 1]
@@ -100,8 +101,33 @@ order enter:int(){
 
     vision("---Bubble Sort---")
     bubbleSort()
-
     
+    vision("--- Find ----")
+    
+    find(66)
+    
+    mat aMat:int[2][3] = [[1, 2, 3], 
+                            [4, 5, 6]]
+
+    mat bMat:int[3][4] = [[11, 12, 13, 14], 
+                            [ 15, 16, 17, 18], 
+                            [19, 20, 21, 22]]
+    
+    mat cMat:int [2][4] = [[0, 0, 0, 0], 
+                            [0, 0, 0, 0]]
+    
+    for[0,1,1]->i{
+        for[0,1,3]->j{
+            for[0,1,2]->k{
+                cMat[i][j] = cMat[i][j] + (aMat[i][k] * bMat[k][j])
+            }
+        }
+    }  
+    for[0,1,1]->n{
+        for[0,1,3]->m{
+            vision(cMat[n][m])
+        }
+    }
 
     return 0
 }
