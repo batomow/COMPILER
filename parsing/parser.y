@@ -599,8 +599,8 @@ void npFinalCheck(){
     //globals.print(&globals);  
     //printf("Aqui van las constantes\n"); 
     //constants.print(&constants); 
-    printf("Aqui van las locales\n"); 
-    functions.print(&functions); 
+    //printf("Aqui van las locales\n"); 
+    //functions.print(&functions); 
      
     OPDUM dummy = NewOPDUM("    ", -1, TableNull); 
     OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
