@@ -11,19 +11,39 @@
 
 	{"opcode": 10,	"left": 1002,	"right": -1,	"result": 3004},
 
-	{"opcode": 10,	"left": 1003,	"right": -1,	"result": 3005},
+	{"opcode": 10,	"left": 1000,	"right": -1,	"result": 3005},
 
-	{"opcode": 10,	"left": 1003,	"right": -1,	"result": 3006},
+	{"opcode": 10,	"left": 1000,	"right": -1,	"result": 3006},
 
 	{"opcode": 29,	"left": -1,	"right": -1,	"result": 3000},
 
-	{"opcode": 11,	"left": -1,	"right": -1,	"result": 3003},
+	{"opcode": 10,	"left": 1000,	"right": -1,	"result": 3007},
 
-	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3007},
+	{"opcode": 10,	"left": 1000,	"right": -1,	"result": 3008},
 
-	{"opcode": 10,	"left": 1004,	"right": -1,	"result": 3008},
+	{"opcode": 10,	"left": 1003,	"right": -1,	"result": 3009},
 
-	{"opcode": 10,	"left": 1005,	"right": -1,	"result": 3009},
+	{"opcode": 10,	"left": 1004,	"right": -1,	"result": 3010},
+
+	{"opcode": 10,	"left": 1002,	"right": -1,	"result": 3011},
+
+	{"opcode": 10,	"left": 1000,	"right": -1,	"result": 3012},
+
+	{"opcode": 10,	"left": 1000,	"right": -1,	"result": 3013},
+
+	{"opcode": 29,	"left": -1,	"right": -1,	"result": 3007},
+
+	{"opcode": 10,	"left": 1005,	"right": -1,	"result": 3014},
+
+	{"opcode": 10,	"left": 1006,	"right": -1,	"result": 3015},
+
+	{"opcode": 11,	"left": -1,	"right": -1,	"result": 3014},
+
+	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3016},
+
+	{"opcode": 11,	"left": -1,	"right": -1,	"result": 3015},
+
+	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3017},
 
 	{"opcode": 27,	"left": -1,	"right": -1,	"result": 1001},
 
@@ -36,9 +56,10 @@
 	{"valor": 0, 	"memdir": 1001}, 
 	{"valor": 1, 	"memdir": 1000}, 
 	{"valor": 100, 	"memdir": 1002}, 
-	{"valor": 7.700000, 	"memdir": 1005}, 
-	{"valor": 4.400000, 	"memdir": 1004}, 
-	{"valor": 10, 	"memdir": 1003}, 
+	{"valor": 7, 	"memdir": 1003}, 
+	{"valor": 7.700000, 	"memdir": 1006}, 
+	{"valor": 4.400000, 	"memdir": 1005}, 
+	{"valor": 200, 	"memdir": 1004}, 
 	{"valor": "dummy", 	"memdir": -1} 
 		]
 }
