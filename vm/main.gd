@@ -15,7 +15,7 @@ var constants_counter:int = 0
 var constants := []
 var flag = true
 var stackPointer= []
-const DEBUGGING = 1
+const DEBUGGING = 0
 
 var return_buffer:int
 
@@ -32,11 +32,11 @@ func _ready():
 	
 	# Initialize localsArray, the structure used to hold the memory arrays with local memory
 	var mainLocal = []
-	mainLocal.resize(20)
+	mainLocal.resize(30)
 	localsArray.push_back(mainLocal)
 	
 	# Initialize Global memory
-	globals.resize(20)
+	globals.resize(30)
 
 	_load() 
 
@@ -170,6 +170,8 @@ func _op_register(quad):
 
 
 func _get_mem_val(addr, local = -1):
+	if addr < 0:
+		addr = _get_mem_val(addr * (-1))
 	
 	if(addr == 66 ): #return buffer
 		return return_buffer
@@ -190,6 +192,9 @@ func _get_mem_val(addr, local = -1):
 		return localsArray[local][i]
 
 func _set_mem_addr(addr, val, isParam = 0):
+	if addr < 0:
+		addr = _get_mem_val(addr*(-1))
+	
 	if isParam:
 		eraArray[-1][addr-3000] = val
 		if DEBUGGING:
