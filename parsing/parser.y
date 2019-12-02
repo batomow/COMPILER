@@ -724,7 +724,7 @@ void np1(char* id){
     int success = 0 ;
     DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
     int size = strlen(id); 
-    char* copy = calloc(size, sizeof(char)); 
+    char* copy = calloc(64, sizeof(char)); 
     strcpy(copy, id); 
     if(strlen(currentFunction)>0){
         if(isParam){
@@ -764,7 +764,7 @@ void np2(char* id, int sizeArr){
 	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
 	int success = 0;
-	char* copy = calloc(strlen(id), sizeof(char));
+	char* copy = calloc(64, sizeof(char));
 	strcpy(copy, id);
 	if(strlen(currentFunction) > 0){
 		if(isParam){
@@ -1185,13 +1185,12 @@ void npArrExpr1(char* id){
 	push(&pilaOperadores, NewVarI(-1));
 }
 void npArrExpr2(){
-	int i = 0;
-	int j = 0;
-	
+	Var fondo = peek(&pilaOperadores); pop(&pilaOperadores);
+
 	//Sacar variable dimensionada y checar su cantidad de dimensiones
 	Var struct_name = peek(&pilaDimNombres); pop(&pilaDimNombres);
-	Var struct_dir = peek(&pilaDimNombres); pop(&pilaDimNombres);
-	Var struct_type = peek(&pilaDimNombres); pop(&pilaDimNombres);
+	Var struct_dir = peek(&pilaDimOperandos); pop(&pilaDimOperandos);
+	Var struct_type = peek(&pilaDimTipos); pop(&pilaDimTipos);
 	
 	VTE* lookup = globals.lookup(&globals, struct_name.data.sVal); 
 	if(!(lookup->isSet)){
@@ -1222,7 +1221,6 @@ void npArrExpr2(){
 		Var tope = peek(&pilaOperandos); pop(&pilaOperandos);
 		if(tope.data.iVal != -1){
 			yyerror("Segmentation fault (core)");
-			return;
 		}
 
 		DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
@@ -1243,26 +1241,10 @@ void npArrExpr2(){
 		currentQuad = currentQuad->next;
 		quadrupleCounter++;
 
-		//Guardar el resultado de esa operación y asignar lo que hay en ese espacio de memoria en otra temporal
-		DIM* dim2 = calloc(1, sizeof(DIM)); *dim2 = NewDIM(); 
-                char* aux2 = calloc(64, sizeof(char)); 
-                int tempAddr2 = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
-                sprintf(aux2, "t%d", tempAddr2); 
-                if(strlen(currentFunction) > 0){
-                    functions.addVar(&functions, currentFunction, aux2, struct_type.data.iVal, tempAddr2, dim2); 
-                }else{
-                    globals.add(&globals, aux2, struct_type.data.iVal, tempAddr2, dim2);  
-                }
-		OPDUM dummy = NewOPDUM("    ", -1, TableNull);
-		OPDUM result2 = NewOPDUM(aux2, tempAddr2, struct_type.data.iVal);
-		SetQUAD(currentQuad, ASSIGN, dummy, result1, result2);
-		currentQuad = currentQuad->next;
-		quadrupleCounter++;
-
-		//Push de result 2 en pilas
-		push(&pilaOperandos, NewVarI(tempAddr2));
-		push(&pilaNombres, NewVarS(aux2));
-		push(&pilaTipos, struct_type);
+		//Push de result 1 en pilas, pero en negativo, para indicar a la maquina virtual que es un pointer
+		push(&pilaOperandos, NewVarI(tempAddr1 * (-1)));
+		push(&pilaNombres, NewVarS(aux));
+		push(&pilaTipos, NewVarI(struct_type.data.iVal));
 		 
 	} else if(dim_num == 2){
 		Var index2_name = peek(&pilaNombres); pop(&pilaNombres);
@@ -1272,7 +1254,6 @@ void npArrExpr2(){
 		Var index1_dir = peek(&pilaOperandos); pop(&pilaOperandos);
 		if(index1_dir.data.iVal == -1){
 			yyerror("Segmentation fault (core)");
-			return;
 		}
 		Var index1_name = peek(&pilaNombres); pop(&pilaNombres);
 		Var index1_type = peek(&pilaTipos); pop(&pilaTipos);
@@ -1280,7 +1261,6 @@ void npArrExpr2(){
 		Var tope = peek(&pilaOperandos); pop(&pilaOperandos);
 		if(tope.data.iVal != -1){
 			yyerror("Incorrect number of indexes");
-			return;
 		}
 
 		// Guardar el tamaño de la primera dimensión en una constante
@@ -1319,17 +1299,7 @@ void npArrExpr2(){
                     functions.addVar(&functions, currentFunction, aux3, TableInt, tempAddr3, dim3); 
                 }else{
                     globals.add(&globals, aux3, TableInt, tempAddr3, dim3);  
-                }
-
-		DIM* dim4 = calloc(1, sizeof(DIM)); *dim4 = NewDIM(); 
-                char* aux4 = calloc(64, sizeof(char)); 
-                int tempAddr4 = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
-                sprintf(aux4, "t%d", tempAddr4); 
-                if(strlen(currentFunction) > 0){
-                    functions.addVar(&functions, currentFunction, aux4, struct_type.data.iVal, tempAddr4, dim4); 
-                }else{
-                    globals.add(&globals, aux4, struct_type.data.iVal, struct_type.data.iVal, dim4);  
-                }
+		}
 
 		//Crear cuadruplo de multiplicación index1 + size1 = t1
 		OPDUM index1opdum = NewOPDUM(index1_name.data.sVal, index1_dir.data.iVal, index1_type.data.iVal);
@@ -1352,20 +1322,13 @@ void npArrExpr2(){
 		SetQUAD(currentQuad, SUM, base, t2opdum, t3opdum);
 		currentQuad = currentQuad->next;
 		quadrupleCounter++;
-		
-		// Asignar lo que hay en la dirección que apunta t3 a una temporal
-		OPDUM dummy = NewOPDUM("    ", -1, TableNull);
-		OPDUM t4opdum = NewOPDUM(aux4, tempAddr4, struct_type.data.iVal);
-		SetQUAD(currentQuad, ASSIGN, dummy, t3opdum, t4opdum);
-		currentQuad = currentQuad->next;
-		quadrupleCounter++;
 
-		//Push de t4 a pilas
-		push(&pilaOperandos, NewVarI(tempAddr4));
-		push(&pilaNombres, NewVarS(aux4));
-		push(&pilaTipos, struct_type);		
+		//Push de t3 a pilas, pero en negativo, para indicar a la maquina virtual que es un pointer
+		push(&pilaOperandos, NewVarI(tempAddr3 * (-1)));
+		push(&pilaNombres, NewVarS(aux3));
+		push(&pilaTipos, NewVarI(struct_type.data.iVal));		
 	}
-	pop(&pilaOperadores);
+	
 }
 void npArrExpr3(int indexDim){
 	Var value_name = peek(&pilaNombres);
