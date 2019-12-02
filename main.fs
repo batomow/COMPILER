@@ -12,6 +12,9 @@ order enter:int(){
     scan(size) 
 	var result:int = factorial(size)
 	vision(result)
+    vector position = {4.5, 7.7}
+    vision(position.x)
+    vision(position.y)
 	return 0
 }
 

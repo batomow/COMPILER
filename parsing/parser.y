@@ -20,7 +20,7 @@
 	void np1(); void np1_1(); 
 	void np2();	
 	void np3();
-	void np4();
+	void np4(char*);
 	void np5();
 
 	//Expressions 
@@ -33,7 +33,8 @@
 	void npExpr1_3();
 	void npExpr1_4();
 	void npExpr1_5();
-	void npExpr1_6();
+	void npExpr1_6(char*);
+    void npExpr1_6_aux(char*); 
 	void npExpr2();
 	void npExpr3();
 	void npExpr3_1();
@@ -96,6 +97,7 @@
 
     //Global Variables
     char currentFunction[96];   
+    char propertyAccessAux[9]; //la propiedad mas grandes se llama position
     TableType currentType;  //tipo de variable
     int isParam; // true si la variable que se esta parseando es parametro
     int isVector; 
@@ -402,7 +404,7 @@ elementdec:
 /* Geometric vector */
 
 vectordec: 
-	V_VECTOR V_ID { isVector = 1; np1($2); isVector = 0;  }
+	V_VECTOR V_ID {np4($2);}
 
 vector:
 	SYM_OCURL expr SYM_COMMA expr SYM_CCURL
@@ -410,7 +412,7 @@ vector:
 
 /* Property access */
 property:
-	V_ID SYM_DOT V_ID { npExpr1_6(); }
+	V_ID { npExpr1_6_aux($1); } SYM_DOT V_ID { npExpr1_6($1); }
 
 
 /* ------- EXPRESSIONS GRAMMAR ------- */
@@ -519,6 +521,7 @@ int main(int argc, char *argv[]) {
     constants = NewVarTable(127);
     functions = NewFuncTable(127); 
     strcpy(currentFunction, ""); 
+    strcpy(propertyAccessAux, ""); 
     
     
     pilaNombres = NewStack(TypeString, 64);  
@@ -596,8 +599,8 @@ void npFinalCheck(){
     //globals.print(&globals);  
     //printf("Aqui van las constantes\n"); 
     //constants.print(&constants); 
-    //printf("Aqui van las locales\n"); 
-    //functions.print(&functions); 
+    printf("Aqui van las locales\n"); 
+    functions.print(&functions); 
      
     OPDUM dummy = NewOPDUM("    ", -1, TableNull); 
     OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
@@ -705,9 +708,7 @@ void np1(char* id){
 }
 
 void np1_1(TableType type){
-    if(isVector){
-        currentType = TableVector;
-    }else if (isMat){
+    if (isMat){
         currentType = TableMat; 
     }else if(isElement){
         currentType = TableElement; 
@@ -734,12 +735,37 @@ void np3(){
 	/* Push tipo a pila de Tipos */
 }
 
-void np4(){
+void np4(char* id){
 	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
+    VTE* result = globals.lookup(&globals, id); 
+    if(!(result->isSet))
+        result = functions.lookupParam(&functions, currentFunction, id); 
+    if(!(result->isSet))
+        result = functions.lookupVar(&functions, currentFunction, id); 
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
-	/* Recuerda que este vector es un pair, asi que haz las modificaciones necesarias */
-	/* Push de nombre a pila de Operandos */
-	/* Push tipo a pila de Tipos */
+    if(!result->isSet){
+	    /* Recuerda que este vector es un pair, asi que haz las modificaciones necesarias */
+        DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+        SetDIM(dim, 2, 1); 
+        if(strlen(currentFunction) > 0){//agregala a las locales
+            functions.addVar(&functions, currentFunction, id, TableVector, localsCounter, dim); 
+            localsCounter += 2; 
+        }else{
+            globals.add(&globals, id, TableVector, globalsCounter, dim); 
+            globalsCounter += 2;
+        }
+        /* push el nombre a la pila de nombres */
+        int auxsize = strlen(id); 
+        char* aux = calloc(auxsize+1, sizeof(char)); 
+        strcpy(aux, id); 
+        push(&pilaNombres, NewVarS(aux));
+	    /* Push el dir a pila de Operandos */
+        push(&pilaOperandos, NewVarI(result->dir)); 
+	    /* Push tipo a pila de Tipos */
+        push(&pilaTipos, NewVarI(TableVector)); 
+    }else{
+        yyerror("Ese vector ya esta definido"); 
+    }
 }
 
 void np5(){
@@ -905,11 +931,59 @@ void npExpr1_4(){
 void npExpr1_5(){
 	// Todavía no tengo claro el acceso a las matrices
 }
-void npExpr1_6(){
-	/* Revisar que exista un vector o elemento con ese id
-	   Revisar que ese vector o elemento tenga esa propiedad
-	   Push propiedad a pila de operandos
-	   Push tipo a pila de tipos */
+
+void npExpr1_6_aux(char* vid){
+    strcpy(propertyAccessAux, vid); 
+}
+
+void npExpr1_6(char* pid){
+	// Revisar que exista un vector o elemento con ese id
+    int vidsize = strlen(propertyAccessAux);
+    char* vid = calloc(vidsize+1, sizeof(char)); 
+    strcpy(vid, propertyAccessAux); 
+    VTE* result = globals.lookup(&globals, vid); 
+    if(!(result->isSet))
+        result = functions.lookupParam(&functions, currentFunction, vid); 
+    if(!(result->isSet))
+        result = functions.lookupVar(&functions, currentFunction, vid); 
+    if(result->isSet){
+	    // Revisar que ese vector o elemento tenga esa propiedad
+        char* vector_properties[] = {"x", "y"};
+        char* element_properties[] = {"type", "color", "positionX", "positionY", "sizeX", "sizeY"};
+        int found = 0; 
+        int found_index = 0; 
+        if(result->type == TableVector){
+            for(int n = 0; n<2; n++)
+                if(strcmp(pid, vector_properties[n]) == 0){
+                    found = 1; 
+                    found_index = n; 
+                }
+        }else if (result->type == TableElement){
+            for(int n = 0; n<3; n++)
+                if(strcmp(pid, element_properties[n]) == 0){
+                    found = 1; 
+                    found_index = 0; 
+                }
+        }else{
+            yyerror("Esta variable no es vector ni elemento"); 
+        }
+        if(found){
+            //found is now the base directory offset in this context
+            push(&pilaNombres, NewVarS(vid)); 
+	        // Push propiedad a pila de operandos
+            push(&pilaOperandos, NewVarI(((result->dir) + found_index)));
+	        // Push tipo a pila de tipos 
+            if(result->type == TableElement){ //si es elemento y la propiedad es > 1 (tipo = 0, color = 1) entonces pushea tipo vector
+                found_index > 1  ? push(&pilaTipos, NewVarI(TableDouble)) : push(&pilaTipos, NewVarI(TableInt)); 
+            }else{//los vectores tienes <Double, Double> por default
+                push(&pilaTipos, NewVarI(TableDouble)); 
+            }
+        }else{
+            yyerror("Esa propiedad del vector o elemento no existe"); 
+        }
+    }else{
+        yyerror("Ese vector o elemento no existe"); 
+    }
 }
 void npExpr3(OP newOpe){
 	/* Push de operador a pila de operadores */
@@ -1186,21 +1260,33 @@ void npAssign2(){
 
 }
 void npAssign3(){
-	/*
-	Si (pOperadores.top() == '='):
-		y = pOperandos.pop()
-		y_type = pTipos.pop 
-		x = pOperandos.pop()
-		x_type = pTipos.pop()
-	
-		vector = pOperandos.pop()
-		pTipos.pop() No necesitamos el tipo de vector
-		
-		if(y_type y x_type no son int o double):
-			ERROR: type mismatch
-		
-		gen quad(=, pair(x, y), ,vector) o como vayas a asignar en memoria
-	*/	
+    Var y = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var y_type = peek(&pilaTipos); pop(&pilaTipos); 
+
+    Var x = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var x_type = peek(&pilaTipos); pop(&pilaTipos); 
+
+    Var vec = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var vec_type = peek(&pilaTipos); pop(&pilaTipos); 
+
+    if(y_type.data.iVal != TableInt && y_type.data.iVal != TableDouble ||
+        x_type.data.iVal != TableInt && x_type.data.iVal != TableDouble){
+        yyerror("Type Mismatch!"); 
+        return; 
+    }
+    OPDUM opx = NewOPDUM("x", x.data.iVal, x_type.data.iVal); 
+    OPDUM dummyx = NewOPDUM("    ", -1, TableNull); 
+    OPDUM opxres = NewOPDUM("basedir", vec.data.iVal, vec_type.data.iVal); 
+    SetQUAD(currentQuad, ASSIGN, opx, dummyx, opxres); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
+
+    OPDUM opy = NewOPDUM("y", y.data.iVal, y_type.data.iVal); 
+    OPDUM dummyy = NewOPDUM("    ", -1, TableNull); 
+    OPDUM opyres = NewOPDUM("vecdir", (vec.data.iVal+1), vec_type.data.iVal); 
+    SetQUAD(currentQuad, ASSIGN, opy, dummyy, opyres); 
+    currentQuad = currentQuad->next; 
+    quadrupleCounter++; 
 }
 void npAssign4(){
 	/* 

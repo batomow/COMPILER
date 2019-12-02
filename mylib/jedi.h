@@ -16,6 +16,11 @@ typedef enum DataType{
         TypeBool
 } DataType;
 
+typedef enum ElementType{
+    CircleElem, 
+    SquareElem, 
+    LineElem
+} ElementType;
 
 typedef struct Var{
         union{
@@ -42,18 +47,19 @@ Var* NewVarArrayC(char*, int);  //needs destroying
 char* VarToString(Var); //free return value
 
 //element
-typedef struct Vector{
+/*typedef struct Vector{
     Var a;
     Var b;
 } Vector; 
 Vector NewVector(Var, Var); 
 
 typedef struct Element{    
+    ElementType type;
     Vector position;  
     Vector size; 
     int color; 
 } Element; 
-Element NewElement(Vector, Vector, int); 
+Element NewElement(Vector, Vector, int); *///no use uso al final este 
 
 //------------- Stack Stuff ---------------------//
 typedef struct Stack Stack;
