@@ -246,8 +246,9 @@ typedef enum OP{
     ERA, //25
     PARAM, //26
     RETURN, // 27
-    SCANALL, //29 
-    REGISTER //30
+    SCANALL, //28
+    REGISTER, //29
+    CHECKLIM //30
 } OP; 
 
 typedef struct Operandum OPDUM; 

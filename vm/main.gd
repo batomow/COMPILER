@@ -105,6 +105,8 @@ func _physics_process(delta):
 			flag = false
 			if DEBUGGING:
 				print("Globals: ", globals, "\nConstants: ", constants)
+		elif quad.opcode == 24: # FORCHECK
+			_op_forcheck(quad)
 		elif quad.opcode == 25: # ERA
 			_op_era(quad)
 		elif quad.opcode == 26: # PARAM
@@ -113,6 +115,8 @@ func _physics_process(delta):
 			_op_return(quad)
 		elif quad.opcode == 29: #REGISTER
 			_op_register(quad)
+		elif quad.opcode == 30: # CHECKLIM
+			_op_checklim(quad)
 		
 		if stackPointer.empty():
 			flag = false
@@ -289,12 +293,18 @@ func _op_gosub(quad):
 func _op_assign(quad):
 	if DEBUGGING:
 		print("ASSIGN: ", quad)
-	var left = _get_mem_val(quad.left)
 	var res = quad.result
 	
-	_set_mem_addr(res, left)
-	if DEBUGGING:
-		print(res, " = ", left, " (check: ", _get_mem_val(res), ")")
+	if(quad.left == -1):
+		var right = _get_mem_val(_get_mem_val(quad.right))
+		_set_mem_addr(res, right)
+		if DEBUGGING:
+			print(res, " = ", right, " (check: ", _get_mem_val(res), ")")
+	else:
+		var left = _get_mem_val(quad.left)
+		_set_mem_addr(res, left)
+		if DEBUGGING:
+			print(res, " = ", left, " (check: ", _get_mem_val(res), ")")
 
 # warning-ignore:unused_argument
 func _op_print(quad):
@@ -340,9 +350,14 @@ func _op_gt(quad):
 
 # warning-ignore:unused_argument
 func _op_lte(quad):
+	if DEBUGGING:
+		print("LTE: ", quad)
 	var left = _get_mem_val(quad.left)
 	var right = _get_mem_val(quad.right)
 	_set_mem_addr(quad.result, left <= right)
+	
+	if DEBUGGING:
+		print(left, " <= ", right, " = ", _get_mem_val(quad.result))
 
 # warning-ignore:unused_argument
 func _op_gte(quad):
@@ -395,7 +410,11 @@ func _op_neg(quad):
 
 # warning-ignore:unused_argument
 func _op_forcheck(quad):
-	pass
+	var left = _get_mem_val(quad.left)
+	var right = _get_mem_val(quad.right)
+	
+	if(left > right):
+		flag = false
 
 # warning-ignore:unused_argument
 func _op_era(quad):
@@ -430,3 +449,14 @@ func _op_return(quad):
 			print("Program finished");
 		else:
 			print("Control now to: ", stackPointer[-1], ", Returned: ", return_buffer)
+			
+func _op_checklim(quad):
+	var tocheck = _get_mem_val(quad.left)
+	var sup = quad.result
+	
+	if(tocheck >= sup || tocheck < 0):
+		print("Index out of bounds")
+		flag = false
+		
+	if(DEBUGGING):
+		print("Checking limits: 0 - ", tocheck, " - ", sup)

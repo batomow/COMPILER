@@ -1,9 +1,10 @@
 %{
 	#include <stdio.h> 
-    #include <stdlib.h>
-    #include <string.h> 
-    #include <jedi.h>
-    #include "cube.h"
+	#include <stdlib.h>
+	#include <string.h> 
+	#include <jedi.h>
+	#include "cube.h"
+	#include <limits.h>
 
 	extern int yylex();
 	extern int yyparse();
@@ -31,8 +32,6 @@
     void npExpr1_2_int(); 
     void npExpr1_2_bool(); 
 	void npExpr1_3();
-	void npExpr1_4();
-	void npExpr1_5();
 	void npExpr1_6(char*);
     void npExpr1_6_aux(char*); 
 	void npExpr2();
@@ -51,6 +50,11 @@
 	void npExpr13();
 	void npExpr14();
 	void npExpr15();
+	
+	//Array access
+	void npArrExpr1();
+	void npArrExpr2();
+	void npArrExpr3();
 
 	//Assignments
 	void npAssign1();
@@ -103,7 +107,7 @@
     int isVector; 
     int isMat; 
     int isElement; 
-    
+	    
     int errorCounter = 0; 
 
     // Global Structures
@@ -119,6 +123,14 @@
     Stack pilaFor; 
     Stack pilaEras; 
     Stack pilaGoSubs;
+
+	Queue filaArrOperandos;
+	Queue filaArrNombres;
+	Queue filaArrTipos;
+	
+	Stack pilaDimNombres;
+	Stack pilaDimOperandos;
+	Stack pilaDimTipos;
     
     QUAD listQuads;   
     QUAD* currentQuad; 
@@ -235,6 +247,8 @@
 
 %type <op> comp_operator //no terminal 
 %type <yystring> vardec //no terminal
+%type <yystring> arrdec //no terminal
+%type <yystring> matdec //no terminal
 
 %code requires{
     #include <jedi.h>
@@ -303,8 +317,8 @@ generaldec: /* declaras o declaras y assignas */
 	| vectordec
 	| elementdec 
 	| vardec {npExpr1_1($1);} MTH_SEQUA expr { npAssign1(); }
-	| arrdec MTH_SEQUA arr { npAssign2(); }
-	| matdec MTH_SEQUA mat { npAssign2(); }
+	| arrdec {npExpr1_1($1);} MTH_SEQUA arr { npAssign2(); }
+	| matdec {npExpr1_1($1);} MTH_SEQUA mat { npAssign2(); }
 	| vectordec MTH_SEQUA vector {npAssign3();}
 	| elementdec MTH_SEQUA element {npAssign4();}
 
@@ -363,16 +377,16 @@ assign:
 /* ------- DATA STRUCTURES GRAMMAR ------- */
 
 structaccess:
-	V_ID SYM_OBRAC expr SYM_CBRAC { npExpr1_4(); } structIndex
+	V_ID { npArrExpr1($1); } SYM_OBRAC expr SYM_CBRAC { npArrExpr3(1);  } structIndex { npArrExpr2(); }
 
 structIndex:
 	/* empty */
-	| SYM_OBRAC expr SYM_CBRAC { npExpr1_5(); }
+	| SYM_OBRAC expr SYM_CBRAC { npArrExpr3(2); }
 
 /* Array*/
 
 arrdec:
-	V_ARR V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC { np2();}
+	V_ARR V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC { $$ = $2; np2($2, $6);}
 
 arr:
 	SYM_OBRAC arrHelper SYM_CBRAC { npArrGen1(); }
@@ -385,7 +399,7 @@ arrHelper:
 /* Matrix */
 
 matdec:
-	V_MAT V_ID { isMat = 1; np1($2); isMat=0;} SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC { np3(); }
+	V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC { $$ = $2; np3($2, $6, $9); }
 
 mat:
 	SYM_OBRAC optlf matHelper SYM_CBRAC
@@ -534,30 +548,38 @@ int main(int argc, char *argv[]) {
     pilaFor = NewStack(TypeInt, 64); 
     pilaEras = NewStack(TypeInt, 32); 
     pilaGoSubs = NewStack(TypeString, 16);   
+	
+        filaArrOperandos = NewQueue(TypeInt, 64);
+	filaArrNombres = NewQueue(TypeString, 64);
+	filaArrTipos = NewQueue(TypeInt, 64);
 
-    cubo = NewCubo(); 
+	pilaDimNombres = NewStack(TypeString, 64);
+	pilaDimOperandos = NewStack(TypeInt, 64);
+	pilaDimTipos = NewStack(TypeInt, 64);
+	
+	cubo = NewCubo(); 
 
-    constCounter = 1000; 
-    globalsCounter = 2000; 
-    localsCounter = 3000; 
-    paramCounter = 0; 
+	constCounter = 1000; 
+	globalsCounter = 2000; 
+	localsCounter = 3000; 
+	paramCounter = 0; 
 
-    quadrupleCounter = 0; 
+	quadrupleCounter = 0; 
 
-    listQuads = NewQUAD();     
-    currentQuad = &listQuads; 
-    isParam = 0; 
-    isVector = 0; 
-    isMat = 0; 
-    isElement = 0; 
+	listQuads = NewQUAD();     
+	currentQuad = &listQuads; 
+	isParam = 0; 
+	isVector = 0; 
+	isMat = 0; 
+	isElement = 0; 
 
-    OPDUM dummy1 = NewOPDUM("    ", -1, TableNull); 
-    OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
-    OPDUM ondesalto = NewOPDUM("    ", -2, TableNull); 
-    SetQUAD(currentQuad, GOTO, dummy1, dummy2, ondesalto); 
-    currentQuad = currentQuad->next; 
-    push(&pilaSaltos, NewVarI(quadrupleCounter)); 
-    quadrupleCounter++;
+	OPDUM dummy1 = NewOPDUM("    ", -1, TableNull); 
+	OPDUM dummy2 = NewOPDUM("    ", -1, TableNull); 
+	OPDUM ondesalto = NewOPDUM("    ", -2, TableNull); 
+	SetQUAD(currentQuad, GOTO, dummy1, dummy2, ondesalto); 
+	currentQuad = currentQuad->next; 
+	push(&pilaSaltos, NewVarI(quadrupleCounter)); 
+	quadrupleCounter++;
 
 	functions.add(&functions, "vision", TableInt, -5); 
     functions.add(&functions, "scan", TableInt, -5); 
@@ -575,8 +597,8 @@ int main(int argc, char *argv[]) {
 	if(r == 0){
 		//printf("COMPILATION SUCCESSFUL!\n");
 	} 
-    fclose(yyin); 
-    //printf("Number of errors: %d\n", errorCounter); 
+	fclose(yyin); 
+	//printf("Number of errors: %d\n", errorCounter); 
 	return 0;
 }
 
@@ -615,7 +637,7 @@ void npFinalCheck(){
     //validar que exista enter en la tabla de funcitons 
     FTE* enterlookup = functions.lookup(&functions, "enter"); 
     //si no existe error 
-    if(!enterlookup->isSet){
+    if(!(enterlookup->isSet)){
         yyerror("falta declarar enter");  
     }else{
     //si existe
@@ -679,6 +701,14 @@ void npFinalCheck(){
     DestroyStack(&pilaEras); 
     DestroyStack(&pilaGoSubs);
 
+	DestroyQueue(&filaArrNombres);
+	DestroyQueue(&filaArrOperandos);
+	DestroyQueue(&filaArrTipos);
+	
+	DestroyStack(&pilaDimOperandos);
+	DestroyStack(&pilaDimTipos);
+	DestroyStack(&pilaDimNombres);
+
     DestroyVarTable(&globals);
     DestroyFuncTable(&functions); 
     DestroyVarTable(&constants); 
@@ -696,12 +726,14 @@ void np1(char* id){
     strcpy(copy, id); 
     if(strlen(currentFunction)>0){
         if(isParam){
-            success = functions.addParam(&functions, currentFunction, copy, currentType, localsCounter++, dim);
+            success = functions.addParam(&functions, currentFunction, copy, currentType, localsCounter, dim);
         }else{
-            success = functions.addVar(&functions, currentFunction, id, currentType, localsCounter++,  dim); 
-        } 
+            success = functions.addVar(&functions, currentFunction, id, currentType, localsCounter,  dim); 
+        }
+	if(success){localsCounter++;} 
     }else{
-        success = globals.add(&globals, id, currentType, globalsCounter++, dim); 
+        success = globals.add(&globals, id, currentType, globalsCounter, dim);
+	if(success){globalsCounter++;} 
     }
     if(!success){
         DestroyDIM(dim); 
@@ -710,31 +742,80 @@ void np1(char* id){
 }
 
 void np1_1(TableType type){
-    if (isMat){
-        currentType = TableMat; 
-    }else if(isElement){
+    if(isElement){
         currentType = TableElement; 
     }else{
         currentType = type; 
     }
 }
 
-void np2(){
-	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
+void np2(char* id, int sizeArr){
 	/* Revisar que el tamaño del arreglo es mayor a 0 y menor a INT_MAX */
+	if(sizeArr <= 0 || sizeArr > INT_MAX){
+		yyerror("Tamaño de variable dimensionada no válido");
+		return;
+	}
+	
+	/* Generar tabla de dimensión */	
+	DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); SetDIM(dim, sizeArr, 1);
+	
+	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
-	/* Generar tabla de dimensión */
-	/* Push de nombre a pila de Operandos */
-	/* Push tipo a pila de Tipos */
+	int success = 0;
+	char* copy = calloc(strlen(id), sizeof(char));
+	strcpy(copy, id);
+	if(strlen(currentFunction) > 0){
+		if(isParam){
+			success = functions.addParam(&functions, currentFunction, copy, currentType, localsCounter, dim);
+		} else {
+			success = functions.addVar(&functions, currentFunction, id, currentType, localsCounter, dim);
+		}
+		if(success){localsCounter += sizeArr;}
+	} else {
+		success = globals.add(&globals, id, currentType, globalsCounter, dim);
+		if(success){globalsCounter += sizeArr;}
+	}
+	
+	if(!success){
+		DestroyDIM(dim);
+		yyerror("Esa variable ya está definida");
+	}
 }
 
-void np3(){
+void np3(char* id, int size1, int size2){
+	/* Revisar que el tamaño del arreglo es mayor a 0 y menor a INT_MAX */
+	if(size1 <= 0 || size1 > INT_MAX || size2 <= 0 || size2 > INT_MAX ){
+		yyerror("Tamaño de variable dimensionada no válido");
+		return;
+	}
+	
+	/* Generar tabla de dimensión */	
+	DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); SetDIM(dim, size1, 1);
+	DIM* dim2 = calloc(1, sizeof(DIM)); *dim2 = NewDIM(); SetDIM(dim2, size2, 1);
+	AddDIM(dim, dim2);
+	DestroyDIM(dim2);	
+
 	/* Revisar que no exista una varibale llamada igual en el scope actual o globalmente (tablas de variables) */
-	/* Revisar que el tamaño de ambas dimensiones son mayores a 0 y menores a INT_MAX */
 	/* Agregar variable a tabla de variables, asignado nombre, tipo, y dirección virtual en base a tipo */
-	/* Generar tablas de dimensiónes */
-	/* Push de apuntador a primera posicion a pila de Operandos */
-	/* Push tipo a pila de Tipos */
+	int success = 0;
+	char* copy = calloc(strlen(id), sizeof(char));
+	strcpy(copy, id);
+	if(strlen(currentFunction) > 0){
+		if(isParam){
+			success = functions.addParam(&functions, currentFunction, copy, currentType, localsCounter, dim);
+		} else {
+			success = functions.addVar(&functions, currentFunction, id, currentType, localsCounter, dim);
+		}
+		if(success){localsCounter += size1 * size2;}
+	} else {
+		success = globals.add(&globals, id, currentType, globalsCounter, dim);
+		if(success){globalsCounter += size1 * size2;}
+	}
+	
+	if(!success){
+		DestroyDIM(dim);
+		yyerror("Esa variable ya está definida");
+	}
 }
 
 void np4(char* id){
@@ -804,9 +885,9 @@ void np5(char* id){
 
 void npExpr1_1(char* varid){
     VTE* result = globals.lookup(&globals, varid);  
-    if(!result->isSet && (strlen(currentFunction) > 0))
+    if(!(result->isSet) && (strlen(currentFunction) > 0))
         result = functions.lookupVar(&functions, currentFunction, varid);  
-    if(!result->isSet && (strlen(currentFunction) > 0))
+    if(!(result->isSet) && (strlen(currentFunction) > 0))
         result = functions.lookupParam(&functions, currentFunction, varid);  
 
     if(result->isSet){
@@ -950,13 +1031,6 @@ void npExpr1_2_bool(int constBool){
 	push(&pilaTipos, type); 
     
 }
-void npExpr1_4(){
-	// Todavía no tengo claro el acceso a los arreglos
-}
-void npExpr1_5(){
-	// Todavía no tengo claro el acceso a las matrices
-}
-
 void npExpr1_6_aux(char* vid){
     strcpy(propertyAccessAux, vid); 
 }
@@ -1073,6 +1147,275 @@ void npExpr7(){
 	/* Sacar un fondo falso de la pila de Operadores */
     Var tope = peek(&pilaOperadores); 
     pop(&pilaOperadores);  
+}
+
+void npArrExpr1(char* id){
+	// Verificar que la variable exista
+	VTE* lookup = globals.lookup(&globals, id); 
+	if(!(lookup->isSet)){
+		lookup = functions.lookupParam(&functions, currentFunction, id);
+		if(!(lookup->isSet)){
+			lookup = functions.lookupVar(&functions, currentFunction, id);
+			if(!(lookup->isSet)){
+				yyerror("Variable undeclared");
+				return;
+			}
+		}
+	}
+	
+	//Verificar que sea una variable dimensionada
+	if(!(lookup->dim->isSet)){
+		yyerror("Variable is not an array or matrix");
+		return;
+	}
+		
+	// Meter a pila de dimensionadas (nombre, dir, tipo)
+	char* aux = calloc(64, sizeof(char));
+	strcpy(aux, id);
+	push(&pilaDimNombres, NewVarS(aux));
+	push(&pilaDimOperandos, NewVarI(lookup->dir));
+	push(&pilaDimTipos, NewVarI(lookup->type));
+	
+	// Meter a pila de Operandos un tope, para saber cuando acaban mis índices
+	push(&pilaOperandos, NewVarI(-1));	
+
+	// Meter a pila de Operadores un fondo falso, para controlar anidamiento
+	push(&pilaOperadores, NewVarI(-1));
+}
+void npArrExpr2(){
+	int i = 0;
+	int j = 0;
+	
+	//Sacar variable dimensionada y checar su cantidad de dimensiones
+	Var struct_name = peek(&pilaDimNombres); pop(&pilaDimNombres);
+	Var struct_dir = peek(&pilaDimNombres); pop(&pilaDimNombres);
+	Var struct_type = peek(&pilaDimNombres); pop(&pilaDimNombres);
+	
+	VTE* lookup = globals.lookup(&globals, struct_name.data.sVal); 
+	if(!(lookup->isSet)){
+		lookup = functions.lookupParam(&functions, currentFunction, struct_name.data.sVal);
+		if(!(lookup->isSet)){
+			lookup = functions.lookupVar(&functions, currentFunction, struct_name.data.sVal);
+		}
+	}
+	int dim_num = 0;
+	DIM* current_dim = lookup->dim;
+	while(current_dim->isSet){
+		dim_num++;
+		current_dim = current_dim->next;
+	}
+
+	// Crear constante con dirección base del arreglo y sacarla de las pilas
+	npExpr1_2_int(lookup->dir);
+	Var base_name = peek(&pilaNombres); pop(&pilaNombres);
+	Var base_dir = peek(&pilaOperandos); pop(&pilaOperandos);
+	Var base_type = peek(&pilaTipos); pop(&pilaTipos);
+
+	//Ir sacando los indices, en base a la cantidad de dimensiones y lanzas error si tienes más o menos
+	if(dim_num == 1){
+		Var index_name = peek(&pilaNombres); pop(&pilaNombres);
+		Var index_dir = peek(&pilaOperandos); pop(&pilaOperandos);
+		Var index_type = peek(&pilaTipos); pop(&pilaTipos);
+		
+		Var tope = peek(&pilaOperandos); pop(&pilaOperandos);
+		if(tope.data.iVal != -1){
+			yyerror("Segmentation fault (core)");
+			return;
+		}
+
+		DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+                char* aux = calloc(64, sizeof(char)); 
+                int tempAddr1 = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
+                sprintf(aux, "t%d", tempAddr1); 
+                if(strlen(currentFunction) > 0){
+                    functions.addVar(&functions, currentFunction, aux, TableInt, tempAddr1, dim); 
+                }else{
+                    globals.add(&globals, aux, TableInt, tempAddr1, dim);  
+                }
+
+		//Sumar indice y dirección base
+		OPDUM index = NewOPDUM(index_name.data.sVal, index_dir.data.iVal, index_type.data.iVal);
+		OPDUM base = NewOPDUM(base_name.data.sVal, base_dir.data.iVal, base_type.data.iVal);
+		OPDUM result1 = NewOPDUM(aux, tempAddr1, TableInt);
+		SetQUAD(currentQuad, SUM, index, base, result1);
+		currentQuad = currentQuad->next;
+		quadrupleCounter++;
+
+		//Guardar el resultado de esa operación y asignar lo que hay en ese espacio de memoria en otra temporal
+		DIM* dim2 = calloc(1, sizeof(DIM)); *dim2 = NewDIM(); 
+                char* aux2 = calloc(64, sizeof(char)); 
+                int tempAddr2 = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
+                sprintf(aux2, "t%d", tempAddr2); 
+                if(strlen(currentFunction) > 0){
+                    functions.addVar(&functions, currentFunction, aux2, struct_type.data.iVal, tempAddr2, dim2); 
+                }else{
+                    globals.add(&globals, aux2, struct_type.data.iVal, tempAddr2, dim2);  
+                }
+		OPDUM dummy = NewOPDUM("    ", -1, TableNull);
+		OPDUM result2 = NewOPDUM(aux2, tempAddr2, struct_type.data.iVal);
+		SetQUAD(currentQuad, ASSIGN, dummy, result1, result2);
+		currentQuad = currentQuad->next;
+		quadrupleCounter++;
+
+		//Push de result 2 en pilas
+		push(&pilaOperandos, NewVarI(tempAddr2));
+		push(&pilaNombres, NewVarS(aux2));
+		push(&pilaTipos, struct_type);
+		 
+	} else if(dim_num == 2){
+		Var index2_name = peek(&pilaNombres); pop(&pilaNombres);
+		Var index2_dir = peek(&pilaOperandos); pop(&pilaOperandos);
+		Var index2_type = peek(&pilaTipos); pop(&pilaTipos);
+		
+		Var index1_dir = peek(&pilaOperandos); pop(&pilaOperandos);
+		if(index1_dir.data.iVal == -1){
+			yyerror("Segmentation fault (core)");
+			return;
+		}
+		Var index1_name = peek(&pilaNombres); pop(&pilaNombres);
+		Var index1_type = peek(&pilaTipos); pop(&pilaTipos);
+		
+		Var tope = peek(&pilaOperandos); pop(&pilaOperandos);
+		if(tope.data.iVal != -1){
+			yyerror("Incorrect number of indexes");
+			return;
+		}
+
+		// Guardar el tamaño de la primera dimensión en una constante
+		current_dim = lookup->dim;
+		npExpr1_2_int(current_dim->limsup);
+		Var size1_name = peek(&pilaNombres); pop(&pilaNombres);
+		Var size1_dir = peek(&pilaOperandos); pop(&pilaOperandos);
+		Var size1_type = peek(&pilaTipos); pop(&pilaTipos);
+		
+		//Crear temporales para guardar resultados
+		DIM* dim1 = calloc(1, sizeof(DIM)); *dim1 = NewDIM(); 
+                char* aux1 = calloc(64, sizeof(char)); 
+                int tempAddr1 = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
+                sprintf(aux1, "t%d", tempAddr1); 
+                if(strlen(currentFunction) > 0){
+                    functions.addVar(&functions, currentFunction, aux1, TableInt, tempAddr1, dim1); 
+                }else{
+                    globals.add(&globals, aux1, TableInt, tempAddr1, dim1);  
+                }
+		
+		DIM* dim2 = calloc(1, sizeof(DIM)); *dim2 = NewDIM(); 
+                char* aux2 = calloc(64, sizeof(char)); 
+                int tempAddr2 = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
+                sprintf(aux2, "t%d", tempAddr2); 
+                if(strlen(currentFunction) > 0){
+                    functions.addVar(&functions, currentFunction, aux2, TableInt, tempAddr2, dim2); 
+                }else{
+                    globals.add(&globals, aux2, TableInt, tempAddr2, dim2);  
+                }
+
+		DIM* dim3 = calloc(1, sizeof(DIM)); *dim3 = NewDIM(); 
+                char* aux3 = calloc(64, sizeof(char)); 
+                int tempAddr3 = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
+                sprintf(aux3, "t%d", tempAddr1); 
+                if(strlen(currentFunction) > 0){
+                    functions.addVar(&functions, currentFunction, aux3, TableInt, tempAddr3, dim3); 
+                }else{
+                    globals.add(&globals, aux3, TableInt, tempAddr3, dim3);  
+                }
+
+		DIM* dim4 = calloc(1, sizeof(DIM)); *dim4 = NewDIM(); 
+                char* aux4 = calloc(64, sizeof(char)); 
+                int tempAddr4 = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
+                sprintf(aux4, "t%d", tempAddr4); 
+                if(strlen(currentFunction) > 0){
+                    functions.addVar(&functions, currentFunction, aux4, struct_type.data.iVal, tempAddr4, dim4); 
+                }else{
+                    globals.add(&globals, aux4, struct_type.data.iVal, struct_type.data.iVal, dim4);  
+                }
+
+		//Crear cuadruplo de multiplicación index1 + size1 = t1
+		OPDUM index1opdum = NewOPDUM(index1_name.data.sVal, index1_dir.data.iVal, index1_type.data.iVal);
+		OPDUM size1opdum = NewOPDUM(size1_name.data.sVal, size1_dir.data.iVal, size1_type.data.iVal);
+		OPDUM t1opdum = NewOPDUM(aux1, tempAddr1, TableInt);
+		SetQUAD(currentQuad, MULT, index1opdum, size1opdum, t1opdum);
+		currentQuad = currentQuad->next;
+		quadrupleCounter++;
+
+		//Crear cuadruplo de suma index2 + t1 = t2
+		OPDUM index2opdum = NewOPDUM(index2_name.data.sVal, index2_dir.data.iVal, index2_type.data.iVal);
+		OPDUM t2opdum = NewOPDUM(aux2, tempAddr2, TableInt);
+		SetQUAD(currentQuad, SUM, index2opdum, t1opdum, t2opdum);
+		currentQuad = currentQuad->next;
+		quadrupleCounter++;
+
+		//Crear cuadruplo de suma t2 + base_dir = t3
+		OPDUM base = NewOPDUM(base_name.data.sVal, base_dir.data.iVal, base_type.data.iVal);
+		OPDUM t3opdum = NewOPDUM(aux3, tempAddr3, TableInt);
+		SetQUAD(currentQuad, SUM, base, t2opdum, t3opdum);
+		currentQuad = currentQuad->next;
+		quadrupleCounter++;
+		
+		// Asignar lo que hay en la dirección que apunta t3 a una temporal
+		OPDUM dummy = NewOPDUM("    ", -1, TableNull);
+		OPDUM t4opdum = NewOPDUM(aux4, tempAddr4, struct_type.data.iVal);
+		SetQUAD(currentQuad, ASSIGN, dummy, t3opdum, t4opdum);
+		currentQuad = currentQuad->next;
+		quadrupleCounter++;
+
+		//Push de t4 a pilas
+		push(&pilaOperandos, NewVarI(tempAddr4));
+		push(&pilaNombres, NewVarS(aux4));
+		push(&pilaTipos, struct_type);		
+	}
+	pop(&pilaOperadores);
+}
+void npArrExpr3(int indexDim){
+	Var value_name = peek(&pilaNombres);
+	Var value_dir = peek(&pilaOperandos);
+	Var value_type = peek(&pilaTipos);
+
+	if(value_type.data.iVal != TableInt){
+		yyerror("Type mismatch");
+		return;
+	}
+	
+	Var struct_dir = peek(&pilaDimOperandos);
+	Var struct_name = peek(&pilaDimNombres);
+	Var struct_type = peek(&pilaDimTipos);
+	
+	//Sacar variable de tabla de variables para obtener su información de dimensiones
+	VTE* lookup = globals.lookup(&globals, struct_name.data.sVal); 
+	if(!(lookup->isSet)){
+		lookup = functions.lookupParam(&functions, currentFunction, struct_name.data.sVal);
+		if(!(lookup->isSet)){
+			lookup = functions.lookupVar(&functions, currentFunction, struct_name.data.sVal); 
+		}
+	}
+	
+	int lim_sup = 0;
+	DIM* struct_dim = lookup->dim;
+	if(struct_dim->isSet){
+		if(indexDim == 1){
+			lim_sup = struct_dim->limsup;
+		} else if(indexDim == 2){
+			struct_dim = struct_dim->next;
+			if(struct_dim->isSet){
+				lim_sup = struct_dim->limsup;
+			} else{
+				yyerror("Segmentation fault (core)");
+			}
+		}
+	} else {
+		yyerror("Segmentation fault (core)");
+	}
+
+	OPDUM access = NewOPDUM(value_name.data.sVal, value_dir.data.iVal, value_type.data.iVal);
+	OPDUM inflim = NewOPDUM("    ", -1, TableNull);
+	char* aux = calloc(21, sizeof(char));
+	sprintf(aux, "%d", lim_sup);
+	OPDUM suplim = NewOPDUM(aux, lim_sup, TableInt);
+	
+	SetQUAD(currentQuad, CHECKLIM, access, inflim, suplim);
+	currentQuad = currentQuad->next;
+	quadrupleCounter++;
+
+	free(aux); 
 }
 
 void npFunCall1(char* funID){
@@ -1229,7 +1572,7 @@ void npFunCall2(){
 }
 
 void npAssign1(){
-    if(!pilaOperandos.isEmpty)
+    if(pilaOperandos.isEmpty)
         return; 
 
     Var value = peek(&pilaOperandos); pop(&pilaOperandos); 
@@ -1253,37 +1596,69 @@ void npAssign1(){
 	
 }
 void npAssign2(){
-	/*
-	Si (pOperadores.top() == '=')
-		pOperadores.pop()
-		tamaño1 = size(*pOprandos.top()) o como le tengas que hacer pa sacar el tamaño de la primera dimensión
-		tamaño2 = 0
-		if (es una matriz):
-			tamaño2 = tamaño de la segunda dimensión
+	if(pilaOperandos.isEmpty(&pilaOperandos))
+		return;	
+	
+	Var struct_dir = peek(&pilaOperandos); pop(&pilaOperandos);
+	Var struct_name = peek(&pilaNombres); pop(&pilaNombres);
+	Var struct_type = peek(&pilaTipos); pop(&pilaTipos);
+	
+	//Sacar variable de tabla de variables para obtener su información de dimensiones
+	VTE* lookup = globals.lookup(&globals, struct_name.data.sVal); 
+	if(!(lookup->isSet)){
+		lookup = functions.lookupParam(&functions, currentFunction, struct_name.data.sVal);
+		if(!(lookup->isSet)){
+			lookup = functions.lookupVar(&functions, currentFunction, struct_name.data.sVal); 
+		}
+	}
+	
+	// Obtener tamaño de dimensiones
+	DIM* struct_dim = lookup->dim;
+	int size1 = 0;
+	int size2 = 0; 
+	if(struct_dim->isSet){
+		size1 = struct_dim->limsup;
+		DIM* dim2 = struct_dim->next;
+		if(dim2->isSet){
+			size2 = dim2->limsup;
+		}
+	}
+
+	int i = 0;
+	int j = 0;
+	int currentCell = struct_dir.data.iVal;
+	Var value_dir;
+	Var value_name;
+	Var value_type;
+	OPDUM from;
+	OPDUM to;
+	OPDUM dummy;
 		
-		primeraCelda = *pOperandos.pop() (Osea, lo que apunta el apuntador que esta en tope)
-		tipo = pTipos.pop()
+	if(size2 == 0){ j =-1; }
 
-		i=0 
-		j=0
-		celdaActual = primeraCelda
-		while (filaArrOperandos is not empty):
-			if(filaArrOperandos.top() == ']'):
-				i = 0
-				j++
-				celdaActual = primeraCelda + tamaño1*j
-				filaArrOperandos.pop()
-			else:
-				value = filaArrOperandos.pop()
-				value_type = filaArrTipos.pop()
-				if(value_type == tipo && i < tamaño1 && j < tamaño2):
-					gen quad(=, value, , celdaActual)
-					i++
-					celdaActual++
-				else:
-					ERROR: type mismatch o undefined index
-	*/
-
+	while(!(filaArrOperandos.isEmpty(&filaArrOperandos))){
+		value_dir = peekFront(&filaArrOperandos); popFront(&filaArrOperandos);
+		if(value_dir.data.iVal == -10){
+			i = 0;
+			j++;
+			currentCell = struct_dir.data.iVal + size1 * j;
+		} else {
+			value_name = peekFront(&filaArrNombres); popFront(&filaArrNombres);
+			value_type = peekFront(&filaArrTipos); popFront(&filaArrTipos);
+			if(i < size1 && j < size2){
+				from = NewOPDUM(value_name.data.sVal, value_dir.data.iVal, value_type.data.iVal);			
+				to = NewOPDUM(struct_name.data.sVal, currentCell, struct_type.data.iVal);
+				dummy = NewOPDUM("    ", -1, TableNull);
+				SetQUAD(currentQuad, ASSIGN, from, dummy, to);
+				currentQuad = currentQuad->next;
+				quadrupleCounter++;
+				i++;
+				currentCell++;
+			} else {
+				yyerror("Undefined index");
+			}				
+		}
+	}
 }
 void npAssign3(){
     Var y = peek(&pilaOperandos); pop(&pilaOperandos); 
@@ -1418,17 +1793,21 @@ void npAssign4(){
 }
 
 void npArrGen1(){
-	/* Meter tope de arreglo (]) a filaArrOperandos (queue) */
+	/* Meter a pila de Operandos un marcador de fin en el fin de un arreglo */
+	pushBack(&filaArrOperandos, NewVarI(-10));
 }
+
 void npArrGen2(){
-	/*
-	tipo = pTipos.pop()
-	Si(pTipos.top() == tipo):
-		filaArrOperandos.push(pOperandos.pop())
-		filaArrTipos.push(tipo)
-	Else:
-		ERROR: type mismatch
-	*/
+	Var value_type = peek(&pilaTipos); pop(&pilaTipos);
+	Var value_dir = peek(&pilaOperandos); pop(&pilaOperandos);
+	Var value_name = peek(&pilaNombres); pop(&pilaNombres);
+	if(value_type.data.iVal == currentType){
+		pushBack(&filaArrNombres, value_name);
+		pushBack(&filaArrOperandos, value_dir);
+		pushBack(&filaArrTipos, value_type);
+	} else {
+		yyerror("Type mismatch");
+	}
 }
 
 
@@ -1439,24 +1818,24 @@ void npIf0(){
 }
 void npIf1(){
 	Var exp_type = peek(&pilaTipos); pop(&pilaTipos); 
-    int falsies[] = {2, 4, 5, 6, 9};
-    for(int n = 0; n<5; n++){
-    	if(exp_type.data.iVal == falsies[n]){
-		    yyerror("Type Mismatch"); 
-            return; 
-	    }
-    }
+	int falsies[] = {2, 4, 5, 6, 9};
+	for(int n = 0; n<5; n++){
+		if(exp_type.data.iVal == falsies[n]){
+			yyerror("Type Mismatch"); 
+			return; 
+		}
+	}
 	Var result = peek(&pilaOperandos); pop(&pilaOperandos);
-    Var result_name = peek(&pilaNombres); pop(&pilaNombres); 
-    Var result_type = peek(&pilaTipos); pop(&pilaTipos); 
-    
-    OPDUM dummy = NewOPDUM("    ", -1, TableNull); 
-    OPDUM ondesalto = NewOPDUM("____", -2, TableNull); //aqui no es una virtual dir es el salto 
-    OPDUM resdum = NewOPDUM(result_name.data.sVal, result.data.iVal, result_type.data.iVal); 
-    SetQUAD(currentQuad, GOTOF, resdum, dummy, ondesalto);  
-    currentQuad = currentQuad->next; 
+	Var result_name = peek(&pilaNombres); pop(&pilaNombres); 
+	Var result_type = peek(&pilaTipos); pop(&pilaTipos); 
+
+	OPDUM dummy = NewOPDUM("    ", -1, TableNull); 
+	OPDUM ondesalto = NewOPDUM("____", -2, TableNull); //aqui no es una virtual dir es el salto 
+	OPDUM resdum = NewOPDUM(result_name.data.sVal, result.data.iVal, result_type.data.iVal); 
+	SetQUAD(currentQuad, GOTOF, resdum, dummy, ondesalto);  
+	currentQuad = currentQuad->next; 
 	push(&pilaSaltos, NewVarI(quadrupleCounter));
-    quadrupleCounter++; 
+	quadrupleCounter++; 
         
 }
 void npIf2(){
@@ -1742,7 +2121,7 @@ void npReturn(){
 }
 
 void npClean(){
-    while(!pilaOperadores.isEmpty(&pilaOperadores)){
+    while(!(pilaOperadores.isEmpty(&pilaOperadores))){
         pop(&pilaTipos); 
         pop(&pilaNombres);
         pop(&pilaOperandos); 
