@@ -5,7 +5,7 @@ Terminals unused in grammar
    T_FLOAT
 
 
-State 172 conflicts: 8 shift/reduce
+State 176 conflicts: 8 shift/reduce
 
 
 Grammar
@@ -24,322 +24,326 @@ Grammar
     6 $@2: %empty
 
     7 script: vardec crlf $@2 script
-    8       | crlf script
 
-    9 crlf: CR LF
-   10     | LF
+    8 $@3: %empty
 
-   11 optlf: %empty
-   12      | crlf
+    9 script: arrdec crlf $@3 script
+   10       | crlf script
 
-   13 $@3: %empty
+   11 crlf: CR LF
+   12     | LF
 
-   14 $@4: %empty
+   13 optlf: %empty
+   14      | crlf
 
-   15 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@3 funparams SYM_CPARE $@4 optlf SYM_OCURL crlf funbody SYM_CCURL
+   15 $@4: %empty
 
-   16 funparams: %empty
-   17          | generaldec morefunparams
+   16 $@5: %empty
 
-   18 morefunparams: %empty
-   19              | SYM_COMMA generaldec morefunparams
+   17 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@4 funparams SYM_CPARE $@5 optlf SYM_OCURL crlf funbody SYM_CCURL
 
-   20 funbody: %empty
+   18 funparams: %empty
+   19          | generaldec morefunparams
 
-   21 $@5: %empty
+   20 morefunparams: %empty
+   21              | SYM_COMMA generaldec morefunparams
 
-   22 funbody: stmt crlf $@5 funbody
+   22 funbody: %empty
 
    23 $@6: %empty
 
-   24 funbody: generaldec crlf $@6 funbody
-   25        | crlf funbody
+   24 funbody: stmt crlf $@6 funbody
 
-   26 generaldec: vardec
-   27           | arrdec
-   28           | matdec
-   29           | vectordec
-   30           | elementdec
+   25 $@7: %empty
 
-   31 $@7: %empty
+   26 funbody: generaldec crlf $@7 funbody
+   27        | crlf funbody
 
-   32 generaldec: vardec $@7 MTH_SEQUA expr
+   28 generaldec: vardec
+   29           | arrdec
+   30           | matdec
+   31           | vectordec
+   32           | elementdec
 
    33 $@8: %empty
 
-   34 generaldec: arrdec $@8 MTH_SEQUA arr
+   34 generaldec: vardec $@8 MTH_SEQUA expr
 
    35 $@9: %empty
 
-   36 generaldec: matdec $@9 MTH_SEQUA mat
-   37           | vectordec MTH_SEQUA vector
-   38           | elementdec MTH_SEQUA element
+   36 generaldec: arrdec $@9 MTH_SEQUA arr
 
-   39 stmt: assign
-   40     | expr
-   41     | logicstruct
-   42     | RES_MEDIT
-   43     | ret
+   37 $@10: %empty
 
-   44 $@10: %empty
+   38 generaldec: matdec $@10 MTH_SEQUA mat
+   39           | vectordec MTH_SEQUA vector
+   40           | elementdec MTH_SEQUA element
 
-   45 funcall: V_ID $@10 SYM_OPARE funcallHelper SYM_CPARE
+   41 stmt: assign
+   42     | expr
+   43     | logicstruct
+   44     | RES_MEDIT
+   45     | ret
 
-   46 funcallHelper: %empty
+   46 $@11: %empty
 
-   47 $@11: %empty
+   47 funcall: V_ID $@11 SYM_OPARE funcallHelper SYM_CPARE
 
-   48 funcallHelper: expr $@11 funcallHelper2
-   49              | vector funcallHelper2
+   48 funcallHelper: %empty
 
-   50 funcallHelper2: %empty
-   51               | SYM_COMMA funcallHelper
+   49 $@12: %empty
 
-   52 ret: RES_RETRN expr
+   50 funcallHelper: expr $@12 funcallHelper2
+   51              | vector funcallHelper2
 
-   53 vardec: V_VAR V_ID SYM_COLON vartypes
+   52 funcallHelper2: %empty
+   53               | SYM_COMMA funcallHelper
 
-   54 basictypes: V_CHAR
-   55           | V_STRING
-   56           | V_DOUBLE
-   57           | V_INT
-   58           | V_BOOL
+   54 ret: RES_RETRN expr
 
-   59 vartypes: T_INT
-   60         | T_DOUBLE
-   61         | T_CHAR
-   62         | T_STRING
-   63         | T_BOOL
+   55 vardec: V_VAR V_ID SYM_COLON vartypes
 
-   64 var_or_cte: V_ID
-   65           | basictypes
+   56 basictypes: V_CHAR
+   57           | V_STRING
+   58           | V_DOUBLE
+   59           | V_INT
+   60           | V_BOOL
 
-   66 $@12: %empty
+   61 vartypes: T_INT
+   62         | T_DOUBLE
+   63         | T_CHAR
+   64         | T_STRING
+   65         | T_BOOL
 
-   67 assign: V_ID $@12 MTH_SEQUA expr
-   68       | structaccess MTH_SEQUA expr
-   69       | property MTH_SEQUA expr
+   66 var_or_cte: V_ID
+   67           | basictypes
 
-   70 $@13: %empty
+   68 $@13: %empty
 
-   71 $@14: %empty
+   69 assign: V_ID $@13 MTH_SEQUA expr
+   70       | structaccess MTH_SEQUA expr
+   71       | property MTH_SEQUA expr
 
-   72 structaccess: V_ID $@13 SYM_OBRAC expr SYM_CBRAC $@14 structIndex
+   72 $@14: %empty
 
-   73 structIndex: %empty
-   74            | SYM_OBRAC expr SYM_CBRAC
+   73 $@15: %empty
 
-   75 arrdec: V_ARR V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC
+   74 structaccess: V_ID $@14 SYM_OBRAC expr SYM_CBRAC $@15 structIndex
 
-   76 arr: SYM_OBRAC arrHelper SYM_CBRAC
+   75 structIndex: %empty
+   76            | SYM_OBRAC expr SYM_CBRAC
 
-   77 $@15: %empty
+   77 arrdec: V_ARR V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC
 
-   78 arrHelper: expr SYM_COMMA $@15 arrHelper
-   79          | expr
+   78 arr: SYM_OBRAC arrHelper SYM_CBRAC
 
-   80 matdec: V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
+   79 $@16: %empty
 
-   81 mat: SYM_OBRAC optlf matHelper SYM_CBRAC
+   80 arrHelper: expr SYM_COMMA $@16 arrHelper
+   81          | expr
 
-   82 matHelper: arr SYM_COMMA optlf matHelper
-   83          | arr optlf
+   82 matdec: V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
 
-   84 elementdec: V_ELEM V_ID
+   83 mat: SYM_OBRAC optlf matHelper SYM_CBRAC
 
-   85 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
+   84 matHelper: arr SYM_COMMA optlf matHelper
+   85          | arr optlf
 
-   86 vectordec: V_VECTOR V_ID
+   86 elementdec: V_ELEM V_ID
 
-   87 vector: SYM_OPARE expr SYM_COMMA expr SYM_CPARE
+   87 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
 
-   88 $@16: %empty
+   88 vectordec: V_VECTOR V_ID
 
-   89 property: V_ID $@16 SYM_DOT V_ID
+   89 vector: SYM_OPARE expr SYM_COMMA expr SYM_CPARE
 
    90 $@17: %empty
 
-   91 $@18: %empty
+   91 property: V_ID $@17 SYM_DOT V_ID
 
-   92 expr: logicoperation $@17 MTH_OR $@18 expr
-   93     | logicoperation
+   92 $@18: %empty
 
-   94 $@19: %empty
+   93 $@19: %empty
 
-   95 $@20: %empty
+   94 expr: logicoperation $@18 MTH_OR $@19 expr
+   95     | logicoperation
 
-   96 logicoperation: logicfactor $@19 MTH_AND $@20 logicoperation
-   97               | logicfactor
+   96 $@20: %empty
 
-   98 $@21: %empty
+   97 $@21: %empty
 
-   99 logicfactor: MTH_NOT $@21 comparison
-  100            | comparison
+   98 logicoperation: logicfactor $@20 MTH_AND $@21 logicoperation
+   99               | logicfactor
 
-  101 $@22: %empty
+  100 $@22: %empty
 
-  102 comparison: operation comp_operator $@22 operation
-  103           | operation
+  101 logicfactor: MTH_NOT $@22 comparison
+  102            | comparison
 
-  104 $@23: %empty
+  103 $@23: %empty
 
-  105 $@24: %empty
+  104 comparison: operation comp_operator $@23 operation
+  105           | operation
 
-  106 operation: factor $@23 MTH_PLUS $@24 operation
+  106 $@24: %empty
 
   107 $@25: %empty
 
-  108 $@26: %empty
+  108 operation: factor $@24 MTH_PLUS $@25 operation
 
-  109 operation: factor $@25 MTH_MINUS $@26 operation
-  110          | factor
+  109 $@26: %empty
 
-  111 $@27: %empty
+  110 $@27: %empty
 
-  112 $@28: %empty
+  111 operation: factor $@26 MTH_MINUS $@27 operation
+  112          | factor
 
-  113 factor: hvalue $@27 MTH_ASTRK $@28 factor
+  113 $@28: %empty
 
   114 $@29: %empty
 
-  115 $@30: %empty
+  115 factor: hvalue $@28 MTH_ASTRK $@29 factor
 
-  116 factor: hvalue $@29 MTH_DIVIS $@30 factor
-  117       | hvalue
+  116 $@30: %empty
 
-  118 $@31: %empty
+  117 $@31: %empty
 
-  119 $@32: %empty
+  118 factor: hvalue $@30 MTH_DIVIS $@31 factor
+  119       | hvalue
 
-  120 hvalue: value $@31 MTH_POWER $@32 hvalue
+  120 $@32: %empty
 
   121 $@33: %empty
 
-  122 $@34: %empty
+  122 hvalue: value $@32 MTH_POWER $@33 hvalue
 
-  123 hvalue: value $@33 MTH_ROOT $@34 hvalue
-  124       | value
+  123 $@34: %empty
 
-  125 value: var_or_cte
-  126      | funcall
-  127      | structaccess
-  128      | property
+  124 $@35: %empty
 
-  129 $@35: %empty
+  125 hvalue: value $@34 MTH_ROOT $@35 hvalue
+  126       | value
 
-  130 value: SYM_OPARE $@35 expr SYM_CPARE
+  127 value: var_or_cte
+  128      | funcall
+  129      | structaccess
+  130      | property
 
-  131 comp_operator: MTH_GT
-  132              | MTH_GTEQ
-  133              | MTH_LT
-  134              | MTH_LTEQ
-  135              | MTH_DEQUA
-  136              | MTH_NOTEQ
+  131 $@36: %empty
 
-  137 logicstruct: if
-  138            | for
-  139            | while
+  132 value: SYM_OPARE $@36 expr SYM_CPARE
 
-  140 $@36: %empty
+  133 comp_operator: MTH_GT
+  134              | MTH_GTEQ
+  135              | MTH_LT
+  136              | MTH_LTEQ
+  137              | MTH_DEQUA
+  138              | MTH_NOTEQ
 
-  141 if: LOG_IF $@36 ifHelper ifHelper3
+  139 logicstruct: if
+  140            | for
+  141            | while
 
   142 $@37: %empty
 
-  143 ifHelper: SYM_OPARE expr SYM_CPARE $@37 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
+  143 if: LOG_IF $@37 ifHelper ifHelper3
 
-  144 ifHelper2: %empty
+  144 $@38: %empty
 
-  145 $@38: %empty
+  145 ifHelper: SYM_OPARE expr SYM_CPARE $@38 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
 
-  146 ifHelper2: LOG_ELIF $@38 ifHelper
+  146 ifHelper2: %empty
 
-  147 ifHelper3: %empty
+  147 $@39: %empty
 
-  148 $@39: %empty
+  148 ifHelper2: LOG_ELIF $@39 ifHelper
 
-  149 ifHelper3: LOG_ELSE $@39 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+  149 ifHelper3: %empty
 
   150 $@40: %empty
 
-  151 for: LOG_FOR forHelper SYM_ARROW V_ID $@40 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+  151 ifHelper3: LOG_ELSE $@40 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
-  152 forHelper: V_ID
-  153          | stepfor
+  152 $@41: %empty
 
-  154 stepfor: SYM_OBRAC expr SYM_COMMA expr SYM_COMMA expr SYM_CBRAC
+  153 for: LOG_FOR forHelper SYM_ARROW V_ID $@41 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
-  155 $@41: %empty
+  154 forHelper: V_ID
+  155          | stepfor
 
-  156 $@42: %empty
+  156 stepfor: SYM_OBRAC expr SYM_COMMA expr SYM_COMMA expr SYM_CBRAC
 
-  157 while: LOG_WHILE $@41 SYM_OPARE expr SYM_CPARE $@42 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+  157 $@42: %empty
 
-  158 newlineCicle: newline
-  159             | newline newlineCicle
+  158 $@43: %empty
 
-  160 newline: stmt crlf
+  159 while: LOG_WHILE $@42 SYM_OPARE expr SYM_CPARE $@43 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+
+  160 newlineCicle: newline
+  161             | newline newlineCicle
+
+  162 newline: stmt crlf
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
 error (256) 2
-SYM_OBRAC (258) 72 74 75 76 80 81 154
-SYM_CBRAC (259) 72 74 75 76 80 81 154
-SYM_OPARE (260) 15 45 87 130 143 157
-SYM_CPARE (261) 15 45 87 130 143 157
-SYM_OCURL (262) 15 85 143 149 151 157
-SYM_CCURL (263) 15 85 143 149 151 157
-SYM_COMMA (264) 19 51 78 82 85 87 154
-SYM_ARROW (265) 151
-SYM_COLON (266) 15 53 75 80
-SYM_DOT (267) 89
-MTH_SEQUA (268) 32 34 36 37 38 67 68 69
-MTH_DEQUA (269) 135
-MTH_GT (270) 131
-MTH_LT (271) 133
-MTH_GTEQ (272) 132
-MTH_LTEQ (273) 134
-MTH_NOT (274) 99
-MTH_NOTEQ (275) 136
-MTH_PLUS (276) 106
-MTH_MINUS (277) 109
-MTH_ASTRK (278) 113
-MTH_DIVIS (279) 116
-MTH_POWER (280) 120
-MTH_ROOT (281) 123
-MTH_AND (282) 96
-MTH_OR (283) 92
-LF (284) 9 10
-CR (285) 9
-V_ID (286) 15 45 53 64 67 72 75 80 84 86 89 151 152
+SYM_OBRAC (258) 74 76 77 78 82 83 156
+SYM_CBRAC (259) 74 76 77 78 82 83 156
+SYM_OPARE (260) 17 47 89 132 145 159
+SYM_CPARE (261) 17 47 89 132 145 159
+SYM_OCURL (262) 17 87 145 151 153 159
+SYM_CCURL (263) 17 87 145 151 153 159
+SYM_COMMA (264) 21 53 80 84 87 89 156
+SYM_ARROW (265) 153
+SYM_COLON (266) 17 55 77 82
+SYM_DOT (267) 91
+MTH_SEQUA (268) 34 36 38 39 40 69 70 71
+MTH_DEQUA (269) 137
+MTH_GT (270) 133
+MTH_LT (271) 135
+MTH_GTEQ (272) 134
+MTH_LTEQ (273) 136
+MTH_NOT (274) 101
+MTH_NOTEQ (275) 138
+MTH_PLUS (276) 108
+MTH_MINUS (277) 111
+MTH_ASTRK (278) 115
+MTH_DIVIS (279) 118
+MTH_POWER (280) 122
+MTH_ROOT (281) 125
+MTH_AND (282) 98
+MTH_OR (283) 94
+LF (284) 11 12
+CR (285) 11
+V_ID (286) 17 47 55 66 69 74 77 82 86 88 91 153 154
 F_ID (287)
 M_ID (288)
-LOG_IF (289) 141
-LOG_ELIF (290) 146
-LOG_ELSE (291) 149
-LOG_FOR (292) 151
-LOG_WHILE (293) 157
-V_VAR (294) 53
-V_CHAR (295) 54
-V_STRING (296) 55
-V_INT (297) 57 75 80
-V_DOUBLE (298) 56
-V_BOOL (299) 58
-V_ARR (300) 75
-V_MAT (301) 80
-V_VECTOR (302) 86
-V_ELEM (303) 84
-T_BOOL (304) 63
-T_INT (305) 59
+LOG_IF (289) 143
+LOG_ELIF (290) 148
+LOG_ELSE (291) 151
+LOG_FOR (292) 153
+LOG_WHILE (293) 159
+V_VAR (294) 55
+V_CHAR (295) 56
+V_STRING (296) 57
+V_INT (297) 59 77 82
+V_DOUBLE (298) 58
+V_BOOL (299) 60
+V_ARR (300) 77
+V_MAT (301) 82
+V_VECTOR (302) 88
+V_ELEM (303) 86
+T_BOOL (304) 65
+T_INT (305) 61
 T_FLOAT (306)
-T_DOUBLE (307) 60
-T_CHAR (308) 61
-T_STRING (309) 62
-RES_ORDER (310) 15
-RES_MEDIT (311) 42
-RES_RETRN (312) 52
+T_DOUBLE (307) 62
+T_CHAR (308) 63
+T_STRING (309) 64
+RES_ORDER (310) 17
+RES_MEDIT (311) 44
+RES_RETRN (312) 54
 
 
 Nonterminals, with rules where they appear
@@ -349,192 +353,195 @@ $accept (58)
 prog (59)
     on left: 1 2, on right: 0
 script (60)
-    on left: 3 5 7 8, on right: 1 5 7 8
+    on left: 3 5 7 9 10, on right: 1 5 7 9 10
 $@1 (61)
     on left: 4, on right: 5
 $@2 (62)
     on left: 6, on right: 7
-crlf (63)
-    on left: 9 10, on right: 5 7 8 12 15 22 24 25 143 149 151 157 160
-optlf (64)
-    on left: 11 12, on right: 15 81 82 83 143 149 151 157
-function (65)
-    on left: 15, on right: 5
-$@3 (66)
-    on left: 13, on right: 15
+$@3 (63)
+    on left: 8, on right: 9
+crlf (64)
+    on left: 11 12, on right: 5 7 9 10 14 17 24 26 27 145 151 153 159
+    162
+optlf (65)
+    on left: 13 14, on right: 17 83 84 85 145 151 153 159
+function (66)
+    on left: 17, on right: 5
 $@4 (67)
-    on left: 14, on right: 15
-funparams (68)
-    on left: 16 17, on right: 15
-morefunparams (69)
-    on left: 18 19, on right: 17 19
-funbody (70)
-    on left: 20 22 24 25, on right: 15 22 24 25
-$@5 (71)
-    on left: 21, on right: 22
+    on left: 15, on right: 17
+$@5 (68)
+    on left: 16, on right: 17
+funparams (69)
+    on left: 18 19, on right: 17
+morefunparams (70)
+    on left: 20 21, on right: 19 21
+funbody (71)
+    on left: 22 24 26 27, on right: 17 24 26 27
 $@6 (72)
     on left: 23, on right: 24
-generaldec (73)
-    on left: 26 27 28 29 30 32 34 36 37 38, on right: 17 19 24
-$@7 (74)
-    on left: 31, on right: 32
+$@7 (73)
+    on left: 25, on right: 26
+generaldec (74)
+    on left: 28 29 30 31 32 34 36 38 39 40, on right: 19 21 26
 $@8 (75)
     on left: 33, on right: 34
 $@9 (76)
     on left: 35, on right: 36
-stmt (77)
-    on left: 39 40 41 42 43, on right: 22 160
-funcall (78)
-    on left: 45, on right: 126
-$@10 (79)
-    on left: 44, on right: 45
-funcallHelper (80)
-    on left: 46 48 49, on right: 45 51
-$@11 (81)
-    on left: 47, on right: 48
-funcallHelper2 (82)
-    on left: 50 51, on right: 48 49
-ret (83)
-    on left: 52, on right: 43
-vardec (84)
-    on left: 53, on right: 7 26 32
-basictypes (85)
-    on left: 54 55 56 57 58, on right: 65
-vartypes (86)
-    on left: 59 60 61 62 63, on right: 15 53 75 80
-var_or_cte (87)
-    on left: 64 65, on right: 125
-assign (88)
-    on left: 67 68 69, on right: 39
-$@12 (89)
-    on left: 66, on right: 67
-structaccess (90)
-    on left: 72, on right: 68 127
-$@13 (91)
-    on left: 70, on right: 72
+$@10 (77)
+    on left: 37, on right: 38
+stmt (78)
+    on left: 41 42 43 44 45, on right: 24 162
+funcall (79)
+    on left: 47, on right: 128
+$@11 (80)
+    on left: 46, on right: 47
+funcallHelper (81)
+    on left: 48 50 51, on right: 47 53
+$@12 (82)
+    on left: 49, on right: 50
+funcallHelper2 (83)
+    on left: 52 53, on right: 50 51
+ret (84)
+    on left: 54, on right: 45
+vardec (85)
+    on left: 55, on right: 7 28 34
+basictypes (86)
+    on left: 56 57 58 59 60, on right: 67
+vartypes (87)
+    on left: 61 62 63 64 65, on right: 17 55 77 82
+var_or_cte (88)
+    on left: 66 67, on right: 127
+assign (89)
+    on left: 69 70 71, on right: 41
+$@13 (90)
+    on left: 68, on right: 69
+structaccess (91)
+    on left: 74, on right: 70 129
 $@14 (92)
-    on left: 71, on right: 72
-structIndex (93)
-    on left: 73 74, on right: 72
-arrdec (94)
-    on left: 75, on right: 27 34
-arr (95)
-    on left: 76, on right: 34 82 83
-arrHelper (96)
-    on left: 78 79, on right: 76 78
-$@15 (97)
-    on left: 77, on right: 78
-matdec (98)
-    on left: 80, on right: 28 36
-mat (99)
-    on left: 81, on right: 36
-matHelper (100)
-    on left: 82 83, on right: 81 82
-elementdec (101)
-    on left: 84, on right: 30 38
-element (102)
-    on left: 85, on right: 38
-vectordec (103)
-    on left: 86, on right: 29 37
-vector (104)
-    on left: 87, on right: 37 49
-property (105)
-    on left: 89, on right: 69 128
-$@16 (106)
-    on left: 88, on right: 89
-expr (107)
-    on left: 92 93, on right: 32 40 48 52 67 68 69 72 74 78 79 85 87
-    92 130 143 154 157
-$@17 (108)
-    on left: 90, on right: 92
+    on left: 72, on right: 74
+$@15 (93)
+    on left: 73, on right: 74
+structIndex (94)
+    on left: 75 76, on right: 74
+arrdec (95)
+    on left: 77, on right: 9 29 36
+arr (96)
+    on left: 78, on right: 36 84 85
+arrHelper (97)
+    on left: 80 81, on right: 78 80
+$@16 (98)
+    on left: 79, on right: 80
+matdec (99)
+    on left: 82, on right: 30 38
+mat (100)
+    on left: 83, on right: 38
+matHelper (101)
+    on left: 84 85, on right: 83 84
+elementdec (102)
+    on left: 86, on right: 32 40
+element (103)
+    on left: 87, on right: 40
+vectordec (104)
+    on left: 88, on right: 31 39
+vector (105)
+    on left: 89, on right: 39 51
+property (106)
+    on left: 91, on right: 71 130
+$@17 (107)
+    on left: 90, on right: 91
+expr (108)
+    on left: 94 95, on right: 34 42 50 54 69 70 71 74 76 80 81 87 89
+    94 132 145 156 159
 $@18 (109)
-    on left: 91, on right: 92
-logicoperation (110)
-    on left: 96 97, on right: 92 93 96
-$@19 (111)
-    on left: 94, on right: 96
+    on left: 92, on right: 94
+$@19 (110)
+    on left: 93, on right: 94
+logicoperation (111)
+    on left: 98 99, on right: 94 95 98
 $@20 (112)
-    on left: 95, on right: 96
-logicfactor (113)
-    on left: 99 100, on right: 96 97
-$@21 (114)
-    on left: 98, on right: 99
-comparison (115)
-    on left: 102 103, on right: 99 100
-$@22 (116)
-    on left: 101, on right: 102
-operation (117)
-    on left: 106 109 110, on right: 102 103 106 109
-$@23 (118)
-    on left: 104, on right: 106
+    on left: 96, on right: 98
+$@21 (113)
+    on left: 97, on right: 98
+logicfactor (114)
+    on left: 101 102, on right: 98 99
+$@22 (115)
+    on left: 100, on right: 101
+comparison (116)
+    on left: 104 105, on right: 101 102
+$@23 (117)
+    on left: 103, on right: 104
+operation (118)
+    on left: 108 111 112, on right: 104 105 108 111
 $@24 (119)
-    on left: 105, on right: 106
+    on left: 106, on right: 108
 $@25 (120)
-    on left: 107, on right: 109
+    on left: 107, on right: 108
 $@26 (121)
-    on left: 108, on right: 109
-factor (122)
-    on left: 113 116 117, on right: 106 109 110 113 116
-$@27 (123)
-    on left: 111, on right: 113
+    on left: 109, on right: 111
+$@27 (122)
+    on left: 110, on right: 111
+factor (123)
+    on left: 115 118 119, on right: 108 111 112 115 118
 $@28 (124)
-    on left: 112, on right: 113
+    on left: 113, on right: 115
 $@29 (125)
-    on left: 114, on right: 116
+    on left: 114, on right: 115
 $@30 (126)
-    on left: 115, on right: 116
-hvalue (127)
-    on left: 120 123 124, on right: 113 116 117 120 123
-$@31 (128)
-    on left: 118, on right: 120
+    on left: 116, on right: 118
+$@31 (127)
+    on left: 117, on right: 118
+hvalue (128)
+    on left: 122 125 126, on right: 115 118 119 122 125
 $@32 (129)
-    on left: 119, on right: 120
+    on left: 120, on right: 122
 $@33 (130)
-    on left: 121, on right: 123
+    on left: 121, on right: 122
 $@34 (131)
-    on left: 122, on right: 123
-value (132)
-    on left: 125 126 127 128 130, on right: 120 123 124
-$@35 (133)
-    on left: 129, on right: 130
-comp_operator (134)
-    on left: 131 132 133 134 135 136, on right: 102
-logicstruct (135)
-    on left: 137 138 139, on right: 41
-if (136)
-    on left: 141, on right: 137
-$@36 (137)
-    on left: 140, on right: 141
-ifHelper (138)
-    on left: 143, on right: 141 146
-$@37 (139)
+    on left: 123, on right: 125
+$@35 (132)
+    on left: 124, on right: 125
+value (133)
+    on left: 127 128 129 130 132, on right: 122 125 126
+$@36 (134)
+    on left: 131, on right: 132
+comp_operator (135)
+    on left: 133 134 135 136 137 138, on right: 104
+logicstruct (136)
+    on left: 139 140 141, on right: 43
+if (137)
+    on left: 143, on right: 139
+$@37 (138)
     on left: 142, on right: 143
-ifHelper2 (140)
-    on left: 144 146, on right: 143
-$@38 (141)
-    on left: 145, on right: 146
-ifHelper3 (142)
-    on left: 147 149, on right: 141
-$@39 (143)
-    on left: 148, on right: 149
-for (144)
-    on left: 151, on right: 138
-$@40 (145)
+ifHelper (139)
+    on left: 145, on right: 143 148
+$@38 (140)
+    on left: 144, on right: 145
+ifHelper2 (141)
+    on left: 146 148, on right: 145
+$@39 (142)
+    on left: 147, on right: 148
+ifHelper3 (143)
+    on left: 149 151, on right: 143
+$@40 (144)
     on left: 150, on right: 151
-forHelper (146)
-    on left: 152 153, on right: 151
-stepfor (147)
-    on left: 154, on right: 153
-while (148)
-    on left: 157, on right: 139
-$@41 (149)
-    on left: 155, on right: 157
+for (145)
+    on left: 153, on right: 140
+$@41 (146)
+    on left: 152, on right: 153
+forHelper (147)
+    on left: 154 155, on right: 153
+stepfor (148)
+    on left: 156, on right: 155
+while (149)
+    on left: 159, on right: 141
 $@42 (150)
-    on left: 156, on right: 157
-newlineCicle (151)
-    on left: 158 159, on right: 143 149 151 157 159
-newline (152)
-    on left: 160, on right: 158 159
+    on left: 157, on right: 159
+$@43 (151)
+    on left: 158, on right: 159
+newlineCicle (152)
+    on left: 160 161, on right: 145 151 153 159 161
+newline (153)
+    on left: 162, on right: 160 161
 
 
 State 0
@@ -545,15 +552,17 @@ State 0
     LF         shift, and go to state 2
     CR         shift, and go to state 3
     V_VAR      shift, and go to state 4
-    RES_ORDER  shift, and go to state 5
+    V_ARR      shift, and go to state 5
+    RES_ORDER  shift, and go to state 6
 
     $end  reduce using rule 3 (script)
 
-    prog      go to state 6
-    script    go to state 7
-    crlf      go to state 8
-    function  go to state 9
-    vardec    go to state 10
+    prog      go to state 7
+    script    go to state 8
+    crlf      go to state 9
+    function  go to state 10
+    vardec    go to state 11
+    arrdec    go to state 12
 
 
 State 1
@@ -565,3567 +574,3618 @@ State 1
 
 State 2
 
-   10 crlf: LF .
+   12 crlf: LF .
 
-    $default  reduce using rule 10 (crlf)
+    $default  reduce using rule 12 (crlf)
 
 
 State 3
 
-    9 crlf: CR . LF
+   11 crlf: CR . LF
 
-    LF  shift, and go to state 11
+    LF  shift, and go to state 13
 
 
 State 4
 
-   53 vardec: V_VAR . V_ID SYM_COLON vartypes
+   55 vardec: V_VAR . V_ID SYM_COLON vartypes
 
-    V_ID  shift, and go to state 12
+    V_ID  shift, and go to state 14
 
 
 State 5
 
-   15 function: RES_ORDER . V_ID SYM_COLON vartypes SYM_OPARE $@3 funparams SYM_CPARE $@4 optlf SYM_OCURL crlf funbody SYM_CCURL
+   77 arrdec: V_ARR . V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC
 
-    V_ID  shift, and go to state 13
+    V_ID  shift, and go to state 15
 
 
 State 6
 
-    0 $accept: prog . $end
+   17 function: RES_ORDER . V_ID SYM_COLON vartypes SYM_OPARE $@4 funparams SYM_CPARE $@5 optlf SYM_OCURL crlf funbody SYM_CCURL
 
-    $end  shift, and go to state 14
+    V_ID  shift, and go to state 16
 
 
 State 7
+
+    0 $accept: prog . $end
+
+    $end  shift, and go to state 17
+
+
+State 8
 
     1 prog: script .
 
     $default  reduce using rule 1 (prog)
 
 
-State 8
+State 9
 
-    8 script: crlf . script
+   10 script: crlf . script
 
     LF         shift, and go to state 2
     CR         shift, and go to state 3
     V_VAR      shift, and go to state 4
-    RES_ORDER  shift, and go to state 5
+    V_ARR      shift, and go to state 5
+    RES_ORDER  shift, and go to state 6
 
     $default  reduce using rule 3 (script)
 
-    script    go to state 15
-    crlf      go to state 8
-    function  go to state 9
-    vardec    go to state 10
+    script    go to state 18
+    crlf      go to state 9
+    function  go to state 10
+    vardec    go to state 11
+    arrdec    go to state 12
 
 
-State 9
+State 10
 
     5 script: function . crlf $@1 script
 
     LF  shift, and go to state 2
     CR  shift, and go to state 3
 
-    crlf  go to state 16
+    crlf  go to state 19
 
 
-State 10
+State 11
 
     7 script: vardec . crlf $@2 script
 
     LF  shift, and go to state 2
     CR  shift, and go to state 3
 
-    crlf  go to state 17
-
-
-State 11
-
-    9 crlf: CR LF .
-
-    $default  reduce using rule 9 (crlf)
+    crlf  go to state 20
 
 
 State 12
 
-   53 vardec: V_VAR V_ID . SYM_COLON vartypes
+    9 script: arrdec . crlf $@3 script
 
-    SYM_COLON  shift, and go to state 18
+    LF  shift, and go to state 2
+    CR  shift, and go to state 3
+
+    crlf  go to state 21
 
 
 State 13
 
-   15 function: RES_ORDER V_ID . SYM_COLON vartypes SYM_OPARE $@3 funparams SYM_CPARE $@4 optlf SYM_OCURL crlf funbody SYM_CCURL
+   11 crlf: CR LF .
 
-    SYM_COLON  shift, and go to state 19
+    $default  reduce using rule 11 (crlf)
 
 
 State 14
+
+   55 vardec: V_VAR V_ID . SYM_COLON vartypes
+
+    SYM_COLON  shift, and go to state 22
+
+
+State 15
+
+   77 arrdec: V_ARR V_ID . SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC
+
+    SYM_COLON  shift, and go to state 23
+
+
+State 16
+
+   17 function: RES_ORDER V_ID . SYM_COLON vartypes SYM_OPARE $@4 funparams SYM_CPARE $@5 optlf SYM_OCURL crlf funbody SYM_CCURL
+
+    SYM_COLON  shift, and go to state 24
+
+
+State 17
 
     0 $accept: prog $end .
 
     $default  accept
 
 
-State 15
+State 18
 
-    8 script: crlf script .
+   10 script: crlf script .
 
-    $default  reduce using rule 8 (script)
+    $default  reduce using rule 10 (script)
 
 
-State 16
+State 19
 
     5 script: function crlf . $@1 script
 
     $default  reduce using rule 4 ($@1)
 
-    $@1  go to state 20
+    $@1  go to state 25
 
 
-State 17
+State 20
 
     7 script: vardec crlf . $@2 script
 
     $default  reduce using rule 6 ($@2)
 
-    $@2  go to state 21
+    $@2  go to state 26
 
 
-State 18
+State 21
 
-   53 vardec: V_VAR V_ID SYM_COLON . vartypes
+    9 script: arrdec crlf . $@3 script
 
-    T_BOOL    shift, and go to state 22
-    T_INT     shift, and go to state 23
-    T_DOUBLE  shift, and go to state 24
-    T_CHAR    shift, and go to state 25
-    T_STRING  shift, and go to state 26
+    $default  reduce using rule 8 ($@3)
 
-    vartypes  go to state 27
+    $@3  go to state 27
 
 
-State 19
+State 22
 
-   15 function: RES_ORDER V_ID SYM_COLON . vartypes SYM_OPARE $@3 funparams SYM_CPARE $@4 optlf SYM_OCURL crlf funbody SYM_CCURL
+   55 vardec: V_VAR V_ID SYM_COLON . vartypes
 
-    T_BOOL    shift, and go to state 22
-    T_INT     shift, and go to state 23
-    T_DOUBLE  shift, and go to state 24
-    T_CHAR    shift, and go to state 25
-    T_STRING  shift, and go to state 26
+    T_BOOL    shift, and go to state 28
+    T_INT     shift, and go to state 29
+    T_DOUBLE  shift, and go to state 30
+    T_CHAR    shift, and go to state 31
+    T_STRING  shift, and go to state 32
 
-    vartypes  go to state 28
+    vartypes  go to state 33
 
 
-State 20
+State 23
+
+   77 arrdec: V_ARR V_ID SYM_COLON . vartypes SYM_OBRAC V_INT SYM_CBRAC
+
+    T_BOOL    shift, and go to state 28
+    T_INT     shift, and go to state 29
+    T_DOUBLE  shift, and go to state 30
+    T_CHAR    shift, and go to state 31
+    T_STRING  shift, and go to state 32
+
+    vartypes  go to state 34
+
+
+State 24
+
+   17 function: RES_ORDER V_ID SYM_COLON . vartypes SYM_OPARE $@4 funparams SYM_CPARE $@5 optlf SYM_OCURL crlf funbody SYM_CCURL
+
+    T_BOOL    shift, and go to state 28
+    T_INT     shift, and go to state 29
+    T_DOUBLE  shift, and go to state 30
+    T_CHAR    shift, and go to state 31
+    T_STRING  shift, and go to state 32
+
+    vartypes  go to state 35
+
+
+State 25
 
     5 script: function crlf $@1 . script
 
     LF         shift, and go to state 2
     CR         shift, and go to state 3
     V_VAR      shift, and go to state 4
-    RES_ORDER  shift, and go to state 5
+    V_ARR      shift, and go to state 5
+    RES_ORDER  shift, and go to state 6
 
     $default  reduce using rule 3 (script)
 
-    script    go to state 29
-    crlf      go to state 8
-    function  go to state 9
-    vardec    go to state 10
+    script    go to state 36
+    crlf      go to state 9
+    function  go to state 10
+    vardec    go to state 11
+    arrdec    go to state 12
 
 
-State 21
+State 26
 
     7 script: vardec crlf $@2 . script
 
     LF         shift, and go to state 2
     CR         shift, and go to state 3
     V_VAR      shift, and go to state 4
-    RES_ORDER  shift, and go to state 5
+    V_ARR      shift, and go to state 5
+    RES_ORDER  shift, and go to state 6
 
     $default  reduce using rule 3 (script)
 
-    script    go to state 30
-    crlf      go to state 8
-    function  go to state 9
-    vardec    go to state 10
-
-
-State 22
-
-   63 vartypes: T_BOOL .
-
-    $default  reduce using rule 63 (vartypes)
-
-
-State 23
-
-   59 vartypes: T_INT .
-
-    $default  reduce using rule 59 (vartypes)
-
-
-State 24
-
-   60 vartypes: T_DOUBLE .
-
-    $default  reduce using rule 60 (vartypes)
-
-
-State 25
-
-   61 vartypes: T_CHAR .
-
-    $default  reduce using rule 61 (vartypes)
-
-
-State 26
-
-   62 vartypes: T_STRING .
-
-    $default  reduce using rule 62 (vartypes)
+    script    go to state 37
+    crlf      go to state 9
+    function  go to state 10
+    vardec    go to state 11
+    arrdec    go to state 12
 
 
 State 27
 
-   53 vardec: V_VAR V_ID SYM_COLON vartypes .
+    9 script: arrdec crlf $@3 . script
 
-    $default  reduce using rule 53 (vardec)
+    LF         shift, and go to state 2
+    CR         shift, and go to state 3
+    V_VAR      shift, and go to state 4
+    V_ARR      shift, and go to state 5
+    RES_ORDER  shift, and go to state 6
+
+    $default  reduce using rule 3 (script)
+
+    script    go to state 38
+    crlf      go to state 9
+    function  go to state 10
+    vardec    go to state 11
+    arrdec    go to state 12
 
 
 State 28
 
-   15 function: RES_ORDER V_ID SYM_COLON vartypes . SYM_OPARE $@3 funparams SYM_CPARE $@4 optlf SYM_OCURL crlf funbody SYM_CCURL
+   65 vartypes: T_BOOL .
 
-    SYM_OPARE  shift, and go to state 31
+    $default  reduce using rule 65 (vartypes)
 
 
 State 29
+
+   61 vartypes: T_INT .
+
+    $default  reduce using rule 61 (vartypes)
+
+
+State 30
+
+   62 vartypes: T_DOUBLE .
+
+    $default  reduce using rule 62 (vartypes)
+
+
+State 31
+
+   63 vartypes: T_CHAR .
+
+    $default  reduce using rule 63 (vartypes)
+
+
+State 32
+
+   64 vartypes: T_STRING .
+
+    $default  reduce using rule 64 (vartypes)
+
+
+State 33
+
+   55 vardec: V_VAR V_ID SYM_COLON vartypes .
+
+    $default  reduce using rule 55 (vardec)
+
+
+State 34
+
+   77 arrdec: V_ARR V_ID SYM_COLON vartypes . SYM_OBRAC V_INT SYM_CBRAC
+
+    SYM_OBRAC  shift, and go to state 39
+
+
+State 35
+
+   17 function: RES_ORDER V_ID SYM_COLON vartypes . SYM_OPARE $@4 funparams SYM_CPARE $@5 optlf SYM_OCURL crlf funbody SYM_CCURL
+
+    SYM_OPARE  shift, and go to state 40
+
+
+State 36
 
     5 script: function crlf $@1 script .
 
     $default  reduce using rule 5 (script)
 
 
-State 30
+State 37
 
     7 script: vardec crlf $@2 script .
 
     $default  reduce using rule 7 (script)
 
 
-State 31
-
-   15 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE . $@3 funparams SYM_CPARE $@4 optlf SYM_OCURL crlf funbody SYM_CCURL
-
-    $default  reduce using rule 13 ($@3)
-
-    $@3  go to state 32
-
-
-State 32
-
-   15 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@3 . funparams SYM_CPARE $@4 optlf SYM_OCURL crlf funbody SYM_CCURL
-
-    V_VAR     shift, and go to state 4
-    V_ARR     shift, and go to state 33
-    V_MAT     shift, and go to state 34
-    V_VECTOR  shift, and go to state 35
-    V_ELEM    shift, and go to state 36
-
-    $default  reduce using rule 16 (funparams)
-
-    funparams   go to state 37
-    generaldec  go to state 38
-    vardec      go to state 39
-    arrdec      go to state 40
-    matdec      go to state 41
-    elementdec  go to state 42
-    vectordec   go to state 43
-
-
-State 33
-
-   75 arrdec: V_ARR . V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC
-
-    V_ID  shift, and go to state 44
-
-
-State 34
-
-   80 matdec: V_MAT . V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
-
-    V_ID  shift, and go to state 45
-
-
-State 35
-
-   86 vectordec: V_VECTOR . V_ID
-
-    V_ID  shift, and go to state 46
-
-
-State 36
-
-   84 elementdec: V_ELEM . V_ID
-
-    V_ID  shift, and go to state 47
-
-
-State 37
-
-   15 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@3 funparams . SYM_CPARE $@4 optlf SYM_OCURL crlf funbody SYM_CCURL
-
-    SYM_CPARE  shift, and go to state 48
-
-
 State 38
 
-   17 funparams: generaldec . morefunparams
+    9 script: arrdec crlf $@3 script .
 
-    SYM_COMMA  shift, and go to state 49
-
-    $default  reduce using rule 18 (morefunparams)
-
-    morefunparams  go to state 50
+    $default  reduce using rule 9 (script)
 
 
 State 39
 
-   26 generaldec: vardec .
-   32           | vardec . $@7 MTH_SEQUA expr
+   77 arrdec: V_ARR V_ID SYM_COLON vartypes SYM_OBRAC . V_INT SYM_CBRAC
 
-    MTH_SEQUA  reduce using rule 31 ($@7)
-    $default   reduce using rule 26 (generaldec)
-
-    $@7  go to state 51
+    V_INT  shift, and go to state 41
 
 
 State 40
 
-   27 generaldec: arrdec .
-   34           | arrdec . $@8 MTH_SEQUA arr
+   17 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE . $@4 funparams SYM_CPARE $@5 optlf SYM_OCURL crlf funbody SYM_CCURL
 
-    MTH_SEQUA  reduce using rule 33 ($@8)
-    $default   reduce using rule 27 (generaldec)
+    $default  reduce using rule 15 ($@4)
 
-    $@8  go to state 52
+    $@4  go to state 42
 
 
 State 41
 
-   28 generaldec: matdec .
-   36           | matdec . $@9 MTH_SEQUA mat
+   77 arrdec: V_ARR V_ID SYM_COLON vartypes SYM_OBRAC V_INT . SYM_CBRAC
 
-    MTH_SEQUA  reduce using rule 35 ($@9)
-    $default   reduce using rule 28 (generaldec)
-
-    $@9  go to state 53
+    SYM_CBRAC  shift, and go to state 43
 
 
 State 42
 
-   30 generaldec: elementdec .
-   38           | elementdec . MTH_SEQUA element
+   17 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@4 . funparams SYM_CPARE $@5 optlf SYM_OCURL crlf funbody SYM_CCURL
 
-    MTH_SEQUA  shift, and go to state 54
+    V_VAR     shift, and go to state 4
+    V_ARR     shift, and go to state 5
+    V_MAT     shift, and go to state 44
+    V_VECTOR  shift, and go to state 45
+    V_ELEM    shift, and go to state 46
 
-    $default  reduce using rule 30 (generaldec)
+    $default  reduce using rule 18 (funparams)
+
+    funparams   go to state 47
+    generaldec  go to state 48
+    vardec      go to state 49
+    arrdec      go to state 50
+    matdec      go to state 51
+    elementdec  go to state 52
+    vectordec   go to state 53
 
 
 State 43
 
-   29 generaldec: vectordec .
-   37           | vectordec . MTH_SEQUA vector
+   77 arrdec: V_ARR V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC .
 
-    MTH_SEQUA  shift, and go to state 55
-
-    $default  reduce using rule 29 (generaldec)
+    $default  reduce using rule 77 (arrdec)
 
 
 State 44
 
-   75 arrdec: V_ARR V_ID . SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC
+   82 matdec: V_MAT . V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
 
-    SYM_COLON  shift, and go to state 56
+    V_ID  shift, and go to state 54
 
 
 State 45
 
-   80 matdec: V_MAT V_ID . SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
+   88 vectordec: V_VECTOR . V_ID
 
-    SYM_COLON  shift, and go to state 57
+    V_ID  shift, and go to state 55
 
 
 State 46
 
-   86 vectordec: V_VECTOR V_ID .
+   86 elementdec: V_ELEM . V_ID
 
-    $default  reduce using rule 86 (vectordec)
+    V_ID  shift, and go to state 56
 
 
 State 47
 
-   84 elementdec: V_ELEM V_ID .
+   17 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@4 funparams . SYM_CPARE $@5 optlf SYM_OCURL crlf funbody SYM_CCURL
 
-    $default  reduce using rule 84 (elementdec)
+    SYM_CPARE  shift, and go to state 57
 
 
 State 48
 
-   15 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@3 funparams SYM_CPARE . $@4 optlf SYM_OCURL crlf funbody SYM_CCURL
+   19 funparams: generaldec . morefunparams
 
-    $default  reduce using rule 14 ($@4)
+    SYM_COMMA  shift, and go to state 58
 
-    $@4  go to state 58
+    $default  reduce using rule 20 (morefunparams)
+
+    morefunparams  go to state 59
 
 
 State 49
 
-   19 morefunparams: SYM_COMMA . generaldec morefunparams
+   28 generaldec: vardec .
+   34           | vardec . $@8 MTH_SEQUA expr
 
-    V_VAR     shift, and go to state 4
-    V_ARR     shift, and go to state 33
-    V_MAT     shift, and go to state 34
-    V_VECTOR  shift, and go to state 35
-    V_ELEM    shift, and go to state 36
+    MTH_SEQUA  reduce using rule 33 ($@8)
+    $default   reduce using rule 28 (generaldec)
 
-    generaldec  go to state 59
-    vardec      go to state 39
-    arrdec      go to state 40
-    matdec      go to state 41
-    elementdec  go to state 42
-    vectordec   go to state 43
+    $@8  go to state 60
 
 
 State 50
 
-   17 funparams: generaldec morefunparams .
+   29 generaldec: arrdec .
+   36           | arrdec . $@9 MTH_SEQUA arr
 
-    $default  reduce using rule 17 (funparams)
+    MTH_SEQUA  reduce using rule 35 ($@9)
+    $default   reduce using rule 29 (generaldec)
+
+    $@9  go to state 61
 
 
 State 51
 
-   32 generaldec: vardec $@7 . MTH_SEQUA expr
+   30 generaldec: matdec .
+   38           | matdec . $@10 MTH_SEQUA mat
 
-    MTH_SEQUA  shift, and go to state 60
+    MTH_SEQUA  reduce using rule 37 ($@10)
+    $default   reduce using rule 30 (generaldec)
+
+    $@10  go to state 62
 
 
 State 52
 
-   34 generaldec: arrdec $@8 . MTH_SEQUA arr
+   32 generaldec: elementdec .
+   40           | elementdec . MTH_SEQUA element
 
-    MTH_SEQUA  shift, and go to state 61
-
-
-State 53
-
-   36 generaldec: matdec $@9 . MTH_SEQUA mat
-
-    MTH_SEQUA  shift, and go to state 62
-
-
-State 54
-
-   38 generaldec: elementdec MTH_SEQUA . element
-
-    SYM_OCURL  shift, and go to state 63
-
-    element  go to state 64
-
-
-State 55
-
-   37 generaldec: vectordec MTH_SEQUA . vector
-
-    SYM_OPARE  shift, and go to state 65
-
-    vector  go to state 66
-
-
-State 56
-
-   75 arrdec: V_ARR V_ID SYM_COLON . vartypes SYM_OBRAC V_INT SYM_CBRAC
-
-    T_BOOL    shift, and go to state 22
-    T_INT     shift, and go to state 23
-    T_DOUBLE  shift, and go to state 24
-    T_CHAR    shift, and go to state 25
-    T_STRING  shift, and go to state 26
-
-    vartypes  go to state 67
-
-
-State 57
-
-   80 matdec: V_MAT V_ID SYM_COLON . vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
-
-    T_BOOL    shift, and go to state 22
-    T_INT     shift, and go to state 23
-    T_DOUBLE  shift, and go to state 24
-    T_CHAR    shift, and go to state 25
-    T_STRING  shift, and go to state 26
-
-    vartypes  go to state 68
-
-
-State 58
-
-   15 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@3 funparams SYM_CPARE $@4 . optlf SYM_OCURL crlf funbody SYM_CCURL
-
-    LF  shift, and go to state 2
-    CR  shift, and go to state 3
-
-    $default  reduce using rule 11 (optlf)
-
-    crlf   go to state 69
-    optlf  go to state 70
-
-
-State 59
-
-   19 morefunparams: SYM_COMMA generaldec . morefunparams
-
-    SYM_COMMA  shift, and go to state 49
-
-    $default  reduce using rule 18 (morefunparams)
-
-    morefunparams  go to state 71
-
-
-State 60
-
-   32 generaldec: vardec $@7 MTH_SEQUA . expr
-
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 85
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-
-
-State 61
-
-   34 generaldec: arrdec $@8 MTH_SEQUA . arr
-
-    SYM_OBRAC  shift, and go to state 93
-
-    arr  go to state 94
-
-
-State 62
-
-   36 generaldec: matdec $@9 MTH_SEQUA . mat
-
-    SYM_OBRAC  shift, and go to state 95
-
-    mat  go to state 96
-
-
-State 63
-
-   85 element: SYM_OCURL . expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
-
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 97
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-
-
-State 64
-
-   38 generaldec: elementdec MTH_SEQUA element .
-
-    $default  reduce using rule 38 (generaldec)
-
-
-State 65
-
-   87 vector: SYM_OPARE . expr SYM_COMMA expr SYM_CPARE
-
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 98
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-
-
-State 66
-
-   37 generaldec: vectordec MTH_SEQUA vector .
-
-    $default  reduce using rule 37 (generaldec)
-
-
-State 67
-
-   75 arrdec: V_ARR V_ID SYM_COLON vartypes . SYM_OBRAC V_INT SYM_CBRAC
-
-    SYM_OBRAC  shift, and go to state 99
-
-
-State 68
-
-   80 matdec: V_MAT V_ID SYM_COLON vartypes . SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
-
-    SYM_OBRAC  shift, and go to state 100
-
-
-State 69
-
-   12 optlf: crlf .
-
-    $default  reduce using rule 12 (optlf)
-
-
-State 70
-
-   15 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@3 funparams SYM_CPARE $@4 optlf . SYM_OCURL crlf funbody SYM_CCURL
-
-    SYM_OCURL  shift, and go to state 101
-
-
-State 71
-
-   19 morefunparams: SYM_COMMA generaldec morefunparams .
-
-    $default  reduce using rule 19 (morefunparams)
-
-
-State 72
-
-  130 value: SYM_OPARE . $@35 expr SYM_CPARE
-
-    $default  reduce using rule 129 ($@35)
-
-    $@35  go to state 102
-
-
-State 73
-
-   99 logicfactor: MTH_NOT . $@21 comparison
-
-    $default  reduce using rule 98 ($@21)
-
-    $@21  go to state 103
-
-
-State 74
-
-   45 funcall: V_ID . $@10 SYM_OPARE funcallHelper SYM_CPARE
-   64 var_or_cte: V_ID .
-   72 structaccess: V_ID . $@13 SYM_OBRAC expr SYM_CBRAC $@14 structIndex
-   89 property: V_ID . $@16 SYM_DOT V_ID
-
-    SYM_OBRAC  reduce using rule 70 ($@13)
-    SYM_OPARE  reduce using rule 44 ($@10)
-    SYM_DOT    reduce using rule 88 ($@16)
-    $default   reduce using rule 64 (var_or_cte)
-
-    $@10  go to state 104
-    $@13  go to state 105
-    $@16  go to state 106
-
-
-State 75
-
-   54 basictypes: V_CHAR .
-
-    $default  reduce using rule 54 (basictypes)
-
-
-State 76
-
-   55 basictypes: V_STRING .
-
-    $default  reduce using rule 55 (basictypes)
-
-
-State 77
-
-   57 basictypes: V_INT .
-
-    $default  reduce using rule 57 (basictypes)
-
-
-State 78
-
-   56 basictypes: V_DOUBLE .
-
-    $default  reduce using rule 56 (basictypes)
-
-
-State 79
-
-   58 basictypes: V_BOOL .
-
-    $default  reduce using rule 58 (basictypes)
-
-
-State 80
-
-  126 value: funcall .
-
-    $default  reduce using rule 126 (value)
-
-
-State 81
-
-   65 var_or_cte: basictypes .
-
-    $default  reduce using rule 65 (var_or_cte)
-
-
-State 82
-
-  125 value: var_or_cte .
-
-    $default  reduce using rule 125 (value)
-
-
-State 83
-
-  127 value: structaccess .
-
-    $default  reduce using rule 127 (value)
-
-
-State 84
-
-  128 value: property .
-
-    $default  reduce using rule 128 (value)
-
-
-State 85
-
-   32 generaldec: vardec $@7 MTH_SEQUA expr .
+    MTH_SEQUA  shift, and go to state 63
 
     $default  reduce using rule 32 (generaldec)
 
 
+State 53
+
+   31 generaldec: vectordec .
+   39           | vectordec . MTH_SEQUA vector
+
+    MTH_SEQUA  shift, and go to state 64
+
+    $default  reduce using rule 31 (generaldec)
+
+
+State 54
+
+   82 matdec: V_MAT V_ID . SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
+
+    SYM_COLON  shift, and go to state 65
+
+
+State 55
+
+   88 vectordec: V_VECTOR V_ID .
+
+    $default  reduce using rule 88 (vectordec)
+
+
+State 56
+
+   86 elementdec: V_ELEM V_ID .
+
+    $default  reduce using rule 86 (elementdec)
+
+
+State 57
+
+   17 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@4 funparams SYM_CPARE . $@5 optlf SYM_OCURL crlf funbody SYM_CCURL
+
+    $default  reduce using rule 16 ($@5)
+
+    $@5  go to state 66
+
+
+State 58
+
+   21 morefunparams: SYM_COMMA . generaldec morefunparams
+
+    V_VAR     shift, and go to state 4
+    V_ARR     shift, and go to state 5
+    V_MAT     shift, and go to state 44
+    V_VECTOR  shift, and go to state 45
+    V_ELEM    shift, and go to state 46
+
+    generaldec  go to state 67
+    vardec      go to state 49
+    arrdec      go to state 50
+    matdec      go to state 51
+    elementdec  go to state 52
+    vectordec   go to state 53
+
+
+State 59
+
+   19 funparams: generaldec morefunparams .
+
+    $default  reduce using rule 19 (funparams)
+
+
+State 60
+
+   34 generaldec: vardec $@8 . MTH_SEQUA expr
+
+    MTH_SEQUA  shift, and go to state 68
+
+
+State 61
+
+   36 generaldec: arrdec $@9 . MTH_SEQUA arr
+
+    MTH_SEQUA  shift, and go to state 69
+
+
+State 62
+
+   38 generaldec: matdec $@10 . MTH_SEQUA mat
+
+    MTH_SEQUA  shift, and go to state 70
+
+
+State 63
+
+   40 generaldec: elementdec MTH_SEQUA . element
+
+    SYM_OCURL  shift, and go to state 71
+
+    element  go to state 72
+
+
+State 64
+
+   39 generaldec: vectordec MTH_SEQUA . vector
+
+    SYM_OPARE  shift, and go to state 73
+
+    vector  go to state 74
+
+
+State 65
+
+   82 matdec: V_MAT V_ID SYM_COLON . vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
+
+    T_BOOL    shift, and go to state 28
+    T_INT     shift, and go to state 29
+    T_DOUBLE  shift, and go to state 30
+    T_CHAR    shift, and go to state 31
+    T_STRING  shift, and go to state 32
+
+    vartypes  go to state 75
+
+
+State 66
+
+   17 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@4 funparams SYM_CPARE $@5 . optlf SYM_OCURL crlf funbody SYM_CCURL
+
+    LF  shift, and go to state 2
+    CR  shift, and go to state 3
+
+    $default  reduce using rule 13 (optlf)
+
+    crlf   go to state 76
+    optlf  go to state 77
+
+
+State 67
+
+   21 morefunparams: SYM_COMMA generaldec . morefunparams
+
+    SYM_COMMA  shift, and go to state 58
+
+    $default  reduce using rule 20 (morefunparams)
+
+    morefunparams  go to state 78
+
+
+State 68
+
+   34 generaldec: vardec $@8 MTH_SEQUA . expr
+
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 92
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+
+
+State 69
+
+   36 generaldec: arrdec $@9 MTH_SEQUA . arr
+
+    SYM_OBRAC  shift, and go to state 100
+
+    arr  go to state 101
+
+
+State 70
+
+   38 generaldec: matdec $@10 MTH_SEQUA . mat
+
+    SYM_OBRAC  shift, and go to state 102
+
+    mat  go to state 103
+
+
+State 71
+
+   87 element: SYM_OCURL . expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
+
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 104
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+
+
+State 72
+
+   40 generaldec: elementdec MTH_SEQUA element .
+
+    $default  reduce using rule 40 (generaldec)
+
+
+State 73
+
+   89 vector: SYM_OPARE . expr SYM_COMMA expr SYM_CPARE
+
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 105
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+
+
+State 74
+
+   39 generaldec: vectordec MTH_SEQUA vector .
+
+    $default  reduce using rule 39 (generaldec)
+
+
+State 75
+
+   82 matdec: V_MAT V_ID SYM_COLON vartypes . SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
+
+    SYM_OBRAC  shift, and go to state 106
+
+
+State 76
+
+   14 optlf: crlf .
+
+    $default  reduce using rule 14 (optlf)
+
+
+State 77
+
+   17 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@4 funparams SYM_CPARE $@5 optlf . SYM_OCURL crlf funbody SYM_CCURL
+
+    SYM_OCURL  shift, and go to state 107
+
+
+State 78
+
+   21 morefunparams: SYM_COMMA generaldec morefunparams .
+
+    $default  reduce using rule 21 (morefunparams)
+
+
+State 79
+
+  132 value: SYM_OPARE . $@36 expr SYM_CPARE
+
+    $default  reduce using rule 131 ($@36)
+
+    $@36  go to state 108
+
+
+State 80
+
+  101 logicfactor: MTH_NOT . $@22 comparison
+
+    $default  reduce using rule 100 ($@22)
+
+    $@22  go to state 109
+
+
+State 81
+
+   47 funcall: V_ID . $@11 SYM_OPARE funcallHelper SYM_CPARE
+   66 var_or_cte: V_ID .
+   74 structaccess: V_ID . $@14 SYM_OBRAC expr SYM_CBRAC $@15 structIndex
+   91 property: V_ID . $@17 SYM_DOT V_ID
+
+    SYM_OBRAC  reduce using rule 72 ($@14)
+    SYM_OPARE  reduce using rule 46 ($@11)
+    SYM_DOT    reduce using rule 90 ($@17)
+    $default   reduce using rule 66 (var_or_cte)
+
+    $@11  go to state 110
+    $@14  go to state 111
+    $@17  go to state 112
+
+
+State 82
+
+   56 basictypes: V_CHAR .
+
+    $default  reduce using rule 56 (basictypes)
+
+
+State 83
+
+   57 basictypes: V_STRING .
+
+    $default  reduce using rule 57 (basictypes)
+
+
+State 84
+
+   59 basictypes: V_INT .
+
+    $default  reduce using rule 59 (basictypes)
+
+
+State 85
+
+   58 basictypes: V_DOUBLE .
+
+    $default  reduce using rule 58 (basictypes)
+
+
 State 86
 
-   92 expr: logicoperation . $@17 MTH_OR $@18 expr
-   93     | logicoperation .
+   60 basictypes: V_BOOL .
 
-    MTH_OR    reduce using rule 90 ($@17)
-    $default  reduce using rule 93 (expr)
-
-    $@17  go to state 107
+    $default  reduce using rule 60 (basictypes)
 
 
 State 87
 
-   96 logicoperation: logicfactor . $@19 MTH_AND $@20 logicoperation
-   97               | logicfactor .
-
-    MTH_AND   reduce using rule 94 ($@19)
-    $default  reduce using rule 97 (logicoperation)
-
-    $@19  go to state 108
-
-
-State 88
-
-  100 logicfactor: comparison .
-
-    $default  reduce using rule 100 (logicfactor)
-
-
-State 89
-
-  102 comparison: operation . comp_operator $@22 operation
-  103           | operation .
-
-    MTH_DEQUA  shift, and go to state 109
-    MTH_GT     shift, and go to state 110
-    MTH_LT     shift, and go to state 111
-    MTH_GTEQ   shift, and go to state 112
-    MTH_LTEQ   shift, and go to state 113
-    MTH_NOTEQ  shift, and go to state 114
-
-    $default  reduce using rule 103 (comparison)
-
-    comp_operator  go to state 115
-
-
-State 90
-
-  106 operation: factor . $@23 MTH_PLUS $@24 operation
-  109          | factor . $@25 MTH_MINUS $@26 operation
-  110          | factor .
-
-    MTH_PLUS   reduce using rule 104 ($@23)
-    MTH_MINUS  reduce using rule 107 ($@25)
-    $default   reduce using rule 110 (operation)
-
-    $@23  go to state 116
-    $@25  go to state 117
-
-
-State 91
-
-  113 factor: hvalue . $@27 MTH_ASTRK $@28 factor
-  116       | hvalue . $@29 MTH_DIVIS $@30 factor
-  117       | hvalue .
-
-    MTH_ASTRK  reduce using rule 111 ($@27)
-    MTH_DIVIS  reduce using rule 114 ($@29)
-    $default   reduce using rule 117 (factor)
-
-    $@27  go to state 118
-    $@29  go to state 119
-
-
-State 92
-
-  120 hvalue: value . $@31 MTH_POWER $@32 hvalue
-  123       | value . $@33 MTH_ROOT $@34 hvalue
-  124       | value .
-
-    MTH_POWER  reduce using rule 118 ($@31)
-    MTH_ROOT   reduce using rule 121 ($@33)
-    $default   reduce using rule 124 (hvalue)
-
-    $@31  go to state 120
-    $@33  go to state 121
-
-
-State 93
-
-   76 arr: SYM_OBRAC . arrHelper SYM_CBRAC
-
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    arrHelper       go to state 122
-    property        go to state 84
-    expr            go to state 123
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-
-
-State 94
-
-   34 generaldec: arrdec $@8 MTH_SEQUA arr .
-
-    $default  reduce using rule 34 (generaldec)
-
-
-State 95
-
-   81 mat: SYM_OBRAC . optlf matHelper SYM_CBRAC
-
-    LF  shift, and go to state 2
-    CR  shift, and go to state 3
-
-    $default  reduce using rule 11 (optlf)
-
-    crlf   go to state 69
-    optlf  go to state 124
-
-
-State 96
-
-   36 generaldec: matdec $@9 MTH_SEQUA mat .
-
-    $default  reduce using rule 36 (generaldec)
-
-
-State 97
-
-   85 element: SYM_OCURL expr . SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
-
-    SYM_COMMA  shift, and go to state 125
-
-
-State 98
-
-   87 vector: SYM_OPARE expr . SYM_COMMA expr SYM_CPARE
-
-    SYM_COMMA  shift, and go to state 126
-
-
-State 99
-
-   75 arrdec: V_ARR V_ID SYM_COLON vartypes SYM_OBRAC . V_INT SYM_CBRAC
-
-    V_INT  shift, and go to state 127
-
-
-State 100
-
-   80 matdec: V_MAT V_ID SYM_COLON vartypes SYM_OBRAC . V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
-
-    V_INT  shift, and go to state 128
-
-
-State 101
-
-   15 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@3 funparams SYM_CPARE $@4 optlf SYM_OCURL . crlf funbody SYM_CCURL
-
-    LF  shift, and go to state 2
-    CR  shift, and go to state 3
-
-    crlf  go to state 129
-
-
-State 102
-
-  130 value: SYM_OPARE $@35 . expr SYM_CPARE
-
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 130
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-
-
-State 103
-
-   99 logicfactor: MTH_NOT $@21 . comparison
-
-    SYM_OPARE  shift, and go to state 72
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall       go to state 80
-    basictypes    go to state 81
-    var_or_cte    go to state 82
-    structaccess  go to state 83
-    property      go to state 84
-    comparison    go to state 131
-    operation     go to state 89
-    factor        go to state 90
-    hvalue        go to state 91
-    value         go to state 92
-
-
-State 104
-
-   45 funcall: V_ID $@10 . SYM_OPARE funcallHelper SYM_CPARE
-
-    SYM_OPARE  shift, and go to state 132
-
-
-State 105
-
-   72 structaccess: V_ID $@13 . SYM_OBRAC expr SYM_CBRAC $@14 structIndex
-
-    SYM_OBRAC  shift, and go to state 133
-
-
-State 106
-
-   89 property: V_ID $@16 . SYM_DOT V_ID
-
-    SYM_DOT  shift, and go to state 134
-
-
-State 107
-
-   92 expr: logicoperation $@17 . MTH_OR $@18 expr
-
-    MTH_OR  shift, and go to state 135
-
-
-State 108
-
-   96 logicoperation: logicfactor $@19 . MTH_AND $@20 logicoperation
-
-    MTH_AND  shift, and go to state 136
-
-
-State 109
-
-  135 comp_operator: MTH_DEQUA .
-
-    $default  reduce using rule 135 (comp_operator)
-
-
-State 110
-
-  131 comp_operator: MTH_GT .
-
-    $default  reduce using rule 131 (comp_operator)
-
-
-State 111
-
-  133 comp_operator: MTH_LT .
-
-    $default  reduce using rule 133 (comp_operator)
-
-
-State 112
-
-  132 comp_operator: MTH_GTEQ .
-
-    $default  reduce using rule 132 (comp_operator)
-
-
-State 113
-
-  134 comp_operator: MTH_LTEQ .
-
-    $default  reduce using rule 134 (comp_operator)
-
-
-State 114
-
-  136 comp_operator: MTH_NOTEQ .
-
-    $default  reduce using rule 136 (comp_operator)
-
-
-State 115
-
-  102 comparison: operation comp_operator . $@22 operation
-
-    $default  reduce using rule 101 ($@22)
-
-    $@22  go to state 137
-
-
-State 116
-
-  106 operation: factor $@23 . MTH_PLUS $@24 operation
-
-    MTH_PLUS  shift, and go to state 138
-
-
-State 117
-
-  109 operation: factor $@25 . MTH_MINUS $@26 operation
-
-    MTH_MINUS  shift, and go to state 139
-
-
-State 118
-
-  113 factor: hvalue $@27 . MTH_ASTRK $@28 factor
-
-    MTH_ASTRK  shift, and go to state 140
-
-
-State 119
-
-  116 factor: hvalue $@29 . MTH_DIVIS $@30 factor
-
-    MTH_DIVIS  shift, and go to state 141
-
-
-State 120
-
-  120 hvalue: value $@31 . MTH_POWER $@32 hvalue
-
-    MTH_POWER  shift, and go to state 142
-
-
-State 121
-
-  123 hvalue: value $@33 . MTH_ROOT $@34 hvalue
-
-    MTH_ROOT  shift, and go to state 143
-
-
-State 122
-
-   76 arr: SYM_OBRAC arrHelper . SYM_CBRAC
-
-    SYM_CBRAC  shift, and go to state 144
-
-
-State 123
-
-   78 arrHelper: expr . SYM_COMMA $@15 arrHelper
-   79          | expr .
-
-    SYM_COMMA  shift, and go to state 145
-
-    $default  reduce using rule 79 (arrHelper)
-
-
-State 124
-
-   81 mat: SYM_OBRAC optlf . matHelper SYM_CBRAC
-
-    SYM_OBRAC  shift, and go to state 93
-
-    arr        go to state 146
-    matHelper  go to state 147
-
-
-State 125
-
-   85 element: SYM_OCURL expr SYM_COMMA . expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
-
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 148
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-
-
-State 126
-
-   87 vector: SYM_OPARE expr SYM_COMMA . expr SYM_CPARE
-
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 149
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-
-
-State 127
-
-   75 arrdec: V_ARR V_ID SYM_COLON vartypes SYM_OBRAC V_INT . SYM_CBRAC
-
-    SYM_CBRAC  shift, and go to state 150
-
-
-State 128
-
-   80 matdec: V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT . SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
-
-    SYM_CBRAC  shift, and go to state 151
-
-
-State 129
-
-   15 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@3 funparams SYM_CPARE $@4 optlf SYM_OCURL crlf . funbody SYM_CCURL
-
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    LF         shift, and go to state 2
-    CR         shift, and go to state 3
-    V_ID       shift, and go to state 152
-    LOG_IF     shift, and go to state 153
-    LOG_FOR    shift, and go to state 154
-    LOG_WHILE  shift, and go to state 155
-    V_VAR      shift, and go to state 4
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-    V_ARR      shift, and go to state 33
-    V_MAT      shift, and go to state 34
-    V_VECTOR   shift, and go to state 35
-    V_ELEM     shift, and go to state 36
-    RES_MEDIT  shift, and go to state 156
-    RES_RETRN  shift, and go to state 157
-
-    $default  reduce using rule 20 (funbody)
-
-    crlf            go to state 158
-    funbody         go to state 159
-    generaldec      go to state 160
-    stmt            go to state 161
-    funcall         go to state 80
-    ret             go to state 162
-    vardec          go to state 39
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    assign          go to state 163
-    structaccess    go to state 164
-    arrdec          go to state 40
-    matdec          go to state 41
-    elementdec      go to state 42
-    vectordec       go to state 43
-    property        go to state 165
-    expr            go to state 166
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-    logicstruct     go to state 167
-    if              go to state 168
-    for             go to state 169
-    while           go to state 170
-
-
-State 130
-
-  130 value: SYM_OPARE $@35 expr . SYM_CPARE
-
-    SYM_CPARE  shift, and go to state 171
-
-
-State 131
-
-   99 logicfactor: MTH_NOT $@21 comparison .
-
-    $default  reduce using rule 99 (logicfactor)
-
-
-State 132
-
-   45 funcall: V_ID $@10 SYM_OPARE . funcallHelper SYM_CPARE
-
-    SYM_OPARE  shift, and go to state 172
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    $default  reduce using rule 46 (funcallHelper)
-
-    funcall         go to state 80
-    funcallHelper   go to state 173
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    vector          go to state 174
-    property        go to state 84
-    expr            go to state 175
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-
-
-State 133
-
-   72 structaccess: V_ID $@13 SYM_OBRAC . expr SYM_CBRAC $@14 structIndex
-
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 176
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-
-
-State 134
-
-   89 property: V_ID $@16 SYM_DOT . V_ID
-
-    V_ID  shift, and go to state 177
-
-
-State 135
-
-   92 expr: logicoperation $@17 MTH_OR . $@18 expr
-
-    $default  reduce using rule 91 ($@18)
-
-    $@18  go to state 178
-
-
-State 136
-
-   96 logicoperation: logicfactor $@19 MTH_AND . $@20 logicoperation
-
-    $default  reduce using rule 95 ($@20)
-
-    $@20  go to state 179
-
-
-State 137
-
-  102 comparison: operation comp_operator $@22 . operation
-
-    SYM_OPARE  shift, and go to state 72
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall       go to state 80
-    basictypes    go to state 81
-    var_or_cte    go to state 82
-    structaccess  go to state 83
-    property      go to state 84
-    operation     go to state 180
-    factor        go to state 90
-    hvalue        go to state 91
-    value         go to state 92
-
-
-State 138
-
-  106 operation: factor $@23 MTH_PLUS . $@24 operation
-
-    $default  reduce using rule 105 ($@24)
-
-    $@24  go to state 181
-
-
-State 139
-
-  109 operation: factor $@25 MTH_MINUS . $@26 operation
-
-    $default  reduce using rule 108 ($@26)
-
-    $@26  go to state 182
-
-
-State 140
-
-  113 factor: hvalue $@27 MTH_ASTRK . $@28 factor
-
-    $default  reduce using rule 112 ($@28)
-
-    $@28  go to state 183
-
-
-State 141
-
-  116 factor: hvalue $@29 MTH_DIVIS . $@30 factor
-
-    $default  reduce using rule 115 ($@30)
-
-    $@30  go to state 184
-
-
-State 142
-
-  120 hvalue: value $@31 MTH_POWER . $@32 hvalue
-
-    $default  reduce using rule 119 ($@32)
-
-    $@32  go to state 185
-
-
-State 143
-
-  123 hvalue: value $@33 MTH_ROOT . $@34 hvalue
-
-    $default  reduce using rule 122 ($@34)
-
-    $@34  go to state 186
-
-
-State 144
-
-   76 arr: SYM_OBRAC arrHelper SYM_CBRAC .
-
-    $default  reduce using rule 76 (arr)
-
-
-State 145
-
-   78 arrHelper: expr SYM_COMMA . $@15 arrHelper
-
-    $default  reduce using rule 77 ($@15)
-
-    $@15  go to state 187
-
-
-State 146
-
-   82 matHelper: arr . SYM_COMMA optlf matHelper
-   83          | arr . optlf
-
-    SYM_COMMA  shift, and go to state 188
-    LF         shift, and go to state 2
-    CR         shift, and go to state 3
-
-    $default  reduce using rule 11 (optlf)
-
-    crlf   go to state 69
-    optlf  go to state 189
-
-
-State 147
-
-   81 mat: SYM_OBRAC optlf matHelper . SYM_CBRAC
-
-    SYM_CBRAC  shift, and go to state 190
-
-
-State 148
-
-   85 element: SYM_OCURL expr SYM_COMMA expr . SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
-
-    SYM_COMMA  shift, and go to state 191
-
-
-State 149
-
-   87 vector: SYM_OPARE expr SYM_COMMA expr . SYM_CPARE
-
-    SYM_CPARE  shift, and go to state 192
-
-
-State 150
-
-   75 arrdec: V_ARR V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC .
-
-    $default  reduce using rule 75 (arrdec)
-
-
-State 151
-
-   80 matdec: V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC . SYM_OBRAC V_INT SYM_CBRAC
-
-    SYM_OBRAC  shift, and go to state 193
-
-
-State 152
-
-   45 funcall: V_ID . $@10 SYM_OPARE funcallHelper SYM_CPARE
-   64 var_or_cte: V_ID .
-   67 assign: V_ID . $@12 MTH_SEQUA expr
-   72 structaccess: V_ID . $@13 SYM_OBRAC expr SYM_CBRAC $@14 structIndex
-   89 property: V_ID . $@16 SYM_DOT V_ID
-
-    SYM_OBRAC  reduce using rule 70 ($@13)
-    SYM_OPARE  reduce using rule 44 ($@10)
-    SYM_DOT    reduce using rule 88 ($@16)
-    MTH_SEQUA  reduce using rule 66 ($@12)
-    $default   reduce using rule 64 (var_or_cte)
-
-    $@10  go to state 104
-    $@12  go to state 194
-    $@13  go to state 105
-    $@16  go to state 106
-
-
-State 153
-
-  141 if: LOG_IF . $@36 ifHelper ifHelper3
-
-    $default  reduce using rule 140 ($@36)
-
-    $@36  go to state 195
-
-
-State 154
-
-  151 for: LOG_FOR . forHelper SYM_ARROW V_ID $@40 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
-
-    SYM_OBRAC  shift, and go to state 196
-    V_ID       shift, and go to state 197
-
-    forHelper  go to state 198
-    stepfor    go to state 199
-
-
-State 155
-
-  157 while: LOG_WHILE . $@41 SYM_OPARE expr SYM_CPARE $@42 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
-
-    $default  reduce using rule 155 ($@41)
-
-    $@41  go to state 200
-
-
-State 156
-
-   42 stmt: RES_MEDIT .
-
-    $default  reduce using rule 42 (stmt)
-
-
-State 157
-
-   52 ret: RES_RETRN . expr
-
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 201
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-
-
-State 158
-
-   25 funbody: crlf . funbody
-
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    LF         shift, and go to state 2
-    CR         shift, and go to state 3
-    V_ID       shift, and go to state 152
-    LOG_IF     shift, and go to state 153
-    LOG_FOR    shift, and go to state 154
-    LOG_WHILE  shift, and go to state 155
-    V_VAR      shift, and go to state 4
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-    V_ARR      shift, and go to state 33
-    V_MAT      shift, and go to state 34
-    V_VECTOR   shift, and go to state 35
-    V_ELEM     shift, and go to state 36
-    RES_MEDIT  shift, and go to state 156
-    RES_RETRN  shift, and go to state 157
-
-    $default  reduce using rule 20 (funbody)
-
-    crlf            go to state 158
-    funbody         go to state 202
-    generaldec      go to state 160
-    stmt            go to state 161
-    funcall         go to state 80
-    ret             go to state 162
-    vardec          go to state 39
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    assign          go to state 163
-    structaccess    go to state 164
-    arrdec          go to state 40
-    matdec          go to state 41
-    elementdec      go to state 42
-    vectordec       go to state 43
-    property        go to state 165
-    expr            go to state 166
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-    logicstruct     go to state 167
-    if              go to state 168
-    for             go to state 169
-    while           go to state 170
-
-
-State 159
-
-   15 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@3 funparams SYM_CPARE $@4 optlf SYM_OCURL crlf funbody . SYM_CCURL
-
-    SYM_CCURL  shift, and go to state 203
-
-
-State 160
-
-   24 funbody: generaldec . crlf $@6 funbody
-
-    LF  shift, and go to state 2
-    CR  shift, and go to state 3
-
-    crlf  go to state 204
-
-
-State 161
-
-   22 funbody: stmt . crlf $@5 funbody
-
-    LF  shift, and go to state 2
-    CR  shift, and go to state 3
-
-    crlf  go to state 205
-
-
-State 162
-
-   43 stmt: ret .
-
-    $default  reduce using rule 43 (stmt)
-
-
-State 163
-
-   39 stmt: assign .
-
-    $default  reduce using rule 39 (stmt)
-
-
-State 164
-
-   68 assign: structaccess . MTH_SEQUA expr
-  127 value: structaccess .
-
-    MTH_SEQUA  shift, and go to state 206
-
-    $default  reduce using rule 127 (value)
-
-
-State 165
-
-   69 assign: property . MTH_SEQUA expr
-  128 value: property .
-
-    MTH_SEQUA  shift, and go to state 207
+  128 value: funcall .
 
     $default  reduce using rule 128 (value)
 
 
+State 88
+
+   67 var_or_cte: basictypes .
+
+    $default  reduce using rule 67 (var_or_cte)
+
+
+State 89
+
+  127 value: var_or_cte .
+
+    $default  reduce using rule 127 (value)
+
+
+State 90
+
+  129 value: structaccess .
+
+    $default  reduce using rule 129 (value)
+
+
+State 91
+
+  130 value: property .
+
+    $default  reduce using rule 130 (value)
+
+
+State 92
+
+   34 generaldec: vardec $@8 MTH_SEQUA expr .
+
+    $default  reduce using rule 34 (generaldec)
+
+
+State 93
+
+   94 expr: logicoperation . $@18 MTH_OR $@19 expr
+   95     | logicoperation .
+
+    MTH_OR    reduce using rule 92 ($@18)
+    $default  reduce using rule 95 (expr)
+
+    $@18  go to state 113
+
+
+State 94
+
+   98 logicoperation: logicfactor . $@20 MTH_AND $@21 logicoperation
+   99               | logicfactor .
+
+    MTH_AND   reduce using rule 96 ($@20)
+    $default  reduce using rule 99 (logicoperation)
+
+    $@20  go to state 114
+
+
+State 95
+
+  102 logicfactor: comparison .
+
+    $default  reduce using rule 102 (logicfactor)
+
+
+State 96
+
+  104 comparison: operation . comp_operator $@23 operation
+  105           | operation .
+
+    MTH_DEQUA  shift, and go to state 115
+    MTH_GT     shift, and go to state 116
+    MTH_LT     shift, and go to state 117
+    MTH_GTEQ   shift, and go to state 118
+    MTH_LTEQ   shift, and go to state 119
+    MTH_NOTEQ  shift, and go to state 120
+
+    $default  reduce using rule 105 (comparison)
+
+    comp_operator  go to state 121
+
+
+State 97
+
+  108 operation: factor . $@24 MTH_PLUS $@25 operation
+  111          | factor . $@26 MTH_MINUS $@27 operation
+  112          | factor .
+
+    MTH_PLUS   reduce using rule 106 ($@24)
+    MTH_MINUS  reduce using rule 109 ($@26)
+    $default   reduce using rule 112 (operation)
+
+    $@24  go to state 122
+    $@26  go to state 123
+
+
+State 98
+
+  115 factor: hvalue . $@28 MTH_ASTRK $@29 factor
+  118       | hvalue . $@30 MTH_DIVIS $@31 factor
+  119       | hvalue .
+
+    MTH_ASTRK  reduce using rule 113 ($@28)
+    MTH_DIVIS  reduce using rule 116 ($@30)
+    $default   reduce using rule 119 (factor)
+
+    $@28  go to state 124
+    $@30  go to state 125
+
+
+State 99
+
+  122 hvalue: value . $@32 MTH_POWER $@33 hvalue
+  125       | value . $@34 MTH_ROOT $@35 hvalue
+  126       | value .
+
+    MTH_POWER  reduce using rule 120 ($@32)
+    MTH_ROOT   reduce using rule 123 ($@34)
+    $default   reduce using rule 126 (hvalue)
+
+    $@32  go to state 126
+    $@34  go to state 127
+
+
+State 100
+
+   78 arr: SYM_OBRAC . arrHelper SYM_CBRAC
+
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    arrHelper       go to state 128
+    property        go to state 91
+    expr            go to state 129
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+
+
+State 101
+
+   36 generaldec: arrdec $@9 MTH_SEQUA arr .
+
+    $default  reduce using rule 36 (generaldec)
+
+
+State 102
+
+   83 mat: SYM_OBRAC . optlf matHelper SYM_CBRAC
+
+    LF  shift, and go to state 2
+    CR  shift, and go to state 3
+
+    $default  reduce using rule 13 (optlf)
+
+    crlf   go to state 76
+    optlf  go to state 130
+
+
+State 103
+
+   38 generaldec: matdec $@10 MTH_SEQUA mat .
+
+    $default  reduce using rule 38 (generaldec)
+
+
+State 104
+
+   87 element: SYM_OCURL expr . SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
+
+    SYM_COMMA  shift, and go to state 131
+
+
+State 105
+
+   89 vector: SYM_OPARE expr . SYM_COMMA expr SYM_CPARE
+
+    SYM_COMMA  shift, and go to state 132
+
+
+State 106
+
+   82 matdec: V_MAT V_ID SYM_COLON vartypes SYM_OBRAC . V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
+
+    V_INT  shift, and go to state 133
+
+
+State 107
+
+   17 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@4 funparams SYM_CPARE $@5 optlf SYM_OCURL . crlf funbody SYM_CCURL
+
+    LF  shift, and go to state 2
+    CR  shift, and go to state 3
+
+    crlf  go to state 134
+
+
+State 108
+
+  132 value: SYM_OPARE $@36 . expr SYM_CPARE
+
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 135
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+
+
+State 109
+
+  101 logicfactor: MTH_NOT $@22 . comparison
+
+    SYM_OPARE  shift, and go to state 79
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall       go to state 87
+    basictypes    go to state 88
+    var_or_cte    go to state 89
+    structaccess  go to state 90
+    property      go to state 91
+    comparison    go to state 136
+    operation     go to state 96
+    factor        go to state 97
+    hvalue        go to state 98
+    value         go to state 99
+
+
+State 110
+
+   47 funcall: V_ID $@11 . SYM_OPARE funcallHelper SYM_CPARE
+
+    SYM_OPARE  shift, and go to state 137
+
+
+State 111
+
+   74 structaccess: V_ID $@14 . SYM_OBRAC expr SYM_CBRAC $@15 structIndex
+
+    SYM_OBRAC  shift, and go to state 138
+
+
+State 112
+
+   91 property: V_ID $@17 . SYM_DOT V_ID
+
+    SYM_DOT  shift, and go to state 139
+
+
+State 113
+
+   94 expr: logicoperation $@18 . MTH_OR $@19 expr
+
+    MTH_OR  shift, and go to state 140
+
+
+State 114
+
+   98 logicoperation: logicfactor $@20 . MTH_AND $@21 logicoperation
+
+    MTH_AND  shift, and go to state 141
+
+
+State 115
+
+  137 comp_operator: MTH_DEQUA .
+
+    $default  reduce using rule 137 (comp_operator)
+
+
+State 116
+
+  133 comp_operator: MTH_GT .
+
+    $default  reduce using rule 133 (comp_operator)
+
+
+State 117
+
+  135 comp_operator: MTH_LT .
+
+    $default  reduce using rule 135 (comp_operator)
+
+
+State 118
+
+  134 comp_operator: MTH_GTEQ .
+
+    $default  reduce using rule 134 (comp_operator)
+
+
+State 119
+
+  136 comp_operator: MTH_LTEQ .
+
+    $default  reduce using rule 136 (comp_operator)
+
+
+State 120
+
+  138 comp_operator: MTH_NOTEQ .
+
+    $default  reduce using rule 138 (comp_operator)
+
+
+State 121
+
+  104 comparison: operation comp_operator . $@23 operation
+
+    $default  reduce using rule 103 ($@23)
+
+    $@23  go to state 142
+
+
+State 122
+
+  108 operation: factor $@24 . MTH_PLUS $@25 operation
+
+    MTH_PLUS  shift, and go to state 143
+
+
+State 123
+
+  111 operation: factor $@26 . MTH_MINUS $@27 operation
+
+    MTH_MINUS  shift, and go to state 144
+
+
+State 124
+
+  115 factor: hvalue $@28 . MTH_ASTRK $@29 factor
+
+    MTH_ASTRK  shift, and go to state 145
+
+
+State 125
+
+  118 factor: hvalue $@30 . MTH_DIVIS $@31 factor
+
+    MTH_DIVIS  shift, and go to state 146
+
+
+State 126
+
+  122 hvalue: value $@32 . MTH_POWER $@33 hvalue
+
+    MTH_POWER  shift, and go to state 147
+
+
+State 127
+
+  125 hvalue: value $@34 . MTH_ROOT $@35 hvalue
+
+    MTH_ROOT  shift, and go to state 148
+
+
+State 128
+
+   78 arr: SYM_OBRAC arrHelper . SYM_CBRAC
+
+    SYM_CBRAC  shift, and go to state 149
+
+
+State 129
+
+   80 arrHelper: expr . SYM_COMMA $@16 arrHelper
+   81          | expr .
+
+    SYM_COMMA  shift, and go to state 150
+
+    $default  reduce using rule 81 (arrHelper)
+
+
+State 130
+
+   83 mat: SYM_OBRAC optlf . matHelper SYM_CBRAC
+
+    SYM_OBRAC  shift, and go to state 100
+
+    arr        go to state 151
+    matHelper  go to state 152
+
+
+State 131
+
+   87 element: SYM_OCURL expr SYM_COMMA . expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
+
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 153
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+
+
+State 132
+
+   89 vector: SYM_OPARE expr SYM_COMMA . expr SYM_CPARE
+
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 154
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+
+
+State 133
+
+   82 matdec: V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT . SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC
+
+    SYM_CBRAC  shift, and go to state 155
+
+
+State 134
+
+   17 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@4 funparams SYM_CPARE $@5 optlf SYM_OCURL crlf . funbody SYM_CCURL
+
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    LF         shift, and go to state 2
+    CR         shift, and go to state 3
+    V_ID       shift, and go to state 156
+    LOG_IF     shift, and go to state 157
+    LOG_FOR    shift, and go to state 158
+    LOG_WHILE  shift, and go to state 159
+    V_VAR      shift, and go to state 4
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+    V_ARR      shift, and go to state 5
+    V_MAT      shift, and go to state 44
+    V_VECTOR   shift, and go to state 45
+    V_ELEM     shift, and go to state 46
+    RES_MEDIT  shift, and go to state 160
+    RES_RETRN  shift, and go to state 161
+
+    $default  reduce using rule 22 (funbody)
+
+    crlf            go to state 162
+    funbody         go to state 163
+    generaldec      go to state 164
+    stmt            go to state 165
+    funcall         go to state 87
+    ret             go to state 166
+    vardec          go to state 49
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    assign          go to state 167
+    structaccess    go to state 168
+    arrdec          go to state 50
+    matdec          go to state 51
+    elementdec      go to state 52
+    vectordec       go to state 53
+    property        go to state 169
+    expr            go to state 170
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+    logicstruct     go to state 171
+    if              go to state 172
+    for             go to state 173
+    while           go to state 174
+
+
+State 135
+
+  132 value: SYM_OPARE $@36 expr . SYM_CPARE
+
+    SYM_CPARE  shift, and go to state 175
+
+
+State 136
+
+  101 logicfactor: MTH_NOT $@22 comparison .
+
+    $default  reduce using rule 101 (logicfactor)
+
+
+State 137
+
+   47 funcall: V_ID $@11 SYM_OPARE . funcallHelper SYM_CPARE
+
+    SYM_OPARE  shift, and go to state 176
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    $default  reduce using rule 48 (funcallHelper)
+
+    funcall         go to state 87
+    funcallHelper   go to state 177
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    vector          go to state 178
+    property        go to state 91
+    expr            go to state 179
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+
+
+State 138
+
+   74 structaccess: V_ID $@14 SYM_OBRAC . expr SYM_CBRAC $@15 structIndex
+
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 180
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+
+
+State 139
+
+   91 property: V_ID $@17 SYM_DOT . V_ID
+
+    V_ID  shift, and go to state 181
+
+
+State 140
+
+   94 expr: logicoperation $@18 MTH_OR . $@19 expr
+
+    $default  reduce using rule 93 ($@19)
+
+    $@19  go to state 182
+
+
+State 141
+
+   98 logicoperation: logicfactor $@20 MTH_AND . $@21 logicoperation
+
+    $default  reduce using rule 97 ($@21)
+
+    $@21  go to state 183
+
+
+State 142
+
+  104 comparison: operation comp_operator $@23 . operation
+
+    SYM_OPARE  shift, and go to state 79
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall       go to state 87
+    basictypes    go to state 88
+    var_or_cte    go to state 89
+    structaccess  go to state 90
+    property      go to state 91
+    operation     go to state 184
+    factor        go to state 97
+    hvalue        go to state 98
+    value         go to state 99
+
+
+State 143
+
+  108 operation: factor $@24 MTH_PLUS . $@25 operation
+
+    $default  reduce using rule 107 ($@25)
+
+    $@25  go to state 185
+
+
+State 144
+
+  111 operation: factor $@26 MTH_MINUS . $@27 operation
+
+    $default  reduce using rule 110 ($@27)
+
+    $@27  go to state 186
+
+
+State 145
+
+  115 factor: hvalue $@28 MTH_ASTRK . $@29 factor
+
+    $default  reduce using rule 114 ($@29)
+
+    $@29  go to state 187
+
+
+State 146
+
+  118 factor: hvalue $@30 MTH_DIVIS . $@31 factor
+
+    $default  reduce using rule 117 ($@31)
+
+    $@31  go to state 188
+
+
+State 147
+
+  122 hvalue: value $@32 MTH_POWER . $@33 hvalue
+
+    $default  reduce using rule 121 ($@33)
+
+    $@33  go to state 189
+
+
+State 148
+
+  125 hvalue: value $@34 MTH_ROOT . $@35 hvalue
+
+    $default  reduce using rule 124 ($@35)
+
+    $@35  go to state 190
+
+
+State 149
+
+   78 arr: SYM_OBRAC arrHelper SYM_CBRAC .
+
+    $default  reduce using rule 78 (arr)
+
+
+State 150
+
+   80 arrHelper: expr SYM_COMMA . $@16 arrHelper
+
+    $default  reduce using rule 79 ($@16)
+
+    $@16  go to state 191
+
+
+State 151
+
+   84 matHelper: arr . SYM_COMMA optlf matHelper
+   85          | arr . optlf
+
+    SYM_COMMA  shift, and go to state 192
+    LF         shift, and go to state 2
+    CR         shift, and go to state 3
+
+    $default  reduce using rule 13 (optlf)
+
+    crlf   go to state 76
+    optlf  go to state 193
+
+
+State 152
+
+   83 mat: SYM_OBRAC optlf matHelper . SYM_CBRAC
+
+    SYM_CBRAC  shift, and go to state 194
+
+
+State 153
+
+   87 element: SYM_OCURL expr SYM_COMMA expr . SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
+
+    SYM_COMMA  shift, and go to state 195
+
+
+State 154
+
+   89 vector: SYM_OPARE expr SYM_COMMA expr . SYM_CPARE
+
+    SYM_CPARE  shift, and go to state 196
+
+
+State 155
+
+   82 matdec: V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC . SYM_OBRAC V_INT SYM_CBRAC
+
+    SYM_OBRAC  shift, and go to state 197
+
+
+State 156
+
+   47 funcall: V_ID . $@11 SYM_OPARE funcallHelper SYM_CPARE
+   66 var_or_cte: V_ID .
+   69 assign: V_ID . $@13 MTH_SEQUA expr
+   74 structaccess: V_ID . $@14 SYM_OBRAC expr SYM_CBRAC $@15 structIndex
+   91 property: V_ID . $@17 SYM_DOT V_ID
+
+    SYM_OBRAC  reduce using rule 72 ($@14)
+    SYM_OPARE  reduce using rule 46 ($@11)
+    SYM_DOT    reduce using rule 90 ($@17)
+    MTH_SEQUA  reduce using rule 68 ($@13)
+    $default   reduce using rule 66 (var_or_cte)
+
+    $@11  go to state 110
+    $@13  go to state 198
+    $@14  go to state 111
+    $@17  go to state 112
+
+
+State 157
+
+  143 if: LOG_IF . $@37 ifHelper ifHelper3
+
+    $default  reduce using rule 142 ($@37)
+
+    $@37  go to state 199
+
+
+State 158
+
+  153 for: LOG_FOR . forHelper SYM_ARROW V_ID $@41 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+
+    SYM_OBRAC  shift, and go to state 200
+    V_ID       shift, and go to state 201
+
+    forHelper  go to state 202
+    stepfor    go to state 203
+
+
+State 159
+
+  159 while: LOG_WHILE . $@42 SYM_OPARE expr SYM_CPARE $@43 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+
+    $default  reduce using rule 157 ($@42)
+
+    $@42  go to state 204
+
+
+State 160
+
+   44 stmt: RES_MEDIT .
+
+    $default  reduce using rule 44 (stmt)
+
+
+State 161
+
+   54 ret: RES_RETRN . expr
+
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 205
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+
+
+State 162
+
+   27 funbody: crlf . funbody
+
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    LF         shift, and go to state 2
+    CR         shift, and go to state 3
+    V_ID       shift, and go to state 156
+    LOG_IF     shift, and go to state 157
+    LOG_FOR    shift, and go to state 158
+    LOG_WHILE  shift, and go to state 159
+    V_VAR      shift, and go to state 4
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+    V_ARR      shift, and go to state 5
+    V_MAT      shift, and go to state 44
+    V_VECTOR   shift, and go to state 45
+    V_ELEM     shift, and go to state 46
+    RES_MEDIT  shift, and go to state 160
+    RES_RETRN  shift, and go to state 161
+
+    $default  reduce using rule 22 (funbody)
+
+    crlf            go to state 162
+    funbody         go to state 206
+    generaldec      go to state 164
+    stmt            go to state 165
+    funcall         go to state 87
+    ret             go to state 166
+    vardec          go to state 49
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    assign          go to state 167
+    structaccess    go to state 168
+    arrdec          go to state 50
+    matdec          go to state 51
+    elementdec      go to state 52
+    vectordec       go to state 53
+    property        go to state 169
+    expr            go to state 170
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+    logicstruct     go to state 171
+    if              go to state 172
+    for             go to state 173
+    while           go to state 174
+
+
+State 163
+
+   17 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@4 funparams SYM_CPARE $@5 optlf SYM_OCURL crlf funbody . SYM_CCURL
+
+    SYM_CCURL  shift, and go to state 207
+
+
+State 164
+
+   26 funbody: generaldec . crlf $@7 funbody
+
+    LF  shift, and go to state 2
+    CR  shift, and go to state 3
+
+    crlf  go to state 208
+
+
+State 165
+
+   24 funbody: stmt . crlf $@6 funbody
+
+    LF  shift, and go to state 2
+    CR  shift, and go to state 3
+
+    crlf  go to state 209
+
+
 State 166
 
-   40 stmt: expr .
+   45 stmt: ret .
 
-    $default  reduce using rule 40 (stmt)
+    $default  reduce using rule 45 (stmt)
 
 
 State 167
 
-   41 stmt: logicstruct .
+   41 stmt: assign .
 
     $default  reduce using rule 41 (stmt)
 
 
 State 168
 
-  137 logicstruct: if .
+   70 assign: structaccess . MTH_SEQUA expr
+  129 value: structaccess .
 
-    $default  reduce using rule 137 (logicstruct)
+    MTH_SEQUA  shift, and go to state 210
+
+    $default  reduce using rule 129 (value)
 
 
 State 169
 
-  138 logicstruct: for .
+   71 assign: property . MTH_SEQUA expr
+  130 value: property .
 
-    $default  reduce using rule 138 (logicstruct)
-
-
-State 170
-
-  139 logicstruct: while .
-
-    $default  reduce using rule 139 (logicstruct)
-
-
-State 171
-
-  130 value: SYM_OPARE $@35 expr SYM_CPARE .
+    MTH_SEQUA  shift, and go to state 211
 
     $default  reduce using rule 130 (value)
 
 
+State 170
+
+   42 stmt: expr .
+
+    $default  reduce using rule 42 (stmt)
+
+
+State 171
+
+   43 stmt: logicstruct .
+
+    $default  reduce using rule 43 (stmt)
+
+
 State 172
 
-   87 vector: SYM_OPARE . expr SYM_COMMA expr SYM_CPARE
-  130 value: SYM_OPARE . $@35 expr SYM_CPARE
+  139 logicstruct: if .
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    SYM_OPARE  [reduce using rule 129 ($@35)]
-    MTH_NOT    [reduce using rule 129 ($@35)]
-    V_ID       [reduce using rule 129 ($@35)]
-    V_CHAR     [reduce using rule 129 ($@35)]
-    V_STRING   [reduce using rule 129 ($@35)]
-    V_INT      [reduce using rule 129 ($@35)]
-    V_DOUBLE   [reduce using rule 129 ($@35)]
-    V_BOOL     [reduce using rule 129 ($@35)]
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 98
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-    $@35            go to state 102
+    $default  reduce using rule 139 (logicstruct)
 
 
 State 173
 
-   45 funcall: V_ID $@10 SYM_OPARE funcallHelper . SYM_CPARE
+  140 logicstruct: for .
 
-    SYM_CPARE  shift, and go to state 208
+    $default  reduce using rule 140 (logicstruct)
 
 
 State 174
 
-   49 funcallHelper: vector . funcallHelper2
+  141 logicstruct: while .
 
-    SYM_COMMA  shift, and go to state 209
-
-    $default  reduce using rule 50 (funcallHelper2)
-
-    funcallHelper2  go to state 210
+    $default  reduce using rule 141 (logicstruct)
 
 
 State 175
 
-   48 funcallHelper: expr . $@11 funcallHelper2
+  132 value: SYM_OPARE $@36 expr SYM_CPARE .
 
-    $default  reduce using rule 47 ($@11)
-
-    $@11  go to state 211
+    $default  reduce using rule 132 (value)
 
 
 State 176
 
-   72 structaccess: V_ID $@13 SYM_OBRAC expr . SYM_CBRAC $@14 structIndex
+   89 vector: SYM_OPARE . expr SYM_COMMA expr SYM_CPARE
+  132 value: SYM_OPARE . $@36 expr SYM_CPARE
 
-    SYM_CBRAC  shift, and go to state 212
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    SYM_OPARE  [reduce using rule 131 ($@36)]
+    MTH_NOT    [reduce using rule 131 ($@36)]
+    V_ID       [reduce using rule 131 ($@36)]
+    V_CHAR     [reduce using rule 131 ($@36)]
+    V_STRING   [reduce using rule 131 ($@36)]
+    V_INT      [reduce using rule 131 ($@36)]
+    V_DOUBLE   [reduce using rule 131 ($@36)]
+    V_BOOL     [reduce using rule 131 ($@36)]
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 105
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+    $@36            go to state 108
 
 
 State 177
 
-   89 property: V_ID $@16 SYM_DOT V_ID .
+   47 funcall: V_ID $@11 SYM_OPARE funcallHelper . SYM_CPARE
 
-    $default  reduce using rule 89 (property)
+    SYM_CPARE  shift, and go to state 212
 
 
 State 178
 
-   92 expr: logicoperation $@17 MTH_OR $@18 . expr
+   51 funcallHelper: vector . funcallHelper2
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
+    SYM_COMMA  shift, and go to state 213
 
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 213
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    $default  reduce using rule 52 (funcallHelper2)
+
+    funcallHelper2  go to state 214
 
 
 State 179
 
-   96 logicoperation: logicfactor $@19 MTH_AND $@20 . logicoperation
+   50 funcallHelper: expr . $@12 funcallHelper2
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
+    $default  reduce using rule 49 ($@12)
 
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    logicoperation  go to state 214
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    $@12  go to state 215
 
 
 State 180
 
-  102 comparison: operation comp_operator $@22 operation .
+   74 structaccess: V_ID $@14 SYM_OBRAC expr . SYM_CBRAC $@15 structIndex
 
-    $default  reduce using rule 102 (comparison)
+    SYM_CBRAC  shift, and go to state 216
 
 
 State 181
 
-  106 operation: factor $@23 MTH_PLUS $@24 . operation
+   91 property: V_ID $@17 SYM_DOT V_ID .
 
-    SYM_OPARE  shift, and go to state 72
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall       go to state 80
-    basictypes    go to state 81
-    var_or_cte    go to state 82
-    structaccess  go to state 83
-    property      go to state 84
-    operation     go to state 215
-    factor        go to state 90
-    hvalue        go to state 91
-    value         go to state 92
+    $default  reduce using rule 91 (property)
 
 
 State 182
 
-  109 operation: factor $@25 MTH_MINUS $@26 . operation
+   94 expr: logicoperation $@18 MTH_OR $@19 . expr
 
-    SYM_OPARE  shift, and go to state 72
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
 
-    funcall       go to state 80
-    basictypes    go to state 81
-    var_or_cte    go to state 82
-    structaccess  go to state 83
-    property      go to state 84
-    operation     go to state 216
-    factor        go to state 90
-    hvalue        go to state 91
-    value         go to state 92
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 217
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 183
 
-  113 factor: hvalue $@27 MTH_ASTRK $@28 . factor
+   98 logicoperation: logicfactor $@20 MTH_AND $@21 . logicoperation
 
-    SYM_OPARE  shift, and go to state 72
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
 
-    funcall       go to state 80
-    basictypes    go to state 81
-    var_or_cte    go to state 82
-    structaccess  go to state 83
-    property      go to state 84
-    factor        go to state 217
-    hvalue        go to state 91
-    value         go to state 92
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    logicoperation  go to state 218
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 184
 
-  116 factor: hvalue $@29 MTH_DIVIS $@30 . factor
+  104 comparison: operation comp_operator $@23 operation .
 
-    SYM_OPARE  shift, and go to state 72
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall       go to state 80
-    basictypes    go to state 81
-    var_or_cte    go to state 82
-    structaccess  go to state 83
-    property      go to state 84
-    factor        go to state 218
-    hvalue        go to state 91
-    value         go to state 92
+    $default  reduce using rule 104 (comparison)
 
 
 State 185
 
-  120 hvalue: value $@31 MTH_POWER $@32 . hvalue
+  108 operation: factor $@24 MTH_PLUS $@25 . operation
 
-    SYM_OPARE  shift, and go to state 72
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
+    SYM_OPARE  shift, and go to state 79
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
 
-    funcall       go to state 80
-    basictypes    go to state 81
-    var_or_cte    go to state 82
-    structaccess  go to state 83
-    property      go to state 84
-    hvalue        go to state 219
-    value         go to state 92
+    funcall       go to state 87
+    basictypes    go to state 88
+    var_or_cte    go to state 89
+    structaccess  go to state 90
+    property      go to state 91
+    operation     go to state 219
+    factor        go to state 97
+    hvalue        go to state 98
+    value         go to state 99
 
 
 State 186
 
-  123 hvalue: value $@33 MTH_ROOT $@34 . hvalue
+  111 operation: factor $@26 MTH_MINUS $@27 . operation
 
-    SYM_OPARE  shift, and go to state 72
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
+    SYM_OPARE  shift, and go to state 79
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
 
-    funcall       go to state 80
-    basictypes    go to state 81
-    var_or_cte    go to state 82
-    structaccess  go to state 83
-    property      go to state 84
-    hvalue        go to state 220
-    value         go to state 92
+    funcall       go to state 87
+    basictypes    go to state 88
+    var_or_cte    go to state 89
+    structaccess  go to state 90
+    property      go to state 91
+    operation     go to state 220
+    factor        go to state 97
+    hvalue        go to state 98
+    value         go to state 99
 
 
 State 187
 
-   78 arrHelper: expr SYM_COMMA $@15 . arrHelper
+  115 factor: hvalue $@28 MTH_ASTRK $@29 . factor
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
+    SYM_OPARE  shift, and go to state 79
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
 
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    arrHelper       go to state 221
-    property        go to state 84
-    expr            go to state 123
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    funcall       go to state 87
+    basictypes    go to state 88
+    var_or_cte    go to state 89
+    structaccess  go to state 90
+    property      go to state 91
+    factor        go to state 221
+    hvalue        go to state 98
+    value         go to state 99
 
 
 State 188
 
-   82 matHelper: arr SYM_COMMA . optlf matHelper
+  118 factor: hvalue $@30 MTH_DIVIS $@31 . factor
 
-    LF  shift, and go to state 2
-    CR  shift, and go to state 3
+    SYM_OPARE  shift, and go to state 79
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
 
-    $default  reduce using rule 11 (optlf)
-
-    crlf   go to state 69
-    optlf  go to state 222
+    funcall       go to state 87
+    basictypes    go to state 88
+    var_or_cte    go to state 89
+    structaccess  go to state 90
+    property      go to state 91
+    factor        go to state 222
+    hvalue        go to state 98
+    value         go to state 99
 
 
 State 189
 
-   83 matHelper: arr optlf .
+  122 hvalue: value $@32 MTH_POWER $@33 . hvalue
 
-    $default  reduce using rule 83 (matHelper)
+    SYM_OPARE  shift, and go to state 79
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall       go to state 87
+    basictypes    go to state 88
+    var_or_cte    go to state 89
+    structaccess  go to state 90
+    property      go to state 91
+    hvalue        go to state 223
+    value         go to state 99
 
 
 State 190
 
-   81 mat: SYM_OBRAC optlf matHelper SYM_CBRAC .
+  125 hvalue: value $@34 MTH_ROOT $@35 . hvalue
 
-    $default  reduce using rule 81 (mat)
+    SYM_OPARE  shift, and go to state 79
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall       go to state 87
+    basictypes    go to state 88
+    var_or_cte    go to state 89
+    structaccess  go to state 90
+    property      go to state 91
+    hvalue        go to state 224
+    value         go to state 99
 
 
 State 191
 
-   85 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA . expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
+   80 arrHelper: expr SYM_COMMA $@16 . arrHelper
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
 
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 223
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    arrHelper       go to state 225
+    property        go to state 91
+    expr            go to state 129
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 192
 
-   87 vector: SYM_OPARE expr SYM_COMMA expr SYM_CPARE .
+   84 matHelper: arr SYM_COMMA . optlf matHelper
 
-    $default  reduce using rule 87 (vector)
+    LF  shift, and go to state 2
+    CR  shift, and go to state 3
+
+    $default  reduce using rule 13 (optlf)
+
+    crlf   go to state 76
+    optlf  go to state 226
 
 
 State 193
 
-   80 matdec: V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC . V_INT SYM_CBRAC
+   85 matHelper: arr optlf .
 
-    V_INT  shift, and go to state 224
+    $default  reduce using rule 85 (matHelper)
 
 
 State 194
 
-   67 assign: V_ID $@12 . MTH_SEQUA expr
+   83 mat: SYM_OBRAC optlf matHelper SYM_CBRAC .
 
-    MTH_SEQUA  shift, and go to state 225
+    $default  reduce using rule 83 (mat)
 
 
 State 195
 
-  141 if: LOG_IF $@36 . ifHelper ifHelper3
+   87 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA . expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
 
-    SYM_OPARE  shift, and go to state 226
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
 
-    ifHelper  go to state 227
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 227
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 196
 
-  154 stepfor: SYM_OBRAC . expr SYM_COMMA expr SYM_COMMA expr SYM_CBRAC
+   89 vector: SYM_OPARE expr SYM_COMMA expr SYM_CPARE .
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 228
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    $default  reduce using rule 89 (vector)
 
 
 State 197
 
-  152 forHelper: V_ID .
+   82 matdec: V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC . V_INT SYM_CBRAC
 
-    $default  reduce using rule 152 (forHelper)
+    V_INT  shift, and go to state 228
 
 
 State 198
 
-  151 for: LOG_FOR forHelper . SYM_ARROW V_ID $@40 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+   69 assign: V_ID $@13 . MTH_SEQUA expr
 
-    SYM_ARROW  shift, and go to state 229
+    MTH_SEQUA  shift, and go to state 229
 
 
 State 199
 
-  153 forHelper: stepfor .
+  143 if: LOG_IF $@37 . ifHelper ifHelper3
 
-    $default  reduce using rule 153 (forHelper)
+    SYM_OPARE  shift, and go to state 230
+
+    ifHelper  go to state 231
 
 
 State 200
 
-  157 while: LOG_WHILE $@41 . SYM_OPARE expr SYM_CPARE $@42 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+  156 stepfor: SYM_OBRAC . expr SYM_COMMA expr SYM_COMMA expr SYM_CBRAC
 
-    SYM_OPARE  shift, and go to state 230
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 232
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 201
 
-   52 ret: RES_RETRN expr .
+  154 forHelper: V_ID .
 
-    $default  reduce using rule 52 (ret)
+    $default  reduce using rule 154 (forHelper)
 
 
 State 202
 
-   25 funbody: crlf funbody .
+  153 for: LOG_FOR forHelper . SYM_ARROW V_ID $@41 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
-    $default  reduce using rule 25 (funbody)
+    SYM_ARROW  shift, and go to state 233
 
 
 State 203
 
-   15 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@3 funparams SYM_CPARE $@4 optlf SYM_OCURL crlf funbody SYM_CCURL .
+  155 forHelper: stepfor .
 
-    $default  reduce using rule 15 (function)
+    $default  reduce using rule 155 (forHelper)
 
 
 State 204
 
-   24 funbody: generaldec crlf . $@6 funbody
+  159 while: LOG_WHILE $@42 . SYM_OPARE expr SYM_CPARE $@43 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
-    $default  reduce using rule 23 ($@6)
-
-    $@6  go to state 231
+    SYM_OPARE  shift, and go to state 234
 
 
 State 205
 
-   22 funbody: stmt crlf . $@5 funbody
+   54 ret: RES_RETRN expr .
 
-    $default  reduce using rule 21 ($@5)
-
-    $@5  go to state 232
+    $default  reduce using rule 54 (ret)
 
 
 State 206
 
-   68 assign: structaccess MTH_SEQUA . expr
+   27 funbody: crlf funbody .
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 233
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    $default  reduce using rule 27 (funbody)
 
 
 State 207
 
-   69 assign: property MTH_SEQUA . expr
+   17 function: RES_ORDER V_ID SYM_COLON vartypes SYM_OPARE $@4 funparams SYM_CPARE $@5 optlf SYM_OCURL crlf funbody SYM_CCURL .
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 234
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    $default  reduce using rule 17 (function)
 
 
 State 208
 
-   45 funcall: V_ID $@10 SYM_OPARE funcallHelper SYM_CPARE .
+   26 funbody: generaldec crlf . $@7 funbody
 
-    $default  reduce using rule 45 (funcall)
+    $default  reduce using rule 25 ($@7)
+
+    $@7  go to state 235
 
 
 State 209
 
-   51 funcallHelper2: SYM_COMMA . funcallHelper
+   24 funbody: stmt crlf . $@6 funbody
 
-    SYM_OPARE  shift, and go to state 172
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
+    $default  reduce using rule 23 ($@6)
 
-    $default  reduce using rule 46 (funcallHelper)
-
-    funcall         go to state 80
-    funcallHelper   go to state 235
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    vector          go to state 174
-    property        go to state 84
-    expr            go to state 175
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    $@6  go to state 236
 
 
 State 210
 
-   49 funcallHelper: vector funcallHelper2 .
+   70 assign: structaccess MTH_SEQUA . expr
 
-    $default  reduce using rule 49 (funcallHelper)
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 237
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 211
 
-   48 funcallHelper: expr $@11 . funcallHelper2
+   71 assign: property MTH_SEQUA . expr
 
-    SYM_COMMA  shift, and go to state 209
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
 
-    $default  reduce using rule 50 (funcallHelper2)
-
-    funcallHelper2  go to state 236
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 238
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 212
 
-   72 structaccess: V_ID $@13 SYM_OBRAC expr SYM_CBRAC . $@14 structIndex
+   47 funcall: V_ID $@11 SYM_OPARE funcallHelper SYM_CPARE .
 
-    $default  reduce using rule 71 ($@14)
-
-    $@14  go to state 237
+    $default  reduce using rule 47 (funcall)
 
 
 State 213
 
-   92 expr: logicoperation $@17 MTH_OR $@18 expr .
+   53 funcallHelper2: SYM_COMMA . funcallHelper
 
-    $default  reduce using rule 92 (expr)
+    SYM_OPARE  shift, and go to state 176
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    $default  reduce using rule 48 (funcallHelper)
+
+    funcall         go to state 87
+    funcallHelper   go to state 239
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    vector          go to state 178
+    property        go to state 91
+    expr            go to state 179
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 214
 
-   96 logicoperation: logicfactor $@19 MTH_AND $@20 logicoperation .
+   51 funcallHelper: vector funcallHelper2 .
 
-    $default  reduce using rule 96 (logicoperation)
+    $default  reduce using rule 51 (funcallHelper)
 
 
 State 215
 
-  106 operation: factor $@23 MTH_PLUS $@24 operation .
+   50 funcallHelper: expr $@12 . funcallHelper2
 
-    $default  reduce using rule 106 (operation)
+    SYM_COMMA  shift, and go to state 213
+
+    $default  reduce using rule 52 (funcallHelper2)
+
+    funcallHelper2  go to state 240
 
 
 State 216
 
-  109 operation: factor $@25 MTH_MINUS $@26 operation .
+   74 structaccess: V_ID $@14 SYM_OBRAC expr SYM_CBRAC . $@15 structIndex
 
-    $default  reduce using rule 109 (operation)
+    $default  reduce using rule 73 ($@15)
+
+    $@15  go to state 241
 
 
 State 217
 
-  113 factor: hvalue $@27 MTH_ASTRK $@28 factor .
+   94 expr: logicoperation $@18 MTH_OR $@19 expr .
 
-    $default  reduce using rule 113 (factor)
+    $default  reduce using rule 94 (expr)
 
 
 State 218
 
-  116 factor: hvalue $@29 MTH_DIVIS $@30 factor .
+   98 logicoperation: logicfactor $@20 MTH_AND $@21 logicoperation .
 
-    $default  reduce using rule 116 (factor)
+    $default  reduce using rule 98 (logicoperation)
 
 
 State 219
 
-  120 hvalue: value $@31 MTH_POWER $@32 hvalue .
+  108 operation: factor $@24 MTH_PLUS $@25 operation .
 
-    $default  reduce using rule 120 (hvalue)
+    $default  reduce using rule 108 (operation)
 
 
 State 220
 
-  123 hvalue: value $@33 MTH_ROOT $@34 hvalue .
+  111 operation: factor $@26 MTH_MINUS $@27 operation .
 
-    $default  reduce using rule 123 (hvalue)
+    $default  reduce using rule 111 (operation)
 
 
 State 221
 
-   78 arrHelper: expr SYM_COMMA $@15 arrHelper .
+  115 factor: hvalue $@28 MTH_ASTRK $@29 factor .
 
-    $default  reduce using rule 78 (arrHelper)
+    $default  reduce using rule 115 (factor)
 
 
 State 222
 
-   82 matHelper: arr SYM_COMMA optlf . matHelper
+  118 factor: hvalue $@30 MTH_DIVIS $@31 factor .
 
-    SYM_OBRAC  shift, and go to state 93
-
-    arr        go to state 146
-    matHelper  go to state 238
+    $default  reduce using rule 118 (factor)
 
 
 State 223
 
-   85 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr . SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
+  122 hvalue: value $@32 MTH_POWER $@33 hvalue .
 
-    SYM_COMMA  shift, and go to state 239
+    $default  reduce using rule 122 (hvalue)
 
 
 State 224
 
-   80 matdec: V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT . SYM_CBRAC
+  125 hvalue: value $@34 MTH_ROOT $@35 hvalue .
 
-    SYM_CBRAC  shift, and go to state 240
+    $default  reduce using rule 125 (hvalue)
 
 
 State 225
 
-   67 assign: V_ID $@12 MTH_SEQUA . expr
+   80 arrHelper: expr SYM_COMMA $@16 arrHelper .
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 241
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    $default  reduce using rule 80 (arrHelper)
 
 
 State 226
 
-  143 ifHelper: SYM_OPARE . expr SYM_CPARE $@37 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
+   84 matHelper: arr SYM_COMMA optlf . matHelper
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
+    SYM_OBRAC  shift, and go to state 100
 
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 242
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    arr        go to state 151
+    matHelper  go to state 242
 
 
 State 227
 
-  141 if: LOG_IF $@36 ifHelper . ifHelper3
+   87 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr . SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
 
-    LOG_ELSE  shift, and go to state 243
-
-    $default  reduce using rule 147 (ifHelper3)
-
-    ifHelper3  go to state 244
+    SYM_COMMA  shift, and go to state 243
 
 
 State 228
 
-  154 stepfor: SYM_OBRAC expr . SYM_COMMA expr SYM_COMMA expr SYM_CBRAC
+   82 matdec: V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT . SYM_CBRAC
 
-    SYM_COMMA  shift, and go to state 245
+    SYM_CBRAC  shift, and go to state 244
 
 
 State 229
 
-  151 for: LOG_FOR forHelper SYM_ARROW . V_ID $@40 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+   69 assign: V_ID $@13 MTH_SEQUA . expr
 
-    V_ID  shift, and go to state 246
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 245
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 230
 
-  157 while: LOG_WHILE $@41 SYM_OPARE . expr SYM_CPARE $@42 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+  145 ifHelper: SYM_OPARE . expr SYM_CPARE $@38 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
 
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 247
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 246
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 231
 
-   24 funbody: generaldec crlf $@6 . funbody
+  143 if: LOG_IF $@37 ifHelper . ifHelper3
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    LF         shift, and go to state 2
-    CR         shift, and go to state 3
-    V_ID       shift, and go to state 152
-    LOG_IF     shift, and go to state 153
-    LOG_FOR    shift, and go to state 154
-    LOG_WHILE  shift, and go to state 155
-    V_VAR      shift, and go to state 4
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-    V_ARR      shift, and go to state 33
-    V_MAT      shift, and go to state 34
-    V_VECTOR   shift, and go to state 35
-    V_ELEM     shift, and go to state 36
-    RES_MEDIT  shift, and go to state 156
-    RES_RETRN  shift, and go to state 157
+    LOG_ELSE  shift, and go to state 247
 
-    $default  reduce using rule 20 (funbody)
+    $default  reduce using rule 149 (ifHelper3)
 
-    crlf            go to state 158
-    funbody         go to state 248
-    generaldec      go to state 160
-    stmt            go to state 161
-    funcall         go to state 80
-    ret             go to state 162
-    vardec          go to state 39
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    assign          go to state 163
-    structaccess    go to state 164
-    arrdec          go to state 40
-    matdec          go to state 41
-    elementdec      go to state 42
-    vectordec       go to state 43
-    property        go to state 165
-    expr            go to state 166
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-    logicstruct     go to state 167
-    if              go to state 168
-    for             go to state 169
-    while           go to state 170
+    ifHelper3  go to state 248
 
 
 State 232
 
-   22 funbody: stmt crlf $@5 . funbody
+  156 stepfor: SYM_OBRAC expr . SYM_COMMA expr SYM_COMMA expr SYM_CBRAC
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    LF         shift, and go to state 2
-    CR         shift, and go to state 3
-    V_ID       shift, and go to state 152
-    LOG_IF     shift, and go to state 153
-    LOG_FOR    shift, and go to state 154
-    LOG_WHILE  shift, and go to state 155
-    V_VAR      shift, and go to state 4
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-    V_ARR      shift, and go to state 33
-    V_MAT      shift, and go to state 34
-    V_VECTOR   shift, and go to state 35
-    V_ELEM     shift, and go to state 36
-    RES_MEDIT  shift, and go to state 156
-    RES_RETRN  shift, and go to state 157
-
-    $default  reduce using rule 20 (funbody)
-
-    crlf            go to state 158
-    funbody         go to state 249
-    generaldec      go to state 160
-    stmt            go to state 161
-    funcall         go to state 80
-    ret             go to state 162
-    vardec          go to state 39
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    assign          go to state 163
-    structaccess    go to state 164
-    arrdec          go to state 40
-    matdec          go to state 41
-    elementdec      go to state 42
-    vectordec       go to state 43
-    property        go to state 165
-    expr            go to state 166
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-    logicstruct     go to state 167
-    if              go to state 168
-    for             go to state 169
-    while           go to state 170
+    SYM_COMMA  shift, and go to state 249
 
 
 State 233
 
-   68 assign: structaccess MTH_SEQUA expr .
+  153 for: LOG_FOR forHelper SYM_ARROW . V_ID $@41 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
-    $default  reduce using rule 68 (assign)
+    V_ID  shift, and go to state 250
 
 
 State 234
 
-   69 assign: property MTH_SEQUA expr .
+  159 while: LOG_WHILE $@42 SYM_OPARE . expr SYM_CPARE $@43 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
-    $default  reduce using rule 69 (assign)
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 251
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 235
 
-   51 funcallHelper2: SYM_COMMA funcallHelper .
+   26 funbody: generaldec crlf $@7 . funbody
 
-    $default  reduce using rule 51 (funcallHelper2)
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    LF         shift, and go to state 2
+    CR         shift, and go to state 3
+    V_ID       shift, and go to state 156
+    LOG_IF     shift, and go to state 157
+    LOG_FOR    shift, and go to state 158
+    LOG_WHILE  shift, and go to state 159
+    V_VAR      shift, and go to state 4
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+    V_ARR      shift, and go to state 5
+    V_MAT      shift, and go to state 44
+    V_VECTOR   shift, and go to state 45
+    V_ELEM     shift, and go to state 46
+    RES_MEDIT  shift, and go to state 160
+    RES_RETRN  shift, and go to state 161
+
+    $default  reduce using rule 22 (funbody)
+
+    crlf            go to state 162
+    funbody         go to state 252
+    generaldec      go to state 164
+    stmt            go to state 165
+    funcall         go to state 87
+    ret             go to state 166
+    vardec          go to state 49
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    assign          go to state 167
+    structaccess    go to state 168
+    arrdec          go to state 50
+    matdec          go to state 51
+    elementdec      go to state 52
+    vectordec       go to state 53
+    property        go to state 169
+    expr            go to state 170
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+    logicstruct     go to state 171
+    if              go to state 172
+    for             go to state 173
+    while           go to state 174
 
 
 State 236
 
-   48 funcallHelper: expr $@11 funcallHelper2 .
+   24 funbody: stmt crlf $@6 . funbody
 
-    $default  reduce using rule 48 (funcallHelper)
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    LF         shift, and go to state 2
+    CR         shift, and go to state 3
+    V_ID       shift, and go to state 156
+    LOG_IF     shift, and go to state 157
+    LOG_FOR    shift, and go to state 158
+    LOG_WHILE  shift, and go to state 159
+    V_VAR      shift, and go to state 4
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+    V_ARR      shift, and go to state 5
+    V_MAT      shift, and go to state 44
+    V_VECTOR   shift, and go to state 45
+    V_ELEM     shift, and go to state 46
+    RES_MEDIT  shift, and go to state 160
+    RES_RETRN  shift, and go to state 161
+
+    $default  reduce using rule 22 (funbody)
+
+    crlf            go to state 162
+    funbody         go to state 253
+    generaldec      go to state 164
+    stmt            go to state 165
+    funcall         go to state 87
+    ret             go to state 166
+    vardec          go to state 49
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    assign          go to state 167
+    structaccess    go to state 168
+    arrdec          go to state 50
+    matdec          go to state 51
+    elementdec      go to state 52
+    vectordec       go to state 53
+    property        go to state 169
+    expr            go to state 170
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+    logicstruct     go to state 171
+    if              go to state 172
+    for             go to state 173
+    while           go to state 174
 
 
 State 237
 
-   72 structaccess: V_ID $@13 SYM_OBRAC expr SYM_CBRAC $@14 . structIndex
+   70 assign: structaccess MTH_SEQUA expr .
 
-    SYM_OBRAC  shift, and go to state 250
-
-    $default  reduce using rule 73 (structIndex)
-
-    structIndex  go to state 251
+    $default  reduce using rule 70 (assign)
 
 
 State 238
 
-   82 matHelper: arr SYM_COMMA optlf matHelper .
+   71 assign: property MTH_SEQUA expr .
 
-    $default  reduce using rule 82 (matHelper)
+    $default  reduce using rule 71 (assign)
 
 
 State 239
 
-   85 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA . expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
+   53 funcallHelper2: SYM_COMMA funcallHelper .
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 252
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    $default  reduce using rule 53 (funcallHelper2)
 
 
 State 240
 
-   80 matdec: V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC .
+   50 funcallHelper: expr $@12 funcallHelper2 .
 
-    $default  reduce using rule 80 (matdec)
+    $default  reduce using rule 50 (funcallHelper)
 
 
 State 241
 
-   67 assign: V_ID $@12 MTH_SEQUA expr .
+   74 structaccess: V_ID $@14 SYM_OBRAC expr SYM_CBRAC $@15 . structIndex
 
-    $default  reduce using rule 67 (assign)
+    SYM_OBRAC  shift, and go to state 254
+
+    $default  reduce using rule 75 (structIndex)
+
+    structIndex  go to state 255
 
 
 State 242
 
-  143 ifHelper: SYM_OPARE expr . SYM_CPARE $@37 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
+   84 matHelper: arr SYM_COMMA optlf matHelper .
 
-    SYM_CPARE  shift, and go to state 253
+    $default  reduce using rule 84 (matHelper)
 
 
 State 243
 
-  149 ifHelper3: LOG_ELSE . $@39 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+   87 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA . expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
 
-    $default  reduce using rule 148 ($@39)
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
 
-    $@39  go to state 254
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 256
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 244
 
-  141 if: LOG_IF $@36 ifHelper ifHelper3 .
+   82 matdec: V_MAT V_ID SYM_COLON vartypes SYM_OBRAC V_INT SYM_CBRAC SYM_OBRAC V_INT SYM_CBRAC .
 
-    $default  reduce using rule 141 (if)
+    $default  reduce using rule 82 (matdec)
 
 
 State 245
 
-  154 stepfor: SYM_OBRAC expr SYM_COMMA . expr SYM_COMMA expr SYM_CBRAC
+   69 assign: V_ID $@13 MTH_SEQUA expr .
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 255
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    $default  reduce using rule 69 (assign)
 
 
 State 246
 
-  151 for: LOG_FOR forHelper SYM_ARROW V_ID . $@40 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
-
-    $default  reduce using rule 150 ($@40)
-
-    $@40  go to state 256
-
-
-State 247
-
-  157 while: LOG_WHILE $@41 SYM_OPARE expr . SYM_CPARE $@42 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+  145 ifHelper: SYM_OPARE expr . SYM_CPARE $@38 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
 
     SYM_CPARE  shift, and go to state 257
 
 
+State 247
+
+  151 ifHelper3: LOG_ELSE . $@40 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+
+    $default  reduce using rule 150 ($@40)
+
+    $@40  go to state 258
+
+
 State 248
 
-   24 funbody: generaldec crlf $@6 funbody .
+  143 if: LOG_IF $@37 ifHelper ifHelper3 .
 
-    $default  reduce using rule 24 (funbody)
+    $default  reduce using rule 143 (if)
 
 
 State 249
 
-   22 funbody: stmt crlf $@5 funbody .
+  156 stepfor: SYM_OBRAC expr SYM_COMMA . expr SYM_COMMA expr SYM_CBRAC
 
-    $default  reduce using rule 22 (funbody)
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 259
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 250
 
-   74 structIndex: SYM_OBRAC . expr SYM_CBRAC
+  153 for: LOG_FOR forHelper SYM_ARROW V_ID . $@41 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
+    $default  reduce using rule 152 ($@41)
 
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 258
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    $@41  go to state 260
 
 
 State 251
 
-   72 structaccess: V_ID $@13 SYM_OBRAC expr SYM_CBRAC $@14 structIndex .
+  159 while: LOG_WHILE $@42 SYM_OPARE expr . SYM_CPARE $@43 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
-    $default  reduce using rule 72 (structaccess)
+    SYM_CPARE  shift, and go to state 261
 
 
 State 252
 
-   85 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr . SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
+   26 funbody: generaldec crlf $@7 funbody .
 
-    SYM_COMMA  shift, and go to state 259
+    $default  reduce using rule 26 (funbody)
 
 
 State 253
 
-  143 ifHelper: SYM_OPARE expr SYM_CPARE . $@37 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
+   24 funbody: stmt crlf $@6 funbody .
 
-    $default  reduce using rule 142 ($@37)
-
-    $@37  go to state 260
+    $default  reduce using rule 24 (funbody)
 
 
 State 254
 
-  149 ifHelper3: LOG_ELSE $@39 . optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+   76 structIndex: SYM_OBRAC . expr SYM_CBRAC
 
-    LF  shift, and go to state 2
-    CR  shift, and go to state 3
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
 
-    $default  reduce using rule 11 (optlf)
-
-    crlf   go to state 69
-    optlf  go to state 261
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 262
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 255
 
-  154 stepfor: SYM_OBRAC expr SYM_COMMA expr . SYM_COMMA expr SYM_CBRAC
+   74 structaccess: V_ID $@14 SYM_OBRAC expr SYM_CBRAC $@15 structIndex .
 
-    SYM_COMMA  shift, and go to state 262
+    $default  reduce using rule 74 (structaccess)
 
 
 State 256
 
-  151 for: LOG_FOR forHelper SYM_ARROW V_ID $@40 . optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+   87 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr . SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
 
-    LF  shift, and go to state 2
-    CR  shift, and go to state 3
-
-    $default  reduce using rule 11 (optlf)
-
-    crlf   go to state 69
-    optlf  go to state 263
+    SYM_COMMA  shift, and go to state 263
 
 
 State 257
 
-  157 while: LOG_WHILE $@41 SYM_OPARE expr SYM_CPARE . $@42 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+  145 ifHelper: SYM_OPARE expr SYM_CPARE . $@38 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
 
-    $default  reduce using rule 156 ($@42)
+    $default  reduce using rule 144 ($@38)
 
-    $@42  go to state 264
+    $@38  go to state 264
 
 
 State 258
 
-   74 structIndex: SYM_OBRAC expr . SYM_CBRAC
-
-    SYM_CBRAC  shift, and go to state 265
-
-
-State 259
-
-   85 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA . expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
-
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 266
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-
-
-State 260
-
-  143 ifHelper: SYM_OPARE expr SYM_CPARE $@37 . optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
+  151 ifHelper3: LOG_ELSE $@40 . optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
     LF  shift, and go to state 2
     CR  shift, and go to state 3
 
-    $default  reduce using rule 11 (optlf)
+    $default  reduce using rule 13 (optlf)
 
-    crlf   go to state 69
+    crlf   go to state 76
+    optlf  go to state 265
+
+
+State 259
+
+  156 stepfor: SYM_OBRAC expr SYM_COMMA expr . SYM_COMMA expr SYM_CBRAC
+
+    SYM_COMMA  shift, and go to state 266
+
+
+State 260
+
+  153 for: LOG_FOR forHelper SYM_ARROW V_ID $@41 . optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+
+    LF  shift, and go to state 2
+    CR  shift, and go to state 3
+
+    $default  reduce using rule 13 (optlf)
+
+    crlf   go to state 76
     optlf  go to state 267
 
 
 State 261
 
-  149 ifHelper3: LOG_ELSE $@39 optlf . SYM_OCURL crlf newlineCicle SYM_CCURL
+  159 while: LOG_WHILE $@42 SYM_OPARE expr SYM_CPARE . $@43 optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
-    SYM_OCURL  shift, and go to state 268
+    $default  reduce using rule 158 ($@43)
+
+    $@43  go to state 268
 
 
 State 262
 
-  154 stepfor: SYM_OBRAC expr SYM_COMMA expr SYM_COMMA . expr SYM_CBRAC
+   76 structIndex: SYM_OBRAC expr . SYM_CBRAC
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 269
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    SYM_CBRAC  shift, and go to state 269
 
 
 State 263
 
-  151 for: LOG_FOR forHelper SYM_ARROW V_ID $@40 optlf . SYM_OCURL crlf newlineCicle SYM_CCURL
+   87 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA . expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL
 
-    SYM_OCURL  shift, and go to state 270
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 270
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 264
 
-  157 while: LOG_WHILE $@41 SYM_OPARE expr SYM_CPARE $@42 . optlf SYM_OCURL crlf newlineCicle SYM_CCURL
+  145 ifHelper: SYM_OPARE expr SYM_CPARE $@38 . optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
 
     LF  shift, and go to state 2
     CR  shift, and go to state 3
 
-    $default  reduce using rule 11 (optlf)
+    $default  reduce using rule 13 (optlf)
 
-    crlf   go to state 69
+    crlf   go to state 76
     optlf  go to state 271
 
 
 State 265
 
-   74 structIndex: SYM_OBRAC expr SYM_CBRAC .
+  151 ifHelper3: LOG_ELSE $@40 optlf . SYM_OCURL crlf newlineCicle SYM_CCURL
 
-    $default  reduce using rule 74 (structIndex)
+    SYM_OCURL  shift, and go to state 272
 
 
 State 266
 
-   85 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr . SYM_COMMA expr SYM_COMMA expr SYM_CCURL
+  156 stepfor: SYM_OBRAC expr SYM_COMMA expr SYM_COMMA . expr SYM_CBRAC
 
-    SYM_COMMA  shift, and go to state 272
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 273
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 267
 
-  143 ifHelper: SYM_OPARE expr SYM_CPARE $@37 optlf . SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
+  153 for: LOG_FOR forHelper SYM_ARROW V_ID $@41 optlf . SYM_OCURL crlf newlineCicle SYM_CCURL
 
-    SYM_OCURL  shift, and go to state 273
+    SYM_OCURL  shift, and go to state 274
 
 
 State 268
 
-  149 ifHelper3: LOG_ELSE $@39 optlf SYM_OCURL . crlf newlineCicle SYM_CCURL
+  159 while: LOG_WHILE $@42 SYM_OPARE expr SYM_CPARE $@43 . optlf SYM_OCURL crlf newlineCicle SYM_CCURL
 
     LF  shift, and go to state 2
     CR  shift, and go to state 3
 
-    crlf  go to state 274
+    $default  reduce using rule 13 (optlf)
+
+    crlf   go to state 76
+    optlf  go to state 275
 
 
 State 269
 
-  154 stepfor: SYM_OBRAC expr SYM_COMMA expr SYM_COMMA expr . SYM_CBRAC
+   76 structIndex: SYM_OBRAC expr SYM_CBRAC .
 
-    SYM_CBRAC  shift, and go to state 275
+    $default  reduce using rule 76 (structIndex)
 
 
 State 270
 
-  151 for: LOG_FOR forHelper SYM_ARROW V_ID $@40 optlf SYM_OCURL . crlf newlineCicle SYM_CCURL
+   87 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr . SYM_COMMA expr SYM_COMMA expr SYM_CCURL
 
-    LF  shift, and go to state 2
-    CR  shift, and go to state 3
-
-    crlf  go to state 276
+    SYM_COMMA  shift, and go to state 276
 
 
 State 271
 
-  157 while: LOG_WHILE $@41 SYM_OPARE expr SYM_CPARE $@42 optlf . SYM_OCURL crlf newlineCicle SYM_CCURL
+  145 ifHelper: SYM_OPARE expr SYM_CPARE $@38 optlf . SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2
 
     SYM_OCURL  shift, and go to state 277
 
 
 State 272
 
-   85 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA . expr SYM_COMMA expr SYM_CCURL
+  151 ifHelper3: LOG_ELSE $@40 optlf SYM_OCURL . crlf newlineCicle SYM_CCURL
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
+    LF  shift, and go to state 2
+    CR  shift, and go to state 3
 
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 278
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    crlf  go to state 278
 
 
 State 273
 
-  143 ifHelper: SYM_OPARE expr SYM_CPARE $@37 optlf SYM_OCURL . crlf newlineCicle SYM_CCURL ifHelper2
+  156 stepfor: SYM_OBRAC expr SYM_COMMA expr SYM_COMMA expr . SYM_CBRAC
 
-    LF  shift, and go to state 2
-    CR  shift, and go to state 3
-
-    crlf  go to state 279
+    SYM_CBRAC  shift, and go to state 279
 
 
 State 274
 
-  149 ifHelper3: LOG_ELSE $@39 optlf SYM_OCURL crlf . newlineCicle SYM_CCURL
+  153 for: LOG_FOR forHelper SYM_ARROW V_ID $@41 optlf SYM_OCURL . crlf newlineCicle SYM_CCURL
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 152
-    LOG_IF     shift, and go to state 153
-    LOG_FOR    shift, and go to state 154
-    LOG_WHILE  shift, and go to state 155
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-    RES_MEDIT  shift, and go to state 156
-    RES_RETRN  shift, and go to state 157
+    LF  shift, and go to state 2
+    CR  shift, and go to state 3
 
-    stmt            go to state 280
-    funcall         go to state 80
-    ret             go to state 162
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    assign          go to state 163
-    structaccess    go to state 164
-    property        go to state 165
-    expr            go to state 166
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-    logicstruct     go to state 167
-    if              go to state 168
-    for             go to state 169
-    while           go to state 170
-    newlineCicle    go to state 281
-    newline         go to state 282
+    crlf  go to state 280
 
 
 State 275
 
-  154 stepfor: SYM_OBRAC expr SYM_COMMA expr SYM_COMMA expr SYM_CBRAC .
+  159 while: LOG_WHILE $@42 SYM_OPARE expr SYM_CPARE $@43 optlf . SYM_OCURL crlf newlineCicle SYM_CCURL
 
-    $default  reduce using rule 154 (stepfor)
+    SYM_OCURL  shift, and go to state 281
 
 
 State 276
 
-  151 for: LOG_FOR forHelper SYM_ARROW V_ID $@40 optlf SYM_OCURL crlf . newlineCicle SYM_CCURL
+   87 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA . expr SYM_COMMA expr SYM_CCURL
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 152
-    LOG_IF     shift, and go to state 153
-    LOG_FOR    shift, and go to state 154
-    LOG_WHILE  shift, and go to state 155
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-    RES_MEDIT  shift, and go to state 156
-    RES_RETRN  shift, and go to state 157
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
 
-    stmt            go to state 280
-    funcall         go to state 80
-    ret             go to state 162
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    assign          go to state 163
-    structaccess    go to state 164
-    property        go to state 165
-    expr            go to state 166
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-    logicstruct     go to state 167
-    if              go to state 168
-    for             go to state 169
-    while           go to state 170
-    newlineCicle    go to state 283
-    newline         go to state 282
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 282
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
 
 
 State 277
 
-  157 while: LOG_WHILE $@41 SYM_OPARE expr SYM_CPARE $@42 optlf SYM_OCURL . crlf newlineCicle SYM_CCURL
+  145 ifHelper: SYM_OPARE expr SYM_CPARE $@38 optlf SYM_OCURL . crlf newlineCicle SYM_CCURL ifHelper2
 
     LF  shift, and go to state 2
     CR  shift, and go to state 3
 
-    crlf  go to state 284
+    crlf  go to state 283
 
 
 State 278
 
-   85 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr . SYM_COMMA expr SYM_CCURL
+  151 ifHelper3: LOG_ELSE $@40 optlf SYM_OCURL crlf . newlineCicle SYM_CCURL
 
-    SYM_COMMA  shift, and go to state 285
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 156
+    LOG_IF     shift, and go to state 157
+    LOG_FOR    shift, and go to state 158
+    LOG_WHILE  shift, and go to state 159
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+    RES_MEDIT  shift, and go to state 160
+    RES_RETRN  shift, and go to state 161
+
+    stmt            go to state 284
+    funcall         go to state 87
+    ret             go to state 166
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    assign          go to state 167
+    structaccess    go to state 168
+    property        go to state 169
+    expr            go to state 170
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+    logicstruct     go to state 171
+    if              go to state 172
+    for             go to state 173
+    while           go to state 174
+    newlineCicle    go to state 285
+    newline         go to state 286
 
 
 State 279
 
-  143 ifHelper: SYM_OPARE expr SYM_CPARE $@37 optlf SYM_OCURL crlf . newlineCicle SYM_CCURL ifHelper2
+  156 stepfor: SYM_OBRAC expr SYM_COMMA expr SYM_COMMA expr SYM_CBRAC .
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 152
-    LOG_IF     shift, and go to state 153
-    LOG_FOR    shift, and go to state 154
-    LOG_WHILE  shift, and go to state 155
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-    RES_MEDIT  shift, and go to state 156
-    RES_RETRN  shift, and go to state 157
-
-    stmt            go to state 280
-    funcall         go to state 80
-    ret             go to state 162
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    assign          go to state 163
-    structaccess    go to state 164
-    property        go to state 165
-    expr            go to state 166
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-    logicstruct     go to state 167
-    if              go to state 168
-    for             go to state 169
-    while           go to state 170
-    newlineCicle    go to state 286
-    newline         go to state 282
+    $default  reduce using rule 156 (stepfor)
 
 
 State 280
 
-  160 newline: stmt . crlf
+  153 for: LOG_FOR forHelper SYM_ARROW V_ID $@41 optlf SYM_OCURL crlf . newlineCicle SYM_CCURL
 
-    LF  shift, and go to state 2
-    CR  shift, and go to state 3
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 156
+    LOG_IF     shift, and go to state 157
+    LOG_FOR    shift, and go to state 158
+    LOG_WHILE  shift, and go to state 159
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+    RES_MEDIT  shift, and go to state 160
+    RES_RETRN  shift, and go to state 161
 
-    crlf  go to state 287
+    stmt            go to state 284
+    funcall         go to state 87
+    ret             go to state 166
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    assign          go to state 167
+    structaccess    go to state 168
+    property        go to state 169
+    expr            go to state 170
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+    logicstruct     go to state 171
+    if              go to state 172
+    for             go to state 173
+    while           go to state 174
+    newlineCicle    go to state 287
+    newline         go to state 286
 
 
 State 281
 
-  149 ifHelper3: LOG_ELSE $@39 optlf SYM_OCURL crlf newlineCicle . SYM_CCURL
+  159 while: LOG_WHILE $@42 SYM_OPARE expr SYM_CPARE $@43 optlf SYM_OCURL . crlf newlineCicle SYM_CCURL
 
-    SYM_CCURL  shift, and go to state 288
+    LF  shift, and go to state 2
+    CR  shift, and go to state 3
+
+    crlf  go to state 288
 
 
 State 282
 
-  158 newlineCicle: newline .
-  159             | newline . newlineCicle
+   87 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr . SYM_COMMA expr SYM_CCURL
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 152
-    LOG_IF     shift, and go to state 153
-    LOG_FOR    shift, and go to state 154
-    LOG_WHILE  shift, and go to state 155
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-    RES_MEDIT  shift, and go to state 156
-    RES_RETRN  shift, and go to state 157
-
-    $default  reduce using rule 158 (newlineCicle)
-
-    stmt            go to state 280
-    funcall         go to state 80
-    ret             go to state 162
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    assign          go to state 163
-    structaccess    go to state 164
-    property        go to state 165
-    expr            go to state 166
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-    logicstruct     go to state 167
-    if              go to state 168
-    for             go to state 169
-    while           go to state 170
-    newlineCicle    go to state 289
-    newline         go to state 282
+    SYM_COMMA  shift, and go to state 289
 
 
 State 283
 
-  151 for: LOG_FOR forHelper SYM_ARROW V_ID $@40 optlf SYM_OCURL crlf newlineCicle . SYM_CCURL
+  145 ifHelper: SYM_OPARE expr SYM_CPARE $@38 optlf SYM_OCURL crlf . newlineCicle SYM_CCURL ifHelper2
 
-    SYM_CCURL  shift, and go to state 290
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 156
+    LOG_IF     shift, and go to state 157
+    LOG_FOR    shift, and go to state 158
+    LOG_WHILE  shift, and go to state 159
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+    RES_MEDIT  shift, and go to state 160
+    RES_RETRN  shift, and go to state 161
+
+    stmt            go to state 284
+    funcall         go to state 87
+    ret             go to state 166
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    assign          go to state 167
+    structaccess    go to state 168
+    property        go to state 169
+    expr            go to state 170
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+    logicstruct     go to state 171
+    if              go to state 172
+    for             go to state 173
+    while           go to state 174
+    newlineCicle    go to state 290
+    newline         go to state 286
 
 
 State 284
 
-  157 while: LOG_WHILE $@41 SYM_OPARE expr SYM_CPARE $@42 optlf SYM_OCURL crlf . newlineCicle SYM_CCURL
+  162 newline: stmt . crlf
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 152
-    LOG_IF     shift, and go to state 153
-    LOG_FOR    shift, and go to state 154
-    LOG_WHILE  shift, and go to state 155
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-    RES_MEDIT  shift, and go to state 156
-    RES_RETRN  shift, and go to state 157
+    LF  shift, and go to state 2
+    CR  shift, and go to state 3
 
-    stmt            go to state 280
-    funcall         go to state 80
-    ret             go to state 162
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    assign          go to state 163
-    structaccess    go to state 164
-    property        go to state 165
-    expr            go to state 166
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
-    logicstruct     go to state 167
-    if              go to state 168
-    for             go to state 169
-    while           go to state 170
-    newlineCicle    go to state 291
-    newline         go to state 282
+    crlf  go to state 291
 
 
 State 285
 
-   85 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA . expr SYM_CCURL
+  151 ifHelper3: LOG_ELSE $@40 optlf SYM_OCURL crlf newlineCicle . SYM_CCURL
 
-    SYM_OPARE  shift, and go to state 72
-    MTH_NOT    shift, and go to state 73
-    V_ID       shift, and go to state 74
-    V_CHAR     shift, and go to state 75
-    V_STRING   shift, and go to state 76
-    V_INT      shift, and go to state 77
-    V_DOUBLE   shift, and go to state 78
-    V_BOOL     shift, and go to state 79
-
-    funcall         go to state 80
-    basictypes      go to state 81
-    var_or_cte      go to state 82
-    structaccess    go to state 83
-    property        go to state 84
-    expr            go to state 292
-    logicoperation  go to state 86
-    logicfactor     go to state 87
-    comparison      go to state 88
-    operation       go to state 89
-    factor          go to state 90
-    hvalue          go to state 91
-    value           go to state 92
+    SYM_CCURL  shift, and go to state 292
 
 
 State 286
 
-  143 ifHelper: SYM_OPARE expr SYM_CPARE $@37 optlf SYM_OCURL crlf newlineCicle . SYM_CCURL ifHelper2
+  160 newlineCicle: newline .
+  161             | newline . newlineCicle
 
-    SYM_CCURL  shift, and go to state 293
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 156
+    LOG_IF     shift, and go to state 157
+    LOG_FOR    shift, and go to state 158
+    LOG_WHILE  shift, and go to state 159
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+    RES_MEDIT  shift, and go to state 160
+    RES_RETRN  shift, and go to state 161
+
+    $default  reduce using rule 160 (newlineCicle)
+
+    stmt            go to state 284
+    funcall         go to state 87
+    ret             go to state 166
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    assign          go to state 167
+    structaccess    go to state 168
+    property        go to state 169
+    expr            go to state 170
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+    logicstruct     go to state 171
+    if              go to state 172
+    for             go to state 173
+    while           go to state 174
+    newlineCicle    go to state 293
+    newline         go to state 286
 
 
 State 287
 
-  160 newline: stmt crlf .
-
-    $default  reduce using rule 160 (newline)
-
-
-State 288
-
-  149 ifHelper3: LOG_ELSE $@39 optlf SYM_OCURL crlf newlineCicle SYM_CCURL .
-
-    $default  reduce using rule 149 (ifHelper3)
-
-
-State 289
-
-  159 newlineCicle: newline newlineCicle .
-
-    $default  reduce using rule 159 (newlineCicle)
-
-
-State 290
-
-  151 for: LOG_FOR forHelper SYM_ARROW V_ID $@40 optlf SYM_OCURL crlf newlineCicle SYM_CCURL .
-
-    $default  reduce using rule 151 (for)
-
-
-State 291
-
-  157 while: LOG_WHILE $@41 SYM_OPARE expr SYM_CPARE $@42 optlf SYM_OCURL crlf newlineCicle . SYM_CCURL
+  153 for: LOG_FOR forHelper SYM_ARROW V_ID $@41 optlf SYM_OCURL crlf newlineCicle . SYM_CCURL
 
     SYM_CCURL  shift, and go to state 294
 
 
+State 288
+
+  159 while: LOG_WHILE $@42 SYM_OPARE expr SYM_CPARE $@43 optlf SYM_OCURL crlf . newlineCicle SYM_CCURL
+
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 156
+    LOG_IF     shift, and go to state 157
+    LOG_FOR    shift, and go to state 158
+    LOG_WHILE  shift, and go to state 159
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+    RES_MEDIT  shift, and go to state 160
+    RES_RETRN  shift, and go to state 161
+
+    stmt            go to state 284
+    funcall         go to state 87
+    ret             go to state 166
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    assign          go to state 167
+    structaccess    go to state 168
+    property        go to state 169
+    expr            go to state 170
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+    logicstruct     go to state 171
+    if              go to state 172
+    for             go to state 173
+    while           go to state 174
+    newlineCicle    go to state 295
+    newline         go to state 286
+
+
+State 289
+
+   87 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA . expr SYM_CCURL
+
+    SYM_OPARE  shift, and go to state 79
+    MTH_NOT    shift, and go to state 80
+    V_ID       shift, and go to state 81
+    V_CHAR     shift, and go to state 82
+    V_STRING   shift, and go to state 83
+    V_INT      shift, and go to state 84
+    V_DOUBLE   shift, and go to state 85
+    V_BOOL     shift, and go to state 86
+
+    funcall         go to state 87
+    basictypes      go to state 88
+    var_or_cte      go to state 89
+    structaccess    go to state 90
+    property        go to state 91
+    expr            go to state 296
+    logicoperation  go to state 93
+    logicfactor     go to state 94
+    comparison      go to state 95
+    operation       go to state 96
+    factor          go to state 97
+    hvalue          go to state 98
+    value           go to state 99
+
+
+State 290
+
+  145 ifHelper: SYM_OPARE expr SYM_CPARE $@38 optlf SYM_OCURL crlf newlineCicle . SYM_CCURL ifHelper2
+
+    SYM_CCURL  shift, and go to state 297
+
+
+State 291
+
+  162 newline: stmt crlf .
+
+    $default  reduce using rule 162 (newline)
+
+
 State 292
 
-   85 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr . SYM_CCURL
+  151 ifHelper3: LOG_ELSE $@40 optlf SYM_OCURL crlf newlineCicle SYM_CCURL .
 
-    SYM_CCURL  shift, and go to state 295
+    $default  reduce using rule 151 (ifHelper3)
 
 
 State 293
 
-  143 ifHelper: SYM_OPARE expr SYM_CPARE $@37 optlf SYM_OCURL crlf newlineCicle SYM_CCURL . ifHelper2
+  161 newlineCicle: newline newlineCicle .
 
-    LOG_ELIF  shift, and go to state 296
-
-    $default  reduce using rule 144 (ifHelper2)
-
-    ifHelper2  go to state 297
+    $default  reduce using rule 161 (newlineCicle)
 
 
 State 294
 
-  157 while: LOG_WHILE $@41 SYM_OPARE expr SYM_CPARE $@42 optlf SYM_OCURL crlf newlineCicle SYM_CCURL .
+  153 for: LOG_FOR forHelper SYM_ARROW V_ID $@41 optlf SYM_OCURL crlf newlineCicle SYM_CCURL .
 
-    $default  reduce using rule 157 (while)
+    $default  reduce using rule 153 (for)
 
 
 State 295
 
-   85 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL .
+  159 while: LOG_WHILE $@42 SYM_OPARE expr SYM_CPARE $@43 optlf SYM_OCURL crlf newlineCicle . SYM_CCURL
 
-    $default  reduce using rule 85 (element)
+    SYM_CCURL  shift, and go to state 298
 
 
 State 296
 
-  146 ifHelper2: LOG_ELIF . $@38 ifHelper
+   87 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr . SYM_CCURL
 
-    $default  reduce using rule 145 ($@38)
-
-    $@38  go to state 298
+    SYM_CCURL  shift, and go to state 299
 
 
 State 297
 
-  143 ifHelper: SYM_OPARE expr SYM_CPARE $@37 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2 .
+  145 ifHelper: SYM_OPARE expr SYM_CPARE $@38 optlf SYM_OCURL crlf newlineCicle SYM_CCURL . ifHelper2
 
-    $default  reduce using rule 143 (ifHelper)
+    LOG_ELIF  shift, and go to state 300
+
+    $default  reduce using rule 146 (ifHelper2)
+
+    ifHelper2  go to state 301
 
 
 State 298
 
-  146 ifHelper2: LOG_ELIF $@38 . ifHelper
+  159 while: LOG_WHILE $@42 SYM_OPARE expr SYM_CPARE $@43 optlf SYM_OCURL crlf newlineCicle SYM_CCURL .
 
-    SYM_OPARE  shift, and go to state 226
-
-    ifHelper  go to state 299
+    $default  reduce using rule 159 (while)
 
 
 State 299
 
-  146 ifHelper2: LOG_ELIF $@38 ifHelper .
+   87 element: SYM_OCURL expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_COMMA expr SYM_CCURL .
 
-    $default  reduce using rule 146 (ifHelper2)
+    $default  reduce using rule 87 (element)
+
+
+State 300
+
+  148 ifHelper2: LOG_ELIF . $@39 ifHelper
+
+    $default  reduce using rule 147 ($@39)
+
+    $@39  go to state 302
+
+
+State 301
+
+  145 ifHelper: SYM_OPARE expr SYM_CPARE $@38 optlf SYM_OCURL crlf newlineCicle SYM_CCURL ifHelper2 .
+
+    $default  reduce using rule 145 (ifHelper)
+
+
+State 302
+
+  148 ifHelper2: LOG_ELIF $@39 . ifHelper
+
+    SYM_OPARE  shift, and go to state 230
+
+    ifHelper  go to state 303
+
+
+State 303
+
+  148 ifHelper2: LOG_ELIF $@39 ifHelper .
+
+    $default  reduce using rule 148 (ifHelper2)

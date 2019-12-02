@@ -282,6 +282,7 @@ script:
 	/* empty */
 	| function crlf { npClean();} script
 	| vardec crlf { npClean();} script
+    | arrdec crlf { npClean();} script
 	| crlf script
 
 

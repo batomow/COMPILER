@@ -1,16 +1,41 @@
+array arr:int[10]
 
+order find:int(var n:int){
+    vision("Introduce el elemento al buscar")
+    var search:int
+    scan(search)
+    var first:int = 0
+    var last:int = n - 1
+    var middle:int = (first + last) / 2
+    var flag:bool = lie
+    //binary search
+    while( (first <= last) && (flag == lie)){
+        if(arr[middle] < search){
+            first = middle + 1
+        } elif (arr[middle] == search) {
+            vision("El numero se encontro en la posicion..")
+            vision(middle + 1)
+            flag = truth
+        }else{
+            last = middle - 1
+        }
+        middle = (first + last)/2
+    }
+    if(first > last){
+        vision("El numero no se encontro en el arreglo")
+    }
+}
 
 order bubbleSort:int(){
-    array arr:int[10]
-    vision("introduce 10 elementos aleatorios")
-    for[0,1,9]->iter{
+    vision("introduce 20 elementos aleatorios")
+    for[0,1,19]->iter{
         scan(arr[iter])
     }
     /* -- bubble
         sort ---  */
     var temp:int
-    for[0, 1, 8]->i{
-        for[0,1,8-i]->j {
+    for[0, 1, 18]->i{
+        for[0,1,18-i]->j {
             if(arr[j] > arr[j + 1]) {
                 temp = arr[j]
                 arr[j] = arr[j + 1]
@@ -75,6 +100,8 @@ order enter:int(){
 
     vision("---Bubble Sort---")
     bubbleSort()
+
+    
 
     return 0
 }
