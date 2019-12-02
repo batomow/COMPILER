@@ -171,6 +171,8 @@
 
 %}
 
+%locations 
+
 %token SYM_OBRAC 
 %token SYM_CBRAC 
 %token SYM_OPARE 
@@ -1091,7 +1093,7 @@ void npExpr3(OP newOpe){
     //printf("<Debug> ope:%s\n",  OPE2STRING(newOpe)); 
 }
 void npExpr5(OP* opes, int opesSize){
-    if(pilaOperadores.isEmpty(&pilaOperadores))
+    if((pilaOperadores.isEmpty(&pilaOperadores)))
         return; 
     Var tope = peek(&pilaOperadores); 
     for(int n = 0; n<opesSize; n++){
@@ -1596,7 +1598,7 @@ void npAssign1(){
 	
 }
 void npAssign2(){
-	if(pilaOperandos.isEmpty(&pilaOperandos))
+	if((pilaOperandos.isEmpty(&pilaOperandos)))
 		return;	
 	
 	Var struct_dir = peek(&pilaOperandos); pop(&pilaOperandos);
@@ -2088,7 +2090,7 @@ void npFun1(char* newFunId){
 
 void npFun2(){
 
-    while(!pilaEras.isEmpty(&pilaEras)){
+    while(!(pilaEras.isEmpty(&pilaEras))){
         int eraquadline = (peek(&pilaEras)).data.iVal; pop(&pilaEras); 
         QUAD* iter = &listQuads; 
         for(int n = 0; n<eraquadline; n++){
