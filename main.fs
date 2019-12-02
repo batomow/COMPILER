@@ -15,7 +15,7 @@ order find:int(var n:int){
             first = middle + 1
         } elif (arr[middle] == search) {
             vision("El numero se encontro en la posicion..")
-            vision(middle + 1)
+            vision(middle)
             flag = truth
         }else{
             last = middle - 1
@@ -115,12 +115,15 @@ order enter:int(){
     
     mat cMat:int [2][4] = [[0, 0, 0, 0], 
                             [0, 0, 0, 0]]
-    
+    var sum:int = 0 
     for[0,1,1]->i{
         for[0,1,3]->j{
             for[0,1,2]->k{
-                cMat[i][j] = cMat[i][j] + (aMat[i][k] * bMat[k][j])
+                sum = sum + (aMat[i][k] * bMat[k][j])
+                meditate
             }
+            cMat[i][j] = sum
+            sum = 0
         }
     }  
     for[0,1,1]->n{

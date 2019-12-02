@@ -1,5 +1,5 @@
 {"quads":[
-	{"opcode": 6,	"left": -1,	"right": -1,	"result": 147},
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 146},
 
 	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1000},
 
@@ -29,7 +29,7 @@
 
 	{"opcode": 17,	"left": 3011,	"right": 3012,	"result": 3013},
 
-	{"opcode": 7,	"left": 3013,	"right": -1,	"result": 40},
+	{"opcode": 7,	"left": 3013,	"right": -1,	"result": 39},
 
 	{"opcode": 30,	"left": 3007,	"right": -1,	"result": 10},
 
@@ -43,7 +43,7 @@
 
 	{"opcode": 10,	"left": 3016,	"right": -1,	"result": 3004},
 
-	{"opcode": 6,	"left": -1,	"right": -1,	"result": 36},
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 35},
 
 	{"opcode": 30,	"left": 3007,	"right": -1,	"result": 10},
 
@@ -51,41 +51,39 @@
 
 	{"opcode": 19,	"left": -3017,	"right": 3002,	"result": 3018},
 
-	{"opcode": 7,	"left": 3018,	"right": -1,	"result": 34},
+	{"opcode": 7,	"left": 3018,	"right": -1,	"result": 33},
 
 	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1005},
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3019},
 
-	{"opcode": 0,	"left": 3007,	"right": 1002,	"result": 3021},
-
-	{"opcode": 11,	"left": -1,	"right": -1,	"result": 3021},
+	{"opcode": 11,	"left": -1,	"right": -1,	"result": 3007},
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3020},
 
 	{"opcode": 10,	"left": 1002,	"right": -1,	"result": 3010},
 
-	{"opcode": 6,	"left": -1,	"right": -1,	"result": 36},
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 35},
 
-	{"opcode": 1,	"left": 3007,	"right": 1002,	"result": 3022},
+	{"opcode": 1,	"left": 3007,	"right": 1002,	"result": 3021},
 
-	{"opcode": 10,	"left": 3022,	"right": -1,	"result": 3005},
+	{"opcode": 10,	"left": 3021,	"right": -1,	"result": 3005},
 
-	{"opcode": 0,	"left": 3004,	"right": 3005,	"result": 3023},
+	{"opcode": 0,	"left": 3004,	"right": 3005,	"result": 3022},
 
-	{"opcode": 3,	"left": 3023,	"right": 1003,	"result": 3024},
+	{"opcode": 3,	"left": 3022,	"right": 1003,	"result": 3023},
 
-	{"opcode": 10,	"left": 3024,	"right": -1,	"result": 3007},
+	{"opcode": 10,	"left": 3023,	"right": -1,	"result": 3007},
 
 	{"opcode": 6,	"left": -1,	"right": -1,	"result": 12},
 
-	{"opcode": 14,	"left": 3004,	"right": 3005,	"result": 3025},
+	{"opcode": 14,	"left": 3004,	"right": 3005,	"result": 3024},
 
-	{"opcode": 7,	"left": 3025,	"right": -1,	"result": 44},
+	{"opcode": 7,	"left": 3024,	"right": -1,	"result": 43},
 
 	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1006},
 
-	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3026},
+	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3025},
 
 	{"opcode": 21,	"left": -1,	"right": -1,	"result": -1},
 
@@ -103,7 +101,7 @@
 
 	{"opcode": 15,	"left": 3001,	"right": 1008,	"result": 3003},
 
-	{"opcode": 7,	"left": 3003,	"right": -1,	"result": 58},
+	{"opcode": 7,	"left": 3003,	"right": -1,	"result": 57},
 
 	{"opcode": 30,	"left": 3001,	"right": -1,	"result": 10},
 
@@ -113,7 +111,7 @@
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3004},
 
-	{"opcode": 6,	"left": -1,	"right": -1,	"result": 50},
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 49},
 
 	{"opcode": 24,	"left": 1001,	"right": 1009,	"result": -3},
 
@@ -125,7 +123,7 @@
 
 	{"opcode": 15,	"left": 3007,	"right": 1009,	"result": 3009},
 
-	{"opcode": 7,	"left": 3009,	"right": -1,	"result": 93},
+	{"opcode": 7,	"left": 3009,	"right": -1,	"result": 92},
 
 	{"opcode": 1,	"left": 1009,	"right": 3007,	"result": 3010},
 
@@ -139,7 +137,7 @@
 
 	{"opcode": 15,	"left": 3011,	"right": 3010,	"result": 3013},
 
-	{"opcode": 7,	"left": 3013,	"right": -1,	"result": 92},
+	{"opcode": 7,	"left": 3013,	"right": -1,	"result": 91},
 
 	{"opcode": 30,	"left": 3011,	"right": -1,	"result": 10},
 
@@ -153,7 +151,7 @@
 
 	{"opcode": 14,	"left": -3014,	"right": -3016,	"result": 3017},
 
-	{"opcode": 7,	"left": 3017,	"right": -1,	"result": 91},
+	{"opcode": 7,	"left": 3017,	"right": -1,	"result": 90},
 
 	{"opcode": 30,	"left": 3011,	"right": -1,	"result": 10},
 
@@ -181,9 +179,9 @@
 
 	{"opcode": 10,	"left": 3006,	"right": -1,	"result": -3023},
 
-	{"opcode": 6,	"left": -1,	"right": -1,	"result": 68},
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 67},
 
-	{"opcode": 6,	"left": -1,	"right": -1,	"result": 61},
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 60},
 
 	{"opcode": 11,	"left": -1,	"right": -1,	"result": 1010},
 
@@ -199,7 +197,7 @@
 
 	{"opcode": 15,	"left": 3025,	"right": 1008,	"result": 3027},
 
-	{"opcode": 7,	"left": 3027,	"right": -1,	"result": 106},
+	{"opcode": 7,	"left": 3027,	"right": -1,	"result": 105},
 
 	{"opcode": 30,	"left": 3025,	"right": -1,	"result": 10},
 
@@ -209,7 +207,7 @@
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3028},
 
-	{"opcode": 6,	"left": -1,	"right": -1,	"result": 98},
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 97},
 
 	{"opcode": 21,	"left": -1,	"right": -1,	"result": -1},
 
@@ -235,13 +233,13 @@
 
 	{"opcode": 15,	"left": 3004,	"right": 3002,	"result": 3006},
 
-	{"opcode": 7,	"left": 3006,	"right": -1,	"result": 122},
+	{"opcode": 7,	"left": 3006,	"right": -1,	"result": 121},
 
 	{"opcode": 4,	"left": 3000,	"right": 3004,	"result": 3007},
 
 	{"opcode": 10,	"left": 3007,	"right": -1,	"result": 3000},
 
-	{"opcode": 6,	"left": -1,	"right": -1,	"result": 116},
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 115},
 
 	{"opcode": 27,	"left": -1,	"right": -1,	"result": 3000},
 
@@ -269,15 +267,15 @@
 
 	{"opcode": 15,	"left": 3006,	"right": 3004,	"result": 3008},
 
-	{"opcode": 7,	"left": 3008,	"right": -1,	"result": 145},
+	{"opcode": 7,	"left": 3008,	"right": -1,	"result": 144},
 
 	{"opcode": 15,	"left": 3006,	"right": 1002,	"result": 3009},
 
-	{"opcode": 7,	"left": 3009,	"right": -1,	"result": 140},
+	{"opcode": 7,	"left": 3009,	"right": -1,	"result": 139},
 
 	{"opcode": 10,	"left": 3006,	"right": -1,	"result": 3002},
 
-	{"opcode": 6,	"left": -1,	"right": -1,	"result": 144},
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 143},
 
 	{"opcode": 0,	"left": 3000,	"right": 3001,	"result": 3010},
 
@@ -287,7 +285,7 @@
 
 	{"opcode": 10,	"left": 3002,	"right": -1,	"result": 3001},
 
-	{"opcode": 6,	"left": -1,	"right": -1,	"result": 133},
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 132},
 
 	{"opcode": 27,	"left": -1,	"right": -1,	"result": 3002},
 
@@ -339,7 +337,7 @@
 
 	{"opcode": 25,	"left": -1,	"right": -1,	"result": 8},
 
-	{"opcode": 9,	"left": -1,	"right": -1,	"result": 107},
+	{"opcode": 9,	"left": -1,	"right": -1,	"result": 106},
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3019},
 
@@ -355,7 +353,7 @@
 
 	{"opcode": 25,	"left": -1,	"right": -1,	"result": 11},
 
-	{"opcode": 9,	"left": -1,	"right": -1,	"result": 124},
+	{"opcode": 9,	"left": -1,	"right": -1,	"result": 123},
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3022},
 
@@ -375,7 +373,7 @@
 
 	{"opcode": 25,	"left": -1,	"right": -1,	"result": 30},
 
-	{"opcode": 9,	"left": -1,	"right": -1,	"result": 45},
+	{"opcode": 9,	"left": -1,	"right": -1,	"result": 44},
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3026},
 
@@ -383,7 +381,7 @@
 
 	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3027},
 
-	{"opcode": 25,	"left": -1,	"right": -1,	"result": 27},
+	{"opcode": 25,	"left": -1,	"right": -1,	"result": 26},
 
 	{"opcode": 26,	"left": 1022,	"right": -1,	"result": 3000},
 
@@ -443,89 +441,85 @@
 
 	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3052},
 
+	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3055},
+
 	{"opcode": 24,	"left": 1001,	"right": 1002,	"result": -3},
 
-	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3056},
+	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3057},
 
-	{"opcode": 10,	"left": 3056,	"right": -1,	"result": 3055},
+	{"opcode": 10,	"left": 3057,	"right": -1,	"result": 3056},
 
-	{"opcode": 0,	"left": 3055,	"right": 1002,	"result": 3055},
+	{"opcode": 0,	"left": 3056,	"right": 1002,	"result": 3056},
 
-	{"opcode": 15,	"left": 3055,	"right": 1002,	"result": 3057},
+	{"opcode": 15,	"left": 3056,	"right": 1002,	"result": 3058},
 
-	{"opcode": 7,	"left": 3057,	"right": -1,	"result": 266},
+	{"opcode": 7,	"left": 3058,	"right": -1,	"result": 263},
 
 	{"opcode": 24,	"left": 1001,	"right": 1013,	"result": -3},
 
-	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3059},
+	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3060},
 
-	{"opcode": 10,	"left": 3059,	"right": -1,	"result": 3058},
+	{"opcode": 10,	"left": 3060,	"right": -1,	"result": 3059},
 
-	{"opcode": 0,	"left": 3058,	"right": 1002,	"result": 3058},
+	{"opcode": 0,	"left": 3059,	"right": 1002,	"result": 3059},
 
-	{"opcode": 15,	"left": 3058,	"right": 1013,	"result": 3060},
+	{"opcode": 15,	"left": 3059,	"right": 1013,	"result": 3061},
 
-	{"opcode": 7,	"left": 3060,	"right": -1,	"result": 265},
+	{"opcode": 7,	"left": 3061,	"right": -1,	"result": 262},
 
 	{"opcode": 24,	"left": 1001,	"right": 1003,	"result": -3},
 
-	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3062},
+	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3063},
 
-	{"opcode": 10,	"left": 3062,	"right": -1,	"result": 3061},
+	{"opcode": 10,	"left": 3063,	"right": -1,	"result": 3062},
 
-	{"opcode": 0,	"left": 3061,	"right": 1002,	"result": 3061},
+	{"opcode": 0,	"left": 3062,	"right": 1002,	"result": 3062},
 
-	{"opcode": 15,	"left": 3061,	"right": 1003,	"result": 3063},
+	{"opcode": 15,	"left": 3062,	"right": 1003,	"result": 3064},
 
-	{"opcode": 7,	"left": 3063,	"right": -1,	"result": 264},
+	{"opcode": 7,	"left": 3064,	"right": -1,	"result": 254},
 
-	{"opcode": 30,	"left": 3055,	"right": -1,	"result": 2},
+	{"opcode": 30,	"left": 3056,	"right": -1,	"result": 2},
 
-	{"opcode": 30,	"left": 3058,	"right": -1,	"result": 4},
+	{"opcode": 30,	"left": 3062,	"right": -1,	"result": 3},
 
-	{"opcode": 4,	"left": 3055,	"right": 1003,	"result": 3064},
+	{"opcode": 4,	"left": 3056,	"right": 1003,	"result": 3065},
 
-	{"opcode": 0,	"left": 3058,	"right": 3064,	"result": 3065},
+	{"opcode": 0,	"left": 3062,	"right": 3065,	"result": 3066},
 
-	{"opcode": 0,	"left": 1038,	"right": 3065,	"result": 3066},
+	{"opcode": 0,	"left": 1038,	"right": 3066,	"result": 3067},
 
-	{"opcode": 30,	"left": 3055,	"right": -1,	"result": 2},
+	{"opcode": 30,	"left": 3062,	"right": -1,	"result": 3},
 
-	{"opcode": 30,	"left": 3058,	"right": -1,	"result": 4},
+	{"opcode": 30,	"left": 3059,	"right": -1,	"result": 4},
 
-	{"opcode": 4,	"left": 3055,	"right": 1003,	"result": 3067},
+	{"opcode": 4,	"left": 3062,	"right": 1013,	"result": 3068},
 
-	{"opcode": 0,	"left": 3058,	"right": 3067,	"result": 3068},
+	{"opcode": 0,	"left": 3059,	"right": 3068,	"result": 3069},
 
-	{"opcode": 0,	"left": 1038,	"right": 3068,	"result": 3069},
+	{"opcode": 0,	"left": 1039,	"right": 3069,	"result": 3070},
 
-	{"opcode": 30,	"left": 3055,	"right": -1,	"result": 2},
+	{"opcode": 4,	"left": -3067,	"right": -3070,	"result": 3071},
 
-	{"opcode": 30,	"left": 3061,	"right": -1,	"result": 3},
+	{"opcode": 0,	"left": 3055,	"right": 3071,	"result": 3072},
 
-	{"opcode": 4,	"left": 3055,	"right": 1003,	"result": 3070},
+	{"opcode": 10,	"left": 3072,	"right": -1,	"result": 3055},
 
-	{"opcode": 0,	"left": 3061,	"right": 3070,	"result": 3071},
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 237},
 
-	{"opcode": 0,	"left": 1039,	"right": 3071,	"result": 3072},
+	{"opcode": 30,	"left": 3056,	"right": -1,	"result": 2},
 
-	{"opcode": 30,	"left": 3061,	"right": -1,	"result": 3},
+	{"opcode": 30,	"left": 3059,	"right": -1,	"result": 4},
 
-	{"opcode": 30,	"left": 3058,	"right": -1,	"result": 4},
+	{"opcode": 4,	"left": 3056,	"right": 1003,	"result": 3073},
 
-	{"opcode": 4,	"left": 3061,	"right": 1013,	"result": 3073},
-
-	{"opcode": 0,	"left": 3058,	"right": 3073,	"result": 3074},
+	{"opcode": 0,	"left": 3059,	"right": 3073,	"result": 3074},
 
 	{"opcode": 0,	"left": 1040,	"right": 3074,	"result": 3075},
 
-	{"opcode": 4,	"left": -3072,	"right": -3075,	"result": 3076},
+	{"opcode": 10,	"left": 3055,	"right": -1,	"result": -3075},
 
-	{"opcode": 0,	"left": -3069,	"right": 3076,	"result": 3077},
-
-	{"opcode": 10,	"left": 3077,	"right": -1,	"result": -3066},
-
-	{"opcode": 6,	"left": -1,	"right": -1,	"result": 237},
+	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3055},
 
 	{"opcode": 6,	"left": -1,	"right": -1,	"result": 231},
 
@@ -533,45 +527,45 @@
 
 	{"opcode": 24,	"left": 1001,	"right": 1002,	"result": -3},
 
-	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3079},
+	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3077},
 
-	{"opcode": 10,	"left": 3079,	"right": -1,	"result": 3078},
+	{"opcode": 10,	"left": 3077,	"right": -1,	"result": 3076},
 
-	{"opcode": 0,	"left": 3078,	"right": 1002,	"result": 3078},
+	{"opcode": 0,	"left": 3076,	"right": 1002,	"result": 3076},
 
-	{"opcode": 15,	"left": 3078,	"right": 1002,	"result": 3080},
+	{"opcode": 15,	"left": 3076,	"right": 1002,	"result": 3078},
 
-	{"opcode": 7,	"left": 3080,	"right": -1,	"result": 287},
+	{"opcode": 7,	"left": 3078,	"right": -1,	"result": 284},
 
 	{"opcode": 24,	"left": 1001,	"right": 1013,	"result": -3},
 
-	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3082},
+	{"opcode": 1,	"left": 1001,	"right": 1002,	"result": 3080},
 
-	{"opcode": 10,	"left": 3082,	"right": -1,	"result": 3081},
+	{"opcode": 10,	"left": 3080,	"right": -1,	"result": 3079},
 
-	{"opcode": 0,	"left": 3081,	"right": 1002,	"result": 3081},
+	{"opcode": 0,	"left": 3079,	"right": 1002,	"result": 3079},
 
-	{"opcode": 15,	"left": 3081,	"right": 1013,	"result": 3083},
+	{"opcode": 15,	"left": 3079,	"right": 1013,	"result": 3081},
 
-	{"opcode": 7,	"left": 3083,	"right": -1,	"result": 286},
+	{"opcode": 7,	"left": 3081,	"right": -1,	"result": 283},
 
-	{"opcode": 30,	"left": 3078,	"right": -1,	"result": 2},
+	{"opcode": 30,	"left": 3076,	"right": -1,	"result": 2},
 
-	{"opcode": 30,	"left": 3081,	"right": -1,	"result": 4},
+	{"opcode": 30,	"left": 3079,	"right": -1,	"result": 4},
 
-	{"opcode": 4,	"left": 3078,	"right": 1003,	"result": 3085},
+	{"opcode": 4,	"left": 3076,	"right": 1003,	"result": 3083},
 
-	{"opcode": 0,	"left": 3081,	"right": 3085,	"result": 3086},
+	{"opcode": 0,	"left": 3079,	"right": 3083,	"result": 3084},
 
-	{"opcode": 0,	"left": 1038,	"right": 3086,	"result": 3087},
+	{"opcode": 0,	"left": 1040,	"right": 3084,	"result": 3085},
 
-	{"opcode": 11,	"left": -1,	"right": -1,	"result": -3087},
+	{"opcode": 11,	"left": -1,	"right": -1,	"result": -3085},
 
-	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3084},
+	{"opcode": 10,	"left": 66,	"right": -1,	"result": 3082},
 
-	{"opcode": 6,	"left": -1,	"right": -1,	"result": 275},
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 272},
 
-	{"opcode": 6,	"left": -1,	"right": -1,	"result": 269},
+	{"opcode": 6,	"left": -1,	"right": -1,	"result": 266},
 
 	{"opcode": 27,	"left": -1,	"right": -1,	"result": 1001},
 
@@ -586,7 +580,7 @@
 	{"valor": 21, 	"memdir": 1036}, 
 	{"valor": 22, 	"memdir": 1037}, 
 	{"valor": "---Bubble Sort---", 	"memdir": 1020}, 
-	{"valor": 3029, 	"memdir": 1039}, 
+	{"valor": 3029, 	"memdir": 1038}, 
 	{"valor": 0, 	"memdir": 1001}, 
 	{"valor": 1, 	"memdir": 1002}, 
 	{"valor": "introduce 10 elementos aleatorios", 	"memdir": 1007}, 
@@ -602,11 +596,11 @@
 	{"valor": 10.200000, 	"memdir": 1016}, 
 	{"valor": 9.100000, 	"memdir": 1017}, 
 	{"valor": "El numero de fibonacci es...", 	"memdir": 1019}, 
-	{"valor": 3035, 	"memdir": 1040}, 
+	{"valor": 3035, 	"memdir": 1039}, 
 	{"valor": "Aqui van ordenados", 	"memdir": 1010}, 
 	{"valor": "Introduce el numero fibonacci a calcular", 	"memdir": 1012}, 
 	{"valor": 2000, 	"memdir": 1004}, 
-	{"valor": 3047, 	"memdir": 1038}, 
+	{"valor": 3047, 	"memdir": 1040}, 
 	{"valor": 200, 	"memdir": 1015}, 
 	{"valor": "El numero no se encontro en el arreglo", 	"memdir": 1006}, 
 	{"valor": "--- Find ----", 	"memdir": 1021}, 
