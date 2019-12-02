@@ -95,6 +95,8 @@ func _physics_process(delta):
 			input.get_parent().visible = true
 		elif quad.opcode == 14: # GREATER THAN
 			_op_gt(quad)
+		elif quad.opcode == 15: # LESS THAN OR EQUAL 
+			_op_lte(quad)
 		elif quad.opcode == 19: # EQUALS
 			_op_eeq(quad)
 		elif quad.opcode == 21: # END PROCEDURE
@@ -338,11 +340,15 @@ func _op_gt(quad):
 
 # warning-ignore:unused_argument
 func _op_lte(quad):
-	pass
+	var left = _get_mem_val(quad.left)
+	var right = _get_mem_val(quad.right)
+	_set_mem_addr(quad.result, left <= right)
 
 # warning-ignore:unused_argument
 func _op_gte(quad):
-	pass
+	var left = _get_mem_val(quad.left)
+	var right = _get_mem_val(quad.right)
+	_set_mem_addr(quad.result, left >= right)
 
 # warning-ignore:unused_argument
 func _op_and(quad):
