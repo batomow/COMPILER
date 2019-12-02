@@ -1319,34 +1319,34 @@ void npAssign3(){
 }
 
 void npAssign4(){
-    Var isKinematic = peek(&pilaOperandos); pop(&pilaOperandos); 
-    Var isKinematic_type = peek(&pilaTipos); pop(&pilaTipos);  
-    pop(&pilaNombres); 
-    
-    Var type = peek(&pilaOperandos); pop(&pilaOperandos); 
-    Var type_type = peek(&pilaTipos); pop(&pilaTipos); 
-    pop(&pilaNombres); 
-     
-    Var color = peek(&pilaOperandos); pop(&pilaOperandos); 
-    Var color_type = peek(&pilaTipos); pop(&pilaTipos); 
-    pop(&pilaNombres); 
-
-    Var positionx = peek(&pilaOperandos); pop(&pilaOperandos); 
-    Var positionx_type = peek(&pilaTipos); pop(&pilaTipos); 
-    pop(&pilaNombres); 
-
-    Var positiony = peek(&pilaOperandos); pop(&pilaOperandos); 
-    Var positiony_type = peek(&pilaTipos); pop(&pilaTipos); 
+    Var sizey = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var sizey_type = peek(&pilaTipos); pop(&pilaTipos); 
     pop(&pilaNombres); 
 
     Var sizex = peek(&pilaOperandos); pop(&pilaOperandos); 
     Var sizex_type = peek(&pilaTipos); pop(&pilaTipos); 
     pop(&pilaNombres); 
 
-    Var sizey = peek(&pilaOperandos); pop(&pilaOperandos); 
-    Var sizey_type = peek(&pilaTipos); pop(&pilaTipos); 
+    Var positiony = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var positiony_type = peek(&pilaTipos); pop(&pilaTipos); 
     pop(&pilaNombres); 
 
+    Var positionx = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var positionx_type = peek(&pilaTipos); pop(&pilaTipos); 
+    pop(&pilaNombres); 
+
+    Var color = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var color_type = peek(&pilaTipos); pop(&pilaTipos); 
+    pop(&pilaNombres); 
+
+    Var type = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var type_type = peek(&pilaTipos); pop(&pilaTipos); 
+    pop(&pilaNombres); 
+     
+    Var isKinematic = peek(&pilaOperandos); pop(&pilaOperandos); 
+    Var isKinematic_type = peek(&pilaTipos); pop(&pilaTipos);  
+    pop(&pilaNombres); 
+    
     Var element = peek(&pilaOperandos); pop(&pilaOperandos); 
     Var element_type = peek(&pilaTipos); pop(&pilaTipos); 
     pop(&pilaNombres); 

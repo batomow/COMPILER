@@ -1,19 +1,19 @@
 {"quads":[
 	{"opcode": 6,	"left": -1,	"right": -1,	"result": 1},
 
-	{"opcode": 10,	"left": 1003,	"right": -1,	"result": 3000},
+	{"opcode": 10,	"left": 1000,	"right": -1,	"result": 3000},
 
-	{"opcode": 10,	"left": 1003,	"right": -1,	"result": 3001},
+	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3001},
 
-	{"opcode": 10,	"left": 1002,	"right": -1,	"result": 3002},
+	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3002},
 
 	{"opcode": 10,	"left": 1002,	"right": -1,	"result": 3003},
 
-	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3004},
+	{"opcode": 10,	"left": 1002,	"right": -1,	"result": 3004},
 
-	{"opcode": 10,	"left": 1001,	"right": -1,	"result": 3005},
+	{"opcode": 10,	"left": 1003,	"right": -1,	"result": 3005},
 
-	{"opcode": 10,	"left": 1000,	"right": -1,	"result": 3006},
+	{"opcode": 10,	"left": 1003,	"right": -1,	"result": 3006},
 
 	{"opcode": 29,	"left": -1,	"right": -1,	"result": 3000},
 
