@@ -1572,7 +1572,7 @@ void npFunCall2(){
 }
 
 void npAssign1(){
-    if(pilaOperandos.isEmpty)
+    if((pilaOperandos.isEmpty(&pilaOperandos)))
         return; 
 
     Var value = peek(&pilaOperandos); pop(&pilaOperandos); 
