@@ -25,17 +25,17 @@ func _ready():
 	# Initialize console input
 	input = get_node("UI/background2/input")
 	input.connect("text_entered", self, "_op_scan")
-	
+	input.get_parent().visible = false
 	# Initialize pointer stack, used to know where we are reading
 	stackPointer.push_back(0)
 	
 	# Initialize localsArray, the structure used to hold the memory arrays with local memory
 	var mainLocal = []
-	mainLocal.resize(10)
+	mainLocal.resize(20)
 	localsArray.push_back(mainLocal)
 	
 	# Initialize Global memory
-	globals.resize(10)
+	globals.resize(20)
 
 	_load() 
 
@@ -91,6 +91,7 @@ func _physics_process(delta):
 		elif quad.opcode == 12: # SCAN
 			stackPointer[-1] -= 1 
 			scanQuad = quad
+			input.get_parent().visible = true
 		elif quad.opcode == 14: # GREATER THAN
 			_op_gt(quad)
 		elif quad.opcode == 19: # EQUALS
@@ -255,17 +256,17 @@ func _op_scan(var scanned_text):
 	var parsed_data
 	var type:int = scanQuad.left
 	match(type):
-		0: 
-			print("parsing int")
-			parsed_data = int(scanned_text)  
-		TableTypes.TableChar: parsed_data = scanned_text[0]
-		TableTypes.TableString: parsed_data = scanned_text
-		TableTypes.TableDouble: parsed_data = float(scanned_text)
-		TableTypes.TableBool: parsed_data = true if scanned_text == "truth" else false
+		0:parsed_data = int(scanned_text)  
+		2: parsed_data = scanned_text[0]
+		3: parsed_data = scanned_text
+		7: parsed_data = float(scanned_text)
+		8: parsed_data = true if scanned_text == "truth" else false
 		_ : print("Failed Parse")
 	if DEBUGGING:
 		print("Scanned: ", parsed_data)
 	console.text += "<<\t%s\n" % parsed_data
+	input.text = ""
+	input.get_parent().visible = false
 	_set_mem_addr(scanQuad.result, parsed_data)
 	stackPointer[-1] += 1
 
