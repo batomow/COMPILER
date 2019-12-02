@@ -32,8 +32,6 @@
     void npExpr1_2_int(); 
     void npExpr1_2_bool(); 
 	void npExpr1_3();
-	void npExpr1_4();
-	void npExpr1_5();
 	void npExpr1_6();
 	void npExpr2();
 	void npExpr3();
@@ -51,6 +49,11 @@
 	void npExpr13();
 	void npExpr14();
 	void npExpr15();
+	
+	//Array access
+	void npArrExpr1();
+	void npArrExpr2();
+	void npArrExpr3();
 
 	//Assignments
 	void npAssign1();
@@ -122,6 +125,10 @@
 	Queue filaArrOperandos;
 	Queue filaArrNombres;
 	Queue filaArrTipos;
+	
+	Stack pilaDimNombres;
+	Stack pilaDimOperandos;
+	Stack pilaDimTipos;
     
     QUAD listQuads;   
     QUAD* currentQuad; 
@@ -367,11 +374,11 @@ assign:
 /* ------- DATA STRUCTURES GRAMMAR ------- */
 
 structaccess:
-	V_ID SYM_OBRAC expr SYM_CBRAC { npExpr1_4(); } structIndex
+	V_ID { npArrExpr1($1); } SYM_OBRAC expr SYM_CBRAC { npArrExpr3(1);  } structIndex { npArrExpr2(); }
 
 structIndex:
 	/* empty */
-	| SYM_OBRAC expr SYM_CBRAC { npExpr1_5(); }
+	| SYM_OBRAC expr SYM_CBRAC { npArrExpr3(2); }
 
 /* Array*/
 
@@ -539,6 +546,10 @@ int main(int argc, char *argv[]) {
 	filaArrOperandos = NewQueue(TypeInt, 64);
 	filaArrNombres = NewQueue(TypeString, 64);
 	filaArrTipos = NewQueue(TypeInt, 64);
+
+	pilaDimNombres = NewStack(TypeString, 64);
+	pilaDimOperandos = NewStack(TypeInt, 64);
+	pilaDimTipos = NewStack(TypeInt, 64);
 	
 	cubo = NewCubo(); 
 
@@ -685,6 +696,10 @@ void npFinalCheck(){
 	DestroyQueue(&filaArrNombres);
 	DestroyQueue(&filaArrOperandos);
 	DestroyQueue(&filaArrTipos);
+	
+	DestroyStack(&pilaDimOperandos);
+	DestroyStack(&pilaDimTipos);
+	DestroyStack(&pilaDimNombres);
 
     DestroyVarTable(&globals);
     DestroyFuncTable(&functions); 
@@ -962,12 +977,6 @@ void npExpr1_2_bool(int constBool){
 	push(&pilaTipos, type); 
     
 }
-void npExpr1_4(){
-	// Todavía no tengo claro el acceso a los arreglos
-}
-void npExpr1_5(){
-	// Todavía no tengo claro el acceso a las matrices
-}
 void npExpr1_6(){
 	/* Revisar que exista un vector o elemento con ese id
 	   Revisar que ese vector o elemento tenga esa propiedad
@@ -1036,6 +1045,274 @@ void npExpr7(){
 	/* Sacar un fondo falso de la pila de Operadores */
     Var tope = peek(&pilaOperadores); 
     pop(&pilaOperadores);  
+}
+
+void npArrExpr1(char* id){
+	// Verificar que la variable exista
+	VTE* lookup = globals.lookup(&globals, id); 
+	if(!(lookup->isSet)){
+		lookup = functions.lookupParam(&functions, currentFunction, id);
+		if(!(lookup->isSet)){
+			lookup = functions.lookupVar(&functions, currentFunction, id);
+			if(!(lookup->isSet)){
+				yyerror("Variable undeclared");
+				return;
+			}
+		}
+	}
+	
+	//Verificar que sea una variable dimensionada
+	if(!(lookup->dim->isSet)){
+		yyerror("Variable is not an array or matrix");
+		return;
+	}
+		
+	// Meter a pila de dimensionadas (nombre, dir, tipo)
+	char* aux = calloc(64, sizeof(char));
+	strcpy(aux, id);
+	push(&pilaDimNombres, NewVarS(id));
+	push(&pilaDimOperandos, NewVarI(lookup->dir));
+	push(&pilaDimTipos, NewVarI(lookup->type));
+	
+	// Meter a pila de Operandos un tope, para saber cuando acaban mis índices
+	push(&pilaOperandos, NewVarI(-1));	
+
+	// Meter a pila de Operadores un fondo falso, para controlar anidamiento
+	push(&pilaOperadores, NewVarI(-1));
+}
+void npArrExpr2(){
+	int i = 0;
+	int j = 0;
+	
+	//Sacar variable dimensionada y checar su cantidad de dimensiones
+	Var struct_name = peek(&pilaDimNombres); pop(&pilaDimNombres);
+	Var struct_dir = peek(&pilaDimNombres); pop(&pilaDimNombres);
+	Var struct_type = peek(&pilaDimNombres); pop(&pilaDimNombres);
+	
+	VTE* lookup = globals.lookup(&globals, struct_name.data.sVal); 
+	if(!(lookup->isSet)){
+		lookup = functions.lookupParam(&functions, currentFunction, struct_name.data.sVal);
+		if(!(lookup->isSet)){
+			lookup = functions.lookupVar(&functions, currentFunction, struct_name.data.sVal);
+		}
+	}
+	int dim_num = 0;
+	DIM* current_dim = lookup->dim;
+	while(current_dim->isSet){
+		dim_num++;
+		current_dim = current_dim->next;
+	}
+
+	// Crear constante con dirección base del arreglo y sacarla de las pilas
+	npExpr1_2_int(lookup->dir);
+	Var base_name = peek(&pilaNombres); pop(&pilaNombres);
+	Var base_dir = peek(&pilaOperandos); pop(&pilaOperandos);
+	Var base_type = peek(&pilaTipos); pop(&pilaTipos);
+
+	//Ir sacando los indices, en base a la cantidad de dimensiones y lanzas error si tienes más o menos
+	if(dim_num == 1){
+		Var index_name = peek(&pilaNombres); pop(&pilaNombres);
+		Var index_dir = peek(&pilaOperandos); pop(&pilaOperandos);
+		Var index_type = peek(&pilaTipos); pop(&pilaTipos);
+		
+		Var tope = peek(&pilaOperandos); pop(&pilaOperandos);
+		if(tope.data.iVal != -1){
+			yyerror("Segmentation fault (core)");
+			return;
+		}
+
+		DIM* dim = calloc(1, sizeof(DIM)); *dim = NewDIM(); 
+                char* aux = calloc(64, sizeof(char)); 
+                int tempAddr1 = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
+                sprintf(aux, "t%d", tempAddr1); 
+                if(strlen(currentFunction) > 0){
+                    functions.addVar(&functions, currentFunction, aux, TableInt, tempAddr1, dim); 
+                }else{
+                    globals.add(&globals, aux, TableInt, tempAddr1, dim);  
+                }
+
+		//Sumar indice y dirección base
+		OPDUM index = NewOPDUM(index_name.data.sVal, index_dir.data.iVal, index_type.data.iVal);
+		OPDUM base = NewOPDUM(base_name.data.sVal, base_dir.data.iVal, base_type.data.iVal);
+		OPDUM result1 = NewOPDUM(aux, tempAddr1, TableInt);
+		SetQUAD(currentQuad, SUM, index, base, result1);
+		currentQuad = currentQuad->next;
+		quadrupleCounter++;
+
+		//Guardar el resultado de esa operación y asignar lo que hay en ese espacio de memoria en otra temporal
+		DIM* dim2 = calloc(1, sizeof(DIM)); *dim2 = NewDIM(); 
+                char* aux2 = calloc(64, sizeof(char)); 
+                int tempAddr2 = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
+                sprintf(aux2, "t%d", tempAddr2); 
+                if(strlen(currentFunction) > 0){
+                    functions.addVar(&functions, currentFunction, aux2, struct_type.data.iVal, tempAddr2, dim2); 
+                }else{
+                    globals.add(&globals, aux2, struct_type.data.iVal, tempAddr2, dim2);  
+                }
+		OPDUM dummy = NewOPDUM("    ", -1, TableNull);
+		OPDUM result2 = NewOPDUM(aux2, tempAddr2, struct_type.data.iVal);
+		SetQUAD(currentQuad, ASSIGN, dummy, result1, result2);
+		currentQuad = currentQuad->next;
+		quadrupleCounter++;
+
+		//Push de result 2 en pilas
+		push(&pilaOperandos, NewVarI(tempAddr2));
+		push(&pilaNombres, NewVarS(aux2));
+		push(&pilaTipos, struct_type);
+		 
+	} else if(dim_num == 2){
+		Var index2_name = peek(&pilaNombres); pop(&pilaNombres);
+		Var index2_dir = peek(&pilaOperandos); pop(&pilaOperandos);
+		Var index2_type = peek(&pilaTipos); pop(&pilaTipos);
+		
+		Var index1_dir = peek(&pilaOperandos); pop(&pilaOperandos);
+		if(index1_dir.data.iVal == -1){
+			yyerror("Segmentation fault (core)");
+			return;
+		}
+		Var index1_name = peek(&pilaNombres); pop(&pilaNombres);
+		Var index1_type = peek(&pilaTipos); pop(&pilaTipos);
+		
+		Var tope = peek(&pilaOperandos); pop(&pilaOperandos);
+		if(tope.data.iVal != -1){
+			yyerror("Incorrect number of indexes");
+			return;
+		}
+
+		// Guardar el tamaño de la primera dimensión en una constante
+		current_dim = lookup->dim;
+		npExpr1_2_int(current_dim->limsup);
+		Var size1_name = peek(&pilaNombres); pop(&pilaNombres);
+		Var size1_dir = peek(&pilaOperandos); pop(&pilaOperandos);
+		Var size1_type = peek(&pilaTipos); pop(&pilaTipos);
+		
+		//Crear temporales para guardar resultados
+		DIM* dim1 = calloc(1, sizeof(DIM)); *dim1 = NewDIM(); 
+                char* aux1 = calloc(64, sizeof(char)); 
+                int tempAddr1 = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
+                sprintf(aux1, "t%d", tempAddr1); 
+                if(strlen(currentFunction) > 0){
+                    functions.addVar(&functions, currentFunction, aux1, TableInt, tempAddr1, dim1); 
+                }else{
+                    globals.add(&globals, aux1, TableInt, tempAddr1, dim1);  
+                }
+		
+		DIM* dim2 = calloc(1, sizeof(DIM)); *dim2 = NewDIM(); 
+                char* aux2 = calloc(64, sizeof(char)); 
+                int tempAddr2 = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
+                sprintf(aux2, "t%d", tempAddr2); 
+                if(strlen(currentFunction) > 0){
+                    functions.addVar(&functions, currentFunction, aux2, TableInt, tempAddr2, dim2); 
+                }else{
+                    globals.add(&globals, aux2, TableInt, tempAddr2, dim2);  
+                }
+
+		DIM* dim3 = calloc(1, sizeof(DIM)); *dim3 = NewDIM(); 
+                char* aux3 = calloc(64, sizeof(char)); 
+                int tempAddr3 = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
+                sprintf(aux3, "t%d", tempAddr1); 
+                if(strlen(currentFunction) > 0){
+                    functions.addVar(&functions, currentFunction, aux3, TableInt, tempAddr3, dim3); 
+                }else{
+                    globals.add(&globals, aux3, TableInt, tempAddr3, dim3);  
+                }
+
+		DIM* dim4 = calloc(1, sizeof(DIM)); *dim4 = NewDIM(); 
+                char* aux4 = calloc(64, sizeof(char)); 
+                int tempAddr4 = strlen(currentFunction) > 0 ? localsCounter++ : globalsCounter++; 
+                sprintf(aux4, "t%d", tempAddr4); 
+                if(strlen(currentFunction) > 0){
+                    functions.addVar(&functions, currentFunction, aux4, struct_type.data.iVal, tempAddr4, dim4); 
+                }else{
+                    globals.add(&globals, aux4, struct_type.data.iVal, struct_type.data.iVal, dim4);  
+                }
+
+		//Crear cuadruplo de multiplicación index2 + size1 = t1
+		OPDUM index2opdum = NewOPDUM(index2_name.data.sVal, index2_dir.data.iVal, index2_type.data.iVal);
+		OPDUM size1opdum = NewOPDUM(size1_name.data.sVal, size1_dir.data.iVal, size1_type.data.iVal);
+		OPDUM t1opdum = NewOPDUM(aux1, tempAddr1, TableInt);
+		SetQUAD(currentQuad, MULT, index2opdum, size1opdum, t1opdum);
+		currentQuad = currentQuad->next;
+		quadrupleCounter++;
+
+		//Crear cuadruplo de suma index1 + t1 = t2
+		OPDUM index1opdum = NewOPDUM(index1_name.data.sVal, index1_dir.data.iVal, index1_type.data.iVal);
+		OPDUM t2opdum = NewOPDUM(aux2, tempAddr2, TableInt);
+		SetQUAD(currentQuad, SUM, index1opdum, t1opdum, t2opdum);
+		currentQuad = currentQuad->next;
+		quadrupleCounter++;
+
+		//Crear cuadruplo de suma t2 + base_dir = t3
+		OPDUM base = NewOPDUM(base_name.data.sVal, base_dir.data.iVal, base_type.data.iVal);
+		OPDUM t3opdum = NewOPDUM(aux3, tempAddr3, TableInt);
+		SetQUAD(currentQuad, SUM, base, t2opdum, t3opdum);
+		currentQuad = currentQuad->next;
+		quadrupleCounter++;
+		
+		// Asignar lo que hay en la dirección que apunta t3 a una temporal
+		OPDUM dummy = NewOPDUM("    ", -1, TableNull);
+		OPDUM t4opdum = NewOPDUM(aux4, tempAddr4, struct_type.data.iVal);
+		SetQUAD(currentQuad, ASSIGN, dummy, t3opdum, t4opdum);
+		currentQuad = currentQuad->next;
+		quadrupleCounter++;
+
+		//Push de t4 a pilas
+		push(&pilaOperandos, NewVarI(tempAddr4));
+		push(&pilaNombres, NewVarS(aux4));
+		push(&pilaTipos, struct_type);		
+	}
+}
+void npArrExpr3(int indexDim){
+	Var value_name = peek(&pilaNombres);
+	Var value_dir = peek(&pilaOperandos);
+	Var value_type = peek(&pilaTipos);
+
+	if(value_type.data.iVal != TableInt){
+		yyerror("Type mismatch");
+		return;
+	}
+	
+	Var struct_dir = peek(&pilaDimOperandos);
+	Var struct_name = peek(&pilaDimNombres);
+	Var struct_type = peek(&pilaDimTipos);
+	
+	//Sacar variable de tabla de variables para obtener su información de dimensiones
+	VTE* lookup = globals.lookup(&globals, struct_name.data.sVal); 
+	if(!(lookup->isSet)){
+		lookup = functions.lookupParam(&functions, currentFunction, struct_name.data.sVal);
+		if(!(lookup->isSet)){
+			lookup = functions.lookupVar(&functions, currentFunction, struct_name.data.sVal); 
+		}
+	}
+	
+	int lim_sup = 0;
+	DIM* struct_dim = lookup->dim;
+	if(struct_dim->isSet){
+		if(indexDim == 1){
+			lim_sup = struct_dim->limsup;
+		} else if(indexDim == 2){
+			struct_dim = struct_dim->next;
+			if(struct_dim->isSet){
+				lim_sup = struct_dim->limsup;
+			} else{
+				yyerror("Segmentation fault (core)");
+			}
+		}
+	} else {
+		yyerror("Segmentation fault (core)");
+	}
+
+	OPDUM access = NewOPDUM(value_name.data.sVal, value_dir.data.iVal, value_type.data.iVal);
+	OPDUM inflim = NewOPDUM("    ", -1, TableNull);
+	char* aux = calloc(21, sizeof(char));
+	sprintf(aux, "%d", lim_sup);
+	OPDUM suplim = NewOPDUM(aux, lim_sup, TableInt);
+	
+	SetQUAD(currentQuad, CHECKLIM, access, inflim, suplim);
+	currentQuad = currentQuad->next;
+	quadrupleCounter++;
+
+	free(aux); 
 }
 
 void npFunCall1(char* funID){
