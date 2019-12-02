@@ -124,7 +124,7 @@ func _op_register(quad):
 	else:
 		var isKinematic = localsArray[-1][llave]
 		var type:int = localsArray[-1][llave+1]
-		var color = localsArray[-1][llave+2]
+		var color:int = localsArray[-1][llave+2]
 		var position := Vector2()
 		position.x = localsArray[-1][llave+3]
 		position.y = localsArray[-1][llave+4]
@@ -140,15 +140,23 @@ func _op_register(quad):
 		
 		new_object.position = position
 		new_object.scale = scale
-		match(color):
-			0 : new_object.modulate = Color.white
-			1 : new_object.modulate = Color.red
-			2 : new_object.modulate = Color.green
-			3 : new_object.modulate = Color.blue
-			4 : new_object.modulate = Color.yellow
-			5 : new_object.modulate = Color.cyan
-			6 : new_object.modulate = Color.magenta
-			7 : new_object.modulate = Color.black
+		
+		if color == 0 : 
+			new_object.modulate = Color.white
+		elif color == 1 :
+			 new_object.modulate = Color.red
+		elif color == 2 : 
+			new_object.modulate = Color.green
+		elif color == 3 : 
+			new_object.modulate = Color.blue
+		elif color == 4 :
+			 new_object.modulate = Color.yellow
+		elif color == 5 : 
+			new_object.modulate = Color.cyan
+		elif color == 6 : 
+			new_object.modulate = Color.magenta
+		elif color == 7 : 
+			new_object.modulate = Color.black
 		
 		get_node("Game").add_child(new_object)
 	
