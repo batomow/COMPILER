@@ -16,6 +16,11 @@ typedef enum DataType{
         TypeBool
 } DataType;
 
+typedef enum ElementType{
+    CircleElem, 
+    SquareElem, 
+    LineElem
+} ElementType;
 
 typedef struct Var{
         union{
@@ -42,18 +47,19 @@ Var* NewVarArrayC(char*, int);  //needs destroying
 char* VarToString(Var); //free return value
 
 //element
-typedef struct Vector{
+/*typedef struct Vector{
     Var a;
     Var b;
 } Vector; 
 Vector NewVector(Var, Var); 
 
 typedef struct Element{    
+    ElementType type;
     Vector position;  
     Vector size; 
     int color; 
 } Element; 
-Element NewElement(Vector, Vector, int); 
+Element NewElement(Vector, Vector, int); *///no use uso al final este 
 
 //------------- Stack Stuff ---------------------//
 typedef struct Stack Stack;
@@ -224,7 +230,7 @@ typedef enum OP{
     GOSUB, //9
     ASSIGN, //10
     PRINT, //11
-    READ, //12
+    SCAN, //12
     LT, //13
     GT, //14
     LTE, //15
@@ -239,7 +245,9 @@ typedef enum OP{
     FORCHECK,  //24
     ERA, //25
     PARAM, //26
-    RETURN
+    RETURN, // 27
+    SCANALL, //29 
+    REGISTER //30
 } OP; 
 
 typedef struct Operandum OPDUM; 
