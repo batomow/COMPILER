@@ -104,7 +104,7 @@ order enter:int(){
     
     vision("--- Find ----")
     
-    find(66)
+    find(10)
     
     mat aMat:int[2][3] = [[1, 2, 3], 
                             [4, 5, 6]]
