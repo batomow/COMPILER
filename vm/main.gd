@@ -32,11 +32,11 @@ func _ready():
 	
 	# Initialize localsArray, the structure used to hold the memory arrays with local memory
 	var mainLocal = []
-	mainLocal.resize(30)
+	mainLocal.resize(100)
 	localsArray.push_back(mainLocal)
 	
 	# Initialize Global memory
-	globals.resize(30)
+	globals.resize(100)
 
 	_load() 
 
@@ -214,7 +214,7 @@ func _get_mem_val(addr, local = -1):
 func _set_mem_addr(addr, val, isParam = 0):
 	if addr < 0:
 		addr = _get_mem_val(addr*(-1))
-	
+
 	if isParam:
 		eraArray[-1][addr-3000] = val
 		if DEBUGGING:
@@ -285,7 +285,8 @@ func _op_div(quad):
 		console.text += "!!\tERROR: Math error\n"
 		flag = false
 		return
-	_set_mem_addr(quad.result, left / right)
+
+	_set_mem_addr(quad.result, floor(left / right))
 	if DEBUGGING:
 		print(left, " / ", right, " = ", _get_mem_val(quad.result))
 
