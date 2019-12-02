@@ -1601,7 +1601,9 @@ void npAssign2(){
 	OPDUM to;
 	OPDUM dummy;
 		
-	if(size2 == 0){ j =-1; }
+	if(size2 == 0){ 
+        size2 = size1;
+    }
 
 	while(!(filaArrOperandos.isEmpty(&filaArrOperandos))){
 		value_dir = peekFront(&filaArrOperandos); popFront(&filaArrOperandos);
