@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends MenuButton
+
+func _ready(): 
+	get_popup().connect(\"id_pressed\", self, \"_on_item_pressed\")
+
+func _on_item_pressed(id:int):
+	match(id):
+		1 : get_tree().change_scene(\"res://Main Scenes/MainMenu/MainMenu.tscn\")
+		2 : get_tree().quit()"
+
+[node name="InGameMenu" type="MenuButton"]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_left = 13.8466
+margin_top = -84.9192
+margin_right = 108.846
+margin_bottom = -17.9192
+text = "Menu"
+flat = false
+items = [ "Main Menu", null, 0, false, false, 1, 0, null, "", false, "Quit", null, 0, false, false, 2, 0, null, "", false ]
+script = SubResource( 1 )
