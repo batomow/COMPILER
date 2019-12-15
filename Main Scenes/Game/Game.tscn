@@ -1,9 +1,64 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Main Scenes/Game/InGameMenu.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Art/BG.jpg" type="Texture" id=2]
+[ext_resource path="res://Art/tuberia.png" type="Texture" id=3]
+[ext_resource path="res://Art/piso_agua.png" type="Texture" id=4]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+onready var early_timer = $EarlyGame
+onready var mid_timer = $MidGame
+onready var late_timer = $LateGame
+onready var leak_timer = $Leak
+
+onready var base_fuga = preload(\"res://Main Scenes/Game/Fuga.tscn\")
+
+onready var points = ($Pipe/Line).points
+onready var points_size:int = points.size()
+onready var fuga_container = $FugaContainer
+
+var alphabet:Dictionary = {
+	0:\"A\", 1:\"B\", 2:\"C\", 3:\"D\", 4:\"E\", 5:\"F\",
+	6:\"G\", 7:\"H\", 8:\"I\", 9:\"J\", 10:\"K\", 11:\"L\",
+	12:\"M\", 13:\"N\", 14:\"O\", 15:\"P\", 16:\"Q\", 17:\"R\",
+	18:\"S\", 19:\"T\", 20:\"U\", 21:\"V\", 22:\"W\", 23:\"X\", 
+	24:\"Y\", 25:\"Z\"
+}
+onready var letter_stack:Array = range(0,26)
+onready var position_stack:Array = range(0, points_size)
+
+func _ready():
+	early_timer.start()
+	randomize()
+	letter_stack.shuffle()
+	position_stack.shuffle()
+
+func _on_EarlyGame_timeout():
+	mid_timer.start()
+	leak_timer.start()
+
+func _on_MidGame_timeout():
+	late_timer.start()
+
+func _on_LateGame_timeout():
+	pass # Replace with function body.
+
+func _on_Leak_timeout():
+	var new_fuga = base_fuga.instance()
+	new_fuga.position = points[position_stack.front()]
+	position_stack.pop_front()
+	new_fuga.letter = alphabet[letter_stack.front()]
+	letter_stack.pop_front()
+	new_fuga.state = new_fuga.states.spawn
+	fuga_container.add_child(new_fuga)
+
+
+"
 
 [node name="Game" type="Node2D"]
+script = SubResource( 1 )
 
 [node name="UI" type="Control" parent="."]
 editor/display_folded = true
@@ -18,8 +73,10 @@ margin_bottom = 702.333
 items = [ "Main Menu", null, 0, false, false, 1, 0, null, "", false, "Quit", null, 0, false, false, 2, 0, null, "", false ]
 
 [node name="Pipe" type="Node2D" parent="."]
+editor/display_folded = true
 
 [node name="Line" type="Line2D" parent="Pipe"]
+points = PoolVector2Array( 214, 150, 264.117, 149.504, 331.132, 148.84, 389.485, 148.263, 486.232, 147.305, 551.037, 146.663, 653.181, 145.652, 719, 145, 715.862, 172.054, 710.266, 209.472, 706, 238, 668.836, 234.345, 620.249, 229.565, 571.661, 224.786, 523, 220, 519, 184, 475.974, 185.14, 418.679, 186.658, 368, 188, 363, 239, 318.341, 240.999, 248.508, 244.124, 211.158, 245.795, 209.713, 278.465, 207.104, 337.464, 205.436, 375.193, 228.783, 376.304, 297.863, 379.594, 300.266, 347.148, 302.748, 313.644, 304.905, 284.526, 332.774, 286.557, 384.714, 290.342, 413.616, 292.449, 414.81, 261.395, 416.257, 223.789, 443.211, 231.897, 470.392, 240.074, 469.71, 265.335, 468.871, 296.373, 468.192, 321.497, 447.654, 322.252, 414.936, 323.453, 385.849, 324.522, 360.361, 325.458, 365.66, 353.436, 371.364, 383.555, 398.024, 383.683, 432.42, 383.849, 462.91, 383.995, 473.739, 363.55, 487.799, 337.005, 503.02, 308.268, 517.926, 280.125, 544.559, 278.192, 572.502, 276.164, 571.976, 304.172, 571.36, 336.934, 570.741, 369.911, 556.721, 397.128, 543.373, 423.043, 512.798, 424.055, 423.022, 427.023, 374.145, 428.64, 317.646, 430.508, 260.974, 432.382, 210.637, 434.047, 217.012, 460.257, 222.52, 482.901, 268.189, 481.32, 312.041, 479.802, 353.915, 478.352, 403.537, 476.635, 450.685, 475.003, 497.059, 473.397, 535.083, 472.081, 565.819, 471.017, 580.972, 443.538, 595.83, 416.593, 610.179, 390.573, 624.796, 364.066, 701.818, 343.821, 699.407, 375.268, 697.043, 406.089, 694.164, 443.636, 691.255, 481.58, 736.168, 481.804, 779.72, 482.02, 779.72, 448.979, 779.72, 403.488, 779.72, 361.602, 779.72, 325.335, 750.144, 320.215, 702.283, 311.928, 667.1, 305.837, 632.278, 299.808, 625.676, 268.999, 668.739, 271.343, 713.895, 273.8, 771.738, 276.948, 819.772, 279.562 )
 texture_mode = -1082452802
 
 [node name="Background" type="TextureRect" parent="."]
@@ -29,3 +86,43 @@ margin_right = 1920.0
 margin_bottom = 1080.0
 rect_scale = Vector2( 0.563, 0.667 )
 texture = ExtResource( 2 )
+
+[node name="Background2" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 150.617
+margin_top = 89.5807
+margin_right = 1338.62
+margin_bottom = 765.581
+rect_scale = Vector2( 0.58, 0.6 )
+texture = ExtResource( 3 )
+
+[node name="Midground" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -1.0
+margin_right = 1983.0
+margin_bottom = 1080.0
+rect_scale = Vector2( 0.563, 0.667 )
+texture = ExtResource( 4 )
+
+[node name="EarlyGame" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[node name="MidGame" type="Timer" parent="."]
+wait_time = 35.0
+one_shot = true
+
+[node name="LateGame" type="Timer" parent="."]
+wait_time = 20.0
+one_shot = true
+
+[node name="Leak" type="Timer" parent="."]
+wait_time = 3.0
+
+[node name="FugaContainer" type="Node2D" parent="."]
+[connection signal="timeout" from="EarlyGame" to="." method="_on_EarlyGame_timeout"]
+[connection signal="timeout" from="MidGame" to="." method="_on_MidGame_timeout"]
+[connection signal="timeout" from="LateGame" to="." method="_on_LateGame_timeout"]
+[connection signal="timeout" from="Leak" to="." method="_on_Leak_timeout"]
