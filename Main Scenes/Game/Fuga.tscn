@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://Art/agua larga/agua_larga_1.png" type="Texture" id=1]
 [ext_resource path="res://Art/agua larga/agua_larga_2.png" type="Texture" id=2]
@@ -20,36 +20,31 @@ script/source = "extends Node2D
 
 class_name Fuga
 
-enum states { spawn, flow, patch }
+enum states { spawn, patch }
 
-var __anim setget nowrite, noread
-var __key setget nowrite, noread
+var anim:Array
+var key:Label
 
 var letter:String setget _set_letter
 var state:int setget _set_anim
 
+func _ready():
+	anim = get_node(\"Animations\").get_children()
+	key = get_node(\"Letter/Panel/Label\")
+
 func _set_letter(value):
-	letter = value #set it and then do stuff
-	if !__key: 
-		__key = $Letter/Panel/Label
-	__key.text = value
+	letter = value
+	key.text = value
 
 func _set_anim(value):
-	state == value #set it and then do stuff
-	if !__anim:
-		__anim = $Animation
+	state = value 
 	if value == states.spawn:
-		pass #play first animation
-	elif value == states.flow: 
-		pass #play second animation 
+		anim[0].visible = true
+		anim[1].visible = false
 	elif value == states.patch:
-		pass #play third animation
-
-func nowrite(value):
-	print(\"cant modify this property\")
-
-func noread():
-	print(\"cant read this property\")"
+		anim[0].visible = false
+		anim[1].visible = true
+"
 
 [sub_resource type="SpriteFrames" id=1]
 animations = [ {
@@ -59,15 +54,31 @@ animations = [ {
 "speed": 12.0
 } ]
 
+[sub_resource type="SpriteFrames" id=3]
+animations = [ {
+"frames": [ ExtResource( 1 ), ExtResource( 2 ), ExtResource( 3 ) ],
+"loop": true,
+"name": "default",
+"speed": 12.0
+} ]
+
 [node name="Node2D" type="Node2D"]
 script = SubResource( 2 )
 
-[node name="Animation" type="AnimatedSprite" parent="."]
+[node name="Animations" type="Node2D" parent="."]
+
+[node name="Animation1" type="AnimatedSprite" parent="Animations"]
 scale = Vector2( 0.16, 0.16 )
 frames = SubResource( 1 )
 animation = "agua"
-frame = 4
+frame = 5
 playing = true
+centered = false
+
+[node name="Animation2" type="AnimatedSprite" parent="Animations"]
+visible = false
+scale = Vector2( 0.2, 0.21 )
+frames = SubResource( 3 )
 centered = false
 
 [node name="Letter" type="Control" parent="."]

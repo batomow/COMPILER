@@ -46,14 +46,17 @@ func _on_LateGame_timeout():
 	pass # Replace with function body.
 
 func _on_Leak_timeout():
+	if letter_stack.empty() or position_stack.empty():
+		return
 	var new_fuga = base_fuga.instance()
+	fuga_container.add_child(new_fuga)
 	new_fuga.position = points[position_stack.front()]
 	position_stack.pop_front()
 	new_fuga.letter = alphabet[letter_stack.front()]
 	letter_stack.pop_front()
 	new_fuga.state = new_fuga.states.spawn
-	fuga_container.add_child(new_fuga)
-
+	new_fuga.name = new_fuga.letter
+	
 
 "
 
