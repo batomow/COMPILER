@@ -20,25 +20,43 @@ onready var points_size:int = points.size()
 onready var fuga_container = $FugaContainer
 
 var alphabet:Dictionary = {
-	0:\"A\", 1:\"B\", 2:\"C\", 3:\"D\", 4:\"E\", 5:\"F\",
-	6:\"G\", 7:\"H\", 8:\"I\", 9:\"J\", 10:\"K\", 11:\"L\",
-	12:\"M\", 13:\"N\", 14:\"O\", 15:\"P\", 16:\"Q\", 17:\"R\",
-	18:\"S\", 19:\"T\", 20:\"U\", 21:\"V\", 22:\"W\", 23:\"X\", 
-	24:\"Y\", 25:\"Z\"
+	65:\"A\", 66:\"B\", 67:\"C\", 68:\"D\", 69:\"E\", 70:\"F\",
+	71:\"G\", 72:\"H\", 73:\"I\", 74:\"J\", 75:\"K\", 76:\"L\",
+	77:\"M\", 78:\"N\", 79:\"O\", 80:\"P\", 81:\"Q\", 82:\"R\",
+	83:\"S\", 84:\"T\", 85:\"U\", 86:\"V\", 87:\"W\", 88:\"X\",
+	89:\"Y\", 90:\"Z\"
 }
-onready var letter_stack:Array = range(0,26)
+
+onready var letter_stack:Array = range(65,91)
 onready var position_stack:Array = range(0, points_size)
 
 var fugas_counter:int = 0
-var un_pressed_keys:Array = []
-var pressed_keys:Array = [] 
+var keys_to_press:Dictionary = {}
+
+var input_queue:Array = []
+
+func _unhandled_key_input(event:InputEventKey): #filter key presses
+	if (event.scancode in keys_to_press.keys()):
+		if (!event.echo):
+			input_queue.push_back(event)
+			print(alphabet[event.scancode])
+
+func _process(delta):
+	if !input_queue.empty(): #process key press or release
+		var event:InputEventKey = input_queue.front()
+		if (event.pressed):
+			keys_to_press[event.scancode].state = GM.EFUGA.HELD
+		else:
+			keys_to_press[event.scancode].state = GM.EFUGA.SPAWN
+		input_queue.pop_front()
 
 func _ready():
 	randomize()
 	letter_stack.shuffle()
 	position_stack.shuffle()
 	early_timer.start()
-
+	leak_timer.wait_time = (3 - GM.DIFFICULTY) #DIFICULTY (0, 1, 2) EASY, NORMAL, HARD
+	
 func _on_EarlyGame_timeout():
 	mid_timer.start()
 	_on_Leak_timeout()
@@ -51,22 +69,18 @@ func _on_LateGame_timeout():
 	pass # Replace with function body.
 
 func _on_Leak_timeout():
-	if letter_stack.empty() or position_stack.empty():
-		return
-	if (GameManager.difficulty == 0 && fugas_counter > 5) || (GameManager.difficulty == 1 && fugas_counter > 12):
+	if letter_stack.empty() or position_stack.empty() or fugas_counter > 4:
 		return
 	var new_fuga = base_fuga.instance()
 	fuga_container.add_child(new_fuga)
 	new_fuga.position = points[position_stack.front()]
 	position_stack.pop_front()
 	new_fuga.letter = alphabet[letter_stack.front()]
+	keys_to_press[letter_stack.front()] = new_fuga
 	letter_stack.pop_front()
-	new_fuga.state = new_fuga.states.spawn
+	new_fuga.state = GM.EFUGA.SPAWN
 	new_fuga.name = new_fuga.letter
-	fugas_counter += 1
-	un_pressed_keys.push_back(new_fuga.letter)
-
-"
+	fugas_counter += 1"
 
 [node name="Game" type="Node2D"]
 script = SubResource( 1 )
@@ -130,7 +144,6 @@ wait_time = 20.0
 one_shot = true
 
 [node name="Leak" type="Timer" parent="."]
-wait_time = 3.0
 
 [node name="FugaContainer" type="Node2D" parent="."]
 [connection signal="timeout" from="EarlyGame" to="." method="_on_EarlyGame_timeout"]

@@ -6,7 +6,8 @@ script/source = "extends Node
 class_name GameManager
 
 # warning-ignore:unused_class_variable
-export (int, \"Easy\", \"Normal\", \"Hard\") var difficulty
+export (int, \"Easy\", \"Normal\", \"Hard\") var DIFFICULTY
+enum EFUGA {SPAWN, HELD, PATCH}
 
 "
 

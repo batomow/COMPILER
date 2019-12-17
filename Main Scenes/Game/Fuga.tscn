@@ -15,12 +15,10 @@
 [ext_resource path="res://Art/agua larga/agua_larga_13.png" type="Texture" id=13]
 [ext_resource path="res://Art/agua larga/agua_larga_14.png" type="Texture" id=14]
 
-[sub_resource type="GDScript" id=2]
+[sub_resource type="GDScript" id=4]
 script/source = "extends Node2D
 
 class_name Fuga
-
-enum states { spawn, patch }
 
 var anim:Array
 var key:Label
@@ -38,15 +36,15 @@ func _set_letter(value):
 
 func _set_anim(value):
 	state = value 
-	if value == states.spawn:
+	if value == GM.EFUGA.SPAWN:
 		anim[0].visible = true
 		anim[1].visible = false
-	elif value == states.patch:
+	elif value == GM.EFUGA.PATCH || value == GM.EFUGA.HELD:
 		anim[0].visible = false
 		anim[1].visible = true
 "
 
-[sub_resource type="SpriteFrames" id=1]
+[sub_resource type="SpriteFrames" id=2]
 animations = [ {
 "frames": [ ExtResource( 1 ), ExtResource( 2 ), ExtResource( 3 ), ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ) ],
 "loop": true,
@@ -63,22 +61,24 @@ animations = [ {
 } ]
 
 [node name="Node2D" type="Node2D"]
-script = SubResource( 2 )
+script = SubResource( 4 )
 
 [node name="Animations" type="Node2D" parent="."]
 
 [node name="Animation1" type="AnimatedSprite" parent="Animations"]
+visible = false
 scale = Vector2( 0.16, 0.16 )
-frames = SubResource( 1 )
+frames = SubResource( 2 )
 animation = "agua"
-frame = 5
+frame = 8
 playing = true
 centered = false
 
 [node name="Animation2" type="AnimatedSprite" parent="Animations"]
-visible = false
 scale = Vector2( 0.2, 0.21 )
 frames = SubResource( 3 )
+frame = 2
+playing = true
 centered = false
 
 [node name="Letter" type="Control" parent="."]
