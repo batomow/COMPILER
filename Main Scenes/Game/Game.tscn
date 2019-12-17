@@ -29,14 +29,19 @@ var alphabet:Dictionary = {
 onready var letter_stack:Array = range(0,26)
 onready var position_stack:Array = range(0, points_size)
 
+var fugas_counter:int = 0
+var un_pressed_keys:Array = []
+var pressed_keys:Array = [] 
+
 func _ready():
-	early_timer.start()
 	randomize()
 	letter_stack.shuffle()
 	position_stack.shuffle()
+	early_timer.start()
 
 func _on_EarlyGame_timeout():
 	mid_timer.start()
+	_on_Leak_timeout()
 	leak_timer.start()
 
 func _on_MidGame_timeout():
@@ -48,6 +53,8 @@ func _on_LateGame_timeout():
 func _on_Leak_timeout():
 	if letter_stack.empty() or position_stack.empty():
 		return
+	if (GameManager.difficulty == 0 && fugas_counter > 5) || (GameManager.difficulty == 1 && fugas_counter > 12):
+		return
 	var new_fuga = base_fuga.instance()
 	fuga_container.add_child(new_fuga)
 	new_fuga.position = points[position_stack.front()]
@@ -56,7 +63,8 @@ func _on_Leak_timeout():
 	letter_stack.pop_front()
 	new_fuga.state = new_fuga.states.spawn
 	new_fuga.name = new_fuga.letter
-	
+	fugas_counter += 1
+	un_pressed_keys.push_back(new_fuga.letter)
 
 "
 
@@ -110,7 +118,7 @@ rect_scale = Vector2( 0.563, 0.667 )
 texture = ExtResource( 4 )
 
 [node name="EarlyGame" type="Timer" parent="."]
-wait_time = 5.0
+wait_time = 3.0
 one_shot = true
 
 [node name="MidGame" type="Timer" parent="."]

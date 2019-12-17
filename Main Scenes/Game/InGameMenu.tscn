@@ -4,10 +4,12 @@
 script/source = "extends MenuButton
 
 func _ready(): 
+# warning-ignore:return_value_discarded
 	get_popup().connect(\"id_pressed\", self, \"_on_item_pressed\")
 
 func _on_item_pressed(id:int):
 	match(id):
+# warning-ignore:return_value_discarded
 		1 : get_tree().change_scene(\"res://Main Scenes/MainMenu/MainMenu.tscn\")
 		2 : get_tree().quit()"
 

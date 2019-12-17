@@ -19,6 +19,10 @@ config/name="maelstrom"
 run/main_scene="res://Main Scenes/MainMenu/MainMenu.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+GameManager="*res://Main Scenes/Global/GameManager.tscn"
+
 [display]
 
 window/size/width=1080

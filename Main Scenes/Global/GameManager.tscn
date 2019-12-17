@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node
+
+class_name GameManager
+
+# warning-ignore:unused_class_variable
+export (int, \"Easy\", \"Normal\", \"Hard\") var difficulty
+
+"
+
+[node name="GameManager" type="Node"]
+script = SubResource( 1 )
