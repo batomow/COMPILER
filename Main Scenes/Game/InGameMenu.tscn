@@ -1,26 +1,127 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=16 format=2]
+
+[ext_resource path="res://Art/InGameMenu/PAUSE_IDDLE.png" type="Texture" id=1]
+[ext_resource path="res://Art/InGameMenu/PAUSE_PUSH.png" type="Texture" id=2]
+[ext_resource path="res://Art/InGameMenu/Title/paused_title_2.png" type="Texture" id=3]
+[ext_resource path="res://Animations/InGameMenu.tres" type="Animation" id=4]
+[ext_resource path="res://Art/InGameMenu/resume_iddle.png" type="Texture" id=5]
+[ext_resource path="res://Art/InGameMenu/resume_pushed.png" type="Texture" id=6]
+[ext_resource path="res://Art/InGameMenu/resume_selected.png" type="Texture" id=7]
+[ext_resource path="res://Art/InGameMenu/settings_iddle.png" type="Texture" id=8]
+[ext_resource path="res://Art/InGameMenu/settings_pushed.png" type="Texture" id=9]
+[ext_resource path="res://Art/InGameMenu/settings_selected.png" type="Texture" id=10]
+[ext_resource path="res://Art/InGameMenu/exit_iddle.png" type="Texture" id=11]
+[ext_resource path="res://Art/InGameMenu/exit_pushed.png" type="Texture" id=12]
+[ext_resource path="res://Art/InGameMenu/exit_selected.png" type="Texture" id=13]
 
 [sub_resource type="GDScript" id=1]
-script/source = "extends MenuButton
+script/source = "extends Control
 
-func _ready(): 
-# warning-ignore:return_value_discarded
-	get_popup().connect(\"id_pressed\", self, \"_on_item_pressed\")
 
-func _on_item_pressed(id:int):
-	match(id):
-# warning-ignore:return_value_discarded
-		1 : get_tree().change_scene(\"res://Main Scenes/MainMenu/MainMenu.tscn\")
-		2 : get_tree().quit()"
+onready var menu:Popup = $Popup
+var pop:bool = true
+var game_node:Node2D #this is the root node of the game scene 
 
-[node name="InGameMenu" type="MenuButton"]
-anchor_top = 1.0
+func _on_TextureButton_button_up():
+	if !game_node: 
+		game_node = get_parent() 
+	if pop: 
+		menu.popup()
+		game_node.current_state = game_node.game_states.PAUSED
+	else: 
+		menu.hide()
+		game_node.current_state = game_node.game_states.NOT_PAUSED
+	pop  = !pop
+
+func _on_Resume_button_up():
+	_on_TextureButton_button_up()
+
+
+func _on_Settings_button_up():
+	pass # Replace with function body.
+
+
+func _on_Exite_button_up():
+	get_tree().change_scene('res://Main Scenes/MainMenu/MainMenu.tscn')
+"
+
+[sub_resource type="GDScript" id=2]
+script/source = "extends AnimationPlayer
+
+func _ready():
+	if !(self.is_playing()):
+		self.play(\"PausedTitle\")
+"
+
+[node name="InGameMenu" type="Control"]
+anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 13.8466
-margin_top = -84.9192
-margin_right = 108.846
-margin_bottom = -17.9192
-text = "Menu"
-flat = false
-items = [ "Main Menu", null, 0, false, false, 1, 0, null, "", false, "Quit", null, 0, false, false, 2, 0, null, "", false ]
 script = SubResource( 1 )
+
+[node name="TextureButton" type="TextureButton" parent="."]
+margin_right = 402.0
+margin_bottom = 402.0
+rect_scale = Vector2( 0.234999, 0.227273 )
+texture_normal = ExtResource( 1 )
+texture_pressed = ExtResource( 2 )
+
+[node name="Popup" type="Popup" parent="."]
+visible = true
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 90.0
+margin_top = 79.0
+
+[node name="Panel" type="Panel" parent="Popup"]
+modulate = Color( 1, 1, 1, 0.427451 )
+margin_left = 141.831
+margin_top = 66.7023
+margin_right = 762.831
+margin_bottom = 488.702
+rect_scale = Vector2( 1.01252, 0.978278 )
+
+[node name="TextureRect" type="TextureRect" parent="Popup"]
+margin_left = 277.423
+margin_top = 90.8311
+margin_right = 1442.42
+margin_bottom = 296.831
+rect_scale = Vector2( 0.329314, 0.431539 )
+texture = ExtResource( 3 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Popup/TextureRect"]
+anims/PausedTitle = ExtResource( 4 )
+script = SubResource( 2 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Popup"]
+margin_left = 289.421
+margin_top = 184.277
+margin_right = 1186.42
+margin_bottom = 975.277
+rect_scale = Vector2( 0.380894, 0.353888 )
+
+[node name="Resume" type="TextureButton" parent="Popup/VBoxContainer"]
+margin_right = 897.0
+margin_bottom = 261.0
+texture_normal = ExtResource( 5 )
+texture_pressed = ExtResource( 6 )
+texture_hover = ExtResource( 7 )
+
+[node name="Settings" type="TextureButton" parent="Popup/VBoxContainer"]
+margin_top = 265.0
+margin_right = 897.0
+margin_bottom = 526.0
+texture_normal = ExtResource( 8 )
+texture_pressed = ExtResource( 9 )
+texture_hover = ExtResource( 10 )
+
+[node name="Exit" type="TextureButton" parent="Popup/VBoxContainer"]
+margin_top = 530.0
+margin_right = 897.0
+margin_bottom = 791.0
+texture_normal = ExtResource( 11 )
+texture_pressed = ExtResource( 12 )
+texture_hover = ExtResource( 13 )
+[connection signal="button_up" from="TextureButton" to="." method="_on_TextureButton_button_up"]
+[connection signal="button_up" from="Popup/VBoxContainer/Resume" to="." method="_on_Resume_button_up"]
+[connection signal="button_up" from="Popup/VBoxContainer/Settings" to="." method="_on_Settings_button_up"]
+[connection signal="button_up" from="Popup/VBoxContainer/Exit" to="." method="_on_Exite_button_up"]
