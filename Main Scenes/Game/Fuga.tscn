@@ -15,7 +15,7 @@
 [ext_resource path="res://Art/agua larga/agua_larga_13.png" type="Texture" id=13]
 [ext_resource path="res://Art/agua larga/agua_larga_14.png" type="Texture" id=14]
 
-[sub_resource type="GDScript" id=4]
+[sub_resource type="GDScript" id=1]
 script/source = "extends Node2D
 
 class_name Fuga
@@ -25,6 +25,10 @@ var key:Label
 
 var letter:String setget _set_letter
 var state:int setget _set_anim
+
+const FLOODING_RATE_LOW := 0.01
+const FLOODING_RATE_NORMAL := 0.02
+var current_flooding_rate:float
 
 func _ready():
 	anim = get_node(\"Animations\").get_children()
@@ -39,9 +43,16 @@ func _set_anim(value):
 	if value == GM.EFUGA.SPAWN:
 		anim[0].visible = true
 		anim[1].visible = false
-	elif value == GM.EFUGA.PATCH || value == GM.EFUGA.HELD:
+		current_flooding_rate = FLOODING_RATE_NORMAL
+	elif value == GM.EFUGA.HELD: 
+		current_flooding_rate = FLOODING_RATE_LOW
 		anim[0].visible = false
 		anim[1].visible = true
+	elif value == GM.EFUGA.PATCH:
+		current_flooding_rate = 0
+
+func _on_Timer_timeout():
+	GM.update_flooding(current_flooding_rate)
 "
 
 [sub_resource type="SpriteFrames" id=2]
@@ -61,7 +72,7 @@ animations = [ {
 } ]
 
 [node name="Node2D" type="Node2D"]
-script = SubResource( 4 )
+script = SubResource( 1 )
 
 [node name="Animations" type="Node2D" parent="."]
 
@@ -70,14 +81,13 @@ visible = false
 scale = Vector2( 0.16, 0.16 )
 frames = SubResource( 2 )
 animation = "agua"
-frame = 8
+frame = 7
 playing = true
 centered = false
 
 [node name="Animation2" type="AnimatedSprite" parent="Animations"]
 scale = Vector2( 0.2, 0.21 )
 frames = SubResource( 3 )
-frame = 2
 playing = true
 centered = false
 
@@ -97,3 +107,7 @@ margin_top = -7.0
 margin_right = 4.5
 margin_bottom = 7.0
 text = "A"
+
+[node name="Timer" type="Timer" parent="."]
+autostart = true
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]

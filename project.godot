@@ -8,9 +8,14 @@
 
 config_version=4
 
-_global_script_classes=[  ]
+_global_script_classes=[ {
+"base": "Node2D",
+"class": "Valvula",
+"language": "GDScript",
+"path": "res://Scripts/Valvula.tres.gd"
+} ]
 _global_script_class_icons={
-
+"Valvula": ""
 }
 
 [application]

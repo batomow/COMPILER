@@ -5,11 +5,20 @@ script/source = "extends Node
 
 class_name GameManager
 
-# warning-ignore:unused_class_variable
-export (int, \"Easy\", \"Normal\", \"Hard\") var DIFFICULTY
-enum EFUGA {SPAWN, HELD, PATCH}
+enum difficulty { easy = 3, normal = 6, hard = 9}
+export (difficulty) var DIFFICULTY
+enum EFUGA {SPAWN = 0, HELD = 1, PATCH = 2}
+
+enum game_states { PAUSED, NOT_PAUSED }
+var current_state:int = game_states.NOT_PAUSED
+
+var flood_level:float = 0
+
+func update_flooding(value:float): 
+	flood_level = clamp(flood_level + value, 0, 1)
 
 "
 
 [node name="GameManager" type="Node"]
 script = SubResource( 1 )
+DIFFICULTY = 6
