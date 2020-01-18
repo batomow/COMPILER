@@ -13,10 +13,29 @@ enum game_states { PAUSED, NOT_PAUSED }
 var current_state:int = game_states.NOT_PAUSED
 
 var flood_level:float = 0
+var emptying_velocity:float = 0
 
-func update_flooding(value:float): 
-	flood_level = clamp(flood_level + value, 0, 1)
+var small_leaks:int = 0
+var big_leaks:int = 0
 
+const EMPTYING_AMOUNT := 0.24
+const BIG_LEAK := 0.02
+const SMALL_LEAK := 0.01
+
+func _process(delta): 
+	flood_level = clamp(flood_level + (big_leaks * BIG_LEAK + small_leaks * SMALL_LEAK - emptying_velocity * EMPTYING_AMOUNT) * delta, 0, INF)
+	print(flood_level)
+
+func change_to_small_leak():
+	big_leaks -= 1
+	small_leaks += 1
+
+func change_to_big_leak():
+	big_leaks += 1
+	small_leaks = clamp(small_leaks - 1, 0, INF)
+
+func delete_leak():
+	big_leaks -= 1
 "
 
 [node name="GameManager" type="Node"]

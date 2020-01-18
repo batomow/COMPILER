@@ -4,8 +4,6 @@ class_name Valvula
 
 var dragging:bool = false
 onready var rosca = $Rosca/Sprite2D
-const EMPTYING_AMOUNT = 0.24
-var emptying_velocity:float = 0
 
 func _on_Rosca_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton:
@@ -27,7 +25,5 @@ func _process(delta):
 		dragging = false
 	if not dragging and rosca.rotation_degrees > 0:
 		rosca.rotate(-1 * GM.DIFFICULTY * delta)
-	emptying_velocity = rosca.rotation_degrees / (360 * GM.DIFFICULTY)
+	GM.emptying_velocity = rosca.rotation_degrees / (360 * GM.DIFFICULTY)
 
-func _on_Timer_timeout():
-	GM.update_flooding( -emptying_velocity * EMPTYING_AMOUNT)
