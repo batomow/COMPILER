@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Art/BG.jpg" type="Texture" id=1]
 [ext_resource path="res://Art/tuberia.png" type="Texture" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://Main Scenes/Game/InGameMenu.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Main Scenes/Game/RiskMeter.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Main Scenes/Game/Valvula.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Main Scenes/Game/Toolbox.tscn" type="PackedScene" id=7]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node2D
@@ -153,6 +154,8 @@ rect_scale = Vector2( 0.25, 0.25 )
 
 [node name="Valvula" parent="." instance=ExtResource( 6 )]
 position = Vector2( 937.08, 628.769 )
+
+[node name="Toolbox" parent="." instance=ExtResource( 7 )]
 [connection signal="timeout" from="EarlyGame" to="." method="_on_EarlyGame_timeout"]
 [connection signal="timeout" from="MidGame" to="." method="_on_MidGame_timeout"]
 [connection signal="timeout" from="LateGame" to="." method="_on_LateGame_timeout"]

@@ -24,7 +24,6 @@ const SMALL_LEAK := 0.01
 
 func _process(delta): 
 	flood_level = clamp(flood_level + (big_leaks * BIG_LEAK + small_leaks * SMALL_LEAK - emptying_velocity * EMPTYING_AMOUNT) * delta, 0, INF)
-	print(flood_level)
 
 func change_to_small_leak():
 	big_leaks -= 1
