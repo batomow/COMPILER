@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Art/BG.jpg" type="Texture" id=1]
 [ext_resource path="res://Art/tuberia.png" type="Texture" id=2]
@@ -7,6 +7,8 @@
 [ext_resource path="res://Main Scenes/Game/RiskMeter.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Main Scenes/Game/Valvula.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Main Scenes/Game/Toolbox.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Main Scenes/Game/CharacterFace.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Main Scenes/Game/Reloj.tscn" type="PackedScene" id=9]
 
 [sub_resource type="GDScript" id=1]
 script/source = "extends Node2D
@@ -156,6 +158,18 @@ rect_scale = Vector2( 0.25, 0.25 )
 position = Vector2( 937.08, 628.769 )
 
 [node name="Toolbox" parent="." instance=ExtResource( 7 )]
+
+[node name="CharacterFace" parent="." instance=ExtResource( 8 )]
+margin_left = 640.0
+margin_top = 574.284
+margin_right = 640.0
+margin_bottom = 574.284
+
+[node name="Reloj" parent="." instance=ExtResource( 9 )]
+margin_left = 104.132
+margin_top = -1.29236
+margin_right = 104.132
+margin_bottom = -1.29236
 [connection signal="timeout" from="EarlyGame" to="." method="_on_EarlyGame_timeout"]
 [connection signal="timeout" from="MidGame" to="." method="_on_MidGame_timeout"]
 [connection signal="timeout" from="LateGame" to="." method="_on_LateGame_timeout"]

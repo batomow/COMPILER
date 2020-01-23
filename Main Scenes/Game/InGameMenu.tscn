@@ -20,17 +20,15 @@ script/source = "extends Control
 
 onready var menu:Popup = $Popup
 var pop:bool = true
-var game_node:Node2D #this is the root node of the game scene 
+
 
 func _on_TextureButton_button_up():
-	if !game_node: 
-		game_node = get_parent() 
 	if pop: 
 		menu.popup()
-		game_node.current_state = game_node.game_states.PAUSED
+		GM.current_state = GM.game_states.PAUSED
 	else: 
 		menu.hide()
-		game_node.current_state = game_node.game_states.NOT_PAUSED
+		GM.current_state = GM.game_states.NOT_PAUSED
 	pop  = !pop
 
 func _on_Resume_button_up():
