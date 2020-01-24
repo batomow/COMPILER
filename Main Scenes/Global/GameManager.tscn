@@ -9,8 +9,8 @@ enum difficulty { easy = 3, normal = 6, hard = 9}
 export (difficulty) var DIFFICULTY
 enum EFUGA {SPAWN = 0, HELD = 1, PATCH = 2}
 
-enum game_states { PAUSED, NOT_PAUSED }
-var current_state:int = game_states.NOT_PAUSED
+enum game_states { PAUSED, NOT_PAUSED, TIMEOUT } 
+var current_state:int = game_states.NOT_PAUSED setget _state_check
 
 var flood_level:float = 0
 var emptying_velocity:float = 0
@@ -21,6 +21,8 @@ var big_leaks:int = 0
 const EMPTYING_AMOUNT := 0.24
 const BIG_LEAK := 0.02
 const SMALL_LEAK := 0.01
+
+var reloj:Reloj
 
 func _process(delta): 
 	flood_level = clamp(flood_level + (big_leaks * BIG_LEAK + small_leaks * SMALL_LEAK - emptying_velocity * EMPTYING_AMOUNT) * delta, 0, INF)
@@ -35,8 +37,16 @@ func change_to_big_leak():
 
 func delete_leak():
 	big_leaks -= 1
-"
+
+func _state_check(value): 
+	current_state = value
+	if current_state == game_states.TIMEOUT: 
+		print(\"Game Over\")
+	elif current_state == game_states.NOT_PAUSED: 
+		reloj.unpause_timers()
+	elif current_state == game_states.PAUSED: 
+		reloj.pause_timers()"
 
 [node name="GameManager" type="Node"]
 script = SubResource( 1 )
-DIFFICULTY = 6
+DIFFICULTY = 3
