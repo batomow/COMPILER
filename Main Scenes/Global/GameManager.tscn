@@ -23,6 +23,7 @@ const BIG_LEAK := 0.02
 const SMALL_LEAK := 0.01
 
 var reloj:Reloj
+var toolbox:ToolBox
 
 func _process(delta): 
 	flood_level = clamp(flood_level + (big_leaks * BIG_LEAK + small_leaks * SMALL_LEAK - emptying_velocity * EMPTYING_AMOUNT) * delta, 0, INF)

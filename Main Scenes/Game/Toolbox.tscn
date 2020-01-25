@@ -1,112 +1,63 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
-[ext_resource path="res://Art/toolbox.png" type="Texture" id=1]
+[ext_resource path="res://Scripts/Toolbox.tres.gd" type="Script" id=1]
 [ext_resource path="res://Art/tape.png" type="Texture" id=2]
 [ext_resource path="res://Art/cubeta.png" type="Texture" id=3]
 [ext_resource path="res://Art/martillo.png" type="Texture" id=4]
-
-[sub_resource type="GDScript" id=1]
-script/source = "extends Control
-
-onready var Tape = $HBoxContainer/Tape
-onready var Cubeta = $HBoxContainer/Cubeta
-onready var Martillo = $HBoxContainer/Martillo
-onready var HBox = $HBoxContainer
-onready var Holder = $MouseHolder
-
-var _tape_flag := false 
-var _cubeta_flag := false
-var _martillo_flag := false
-var _has_object := false
-
-func _process(delta):
-	if _tape_flag: 
-		Tape.rect_position = (get_global_mouse_position() - Vector2(85, 67) * 0.4) * 2.5
-	elif _cubeta_flag: 
-		Cubeta.rect_position = (get_global_mouse_position() - Vector2(85, 67) * 0.4) * 2.5
-	elif _martillo_flag: 
-		Martillo.rect_position = (get_global_mouse_position() - Vector2(85, 67) * 0.4) * 2.5
-
-	if _has_object and Input.is_action_just_pressed(\"right_mouse_button\"): 
-		if _tape_flag: 
-			Holder.remove_child(Tape) 
-			HBox.add_child(Tape)
-			_tape_flag = false
-			_has_object = false
-		elif _cubeta_flag: 
-			Holder.remove_child(Cubeta) 
-			HBox.add_child(Cubeta)
-			_cubeta_flag = false 
-			_has_object = false
-		elif _martillo_flag: 
-			Holder.remove_child(Martillo) 
-			HBox.add_child(Martillo) 
-			_martillo_flag = false
-			_has_object = false
-
-func _on_Tape_gui_input(event):
-	if event is InputEventMouseButton and !_has_object:
-		HBox.remove_child(Tape)
-		Holder.add_child(Tape) 
-		_tape_flag = true
-		_has_object = true
-
-func _on_Cubeta_gui_input(event):
-	if event is InputEventMouseButton and !_has_object:
-		HBox.remove_child(Cubeta)
-		Holder.add_child(Cubeta) 
-		_cubeta_flag = true
-		_has_object = true
-
-
-func _on_Martillo_gui_input(event):
-	if event is InputEventMouseButton and !_has_object:
-		HBox.remove_child(Martillo)
-		Holder.add_child(Martillo) 
-		_martillo_flag = true
-		_has_object = true
-
-"
+[ext_resource path="res://Art/toolbox.png" type="Texture" id=5]
+[ext_resource path="res://Animations/tape_normal.tres" type="Animation" id=6]
+[ext_resource path="res://Animations/tape_runout.tres" type="Animation" id=7]
 
 [node name="Toolbox" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 rect_scale = Vector2( 0.4, 0.4 )
-script = SubResource( 1 )
+script = ExtResource( 1 )
+tape_original_sprite = ExtResource( 2 )
+cubeta_original_sprite = ExtResource( 3 )
+martillo_oritinal_sprite = ExtResource( 4 )
 
 [node name="Caja" type="TextureRect" parent="."]
 margin_left = 47.6132
 margin_top = 1329.77
 margin_right = 711.613
 margin_bottom = 1752.77
-texture = ExtResource( 1 )
+texture = ExtResource( 5 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
-margin_left = 141.156
-margin_top = 1435.71
-margin_right = 628.156
-margin_bottom = 1607.71
+margin_left = 141.0
+margin_top = 1436.0
+margin_right = 704.0
+margin_bottom = 1631.0
 custom_constants/separation = 20
 
 [node name="Tape" type="TextureRect" parent="HBoxContainer"]
 margin_right = 169.0
-margin_bottom = 172.0
+margin_bottom = 195.0
 texture = ExtResource( 2 )
 stretch_mode = 3
+
+[node name="TapeAnim" type="AnimationPlayer" parent="HBoxContainer/Tape"]
+anims/tape_normal = ExtResource( 6 )
+anims/tape_runout = ExtResource( 7 )
 
 [node name="Cubeta" type="TextureRect" parent="HBoxContainer"]
 margin_left = 189.0
 margin_right = 339.0
-margin_bottom = 172.0
+margin_bottom = 195.0
 texture = ExtResource( 3 )
 stretch_mode = 3
+
+[node name="CubetaAnim" type="AnimationPlayer" parent="HBoxContainer/Cubeta"]
 
 [node name="Martillo" type="TextureRect" parent="HBoxContainer"]
 margin_left = 359.0
 margin_right = 487.0
-margin_bottom = 172.0
+margin_bottom = 195.0
 texture = ExtResource( 4 )
 stretch_mode = 3
+
+[node name="MartilloAnim" type="AnimationPlayer" parent="HBoxContainer/Martillo"]
 
 [node name="MouseHolder" type="Control" parent="."]
 margin_right = 40.0
