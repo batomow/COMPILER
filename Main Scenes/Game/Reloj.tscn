@@ -24,21 +24,18 @@ one_shot = true
 [node name="Fast" type="Timer" parent="."]
 one_shot = true
 
-[node name="Panel" type="Panel" parent="."]
-modulate = Color( 1, 1, 1, 0.54902 )
-margin_left = 10.0
-margin_top = 90.0
-margin_right = 90.0
-margin_bottom = 108.0
-
-[node name="Label" type="Label" parent="Panel"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-text = "55"
-align = 1
-valign = 1
-
 [node name="Total" type="Timer" parent="."]
 one_shot = true
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+margin_left = 100.0
+margin_top = 110.0
+margin_right = 200.0
+margin_bottom = 134.0
+rect_rotation = -89.9999
+max_value = 60.0
+step = 1.0
+value = 59.0
+percent_visible = false
 [connection signal="timeout" from="Normal" to="." method="_on_Normal_timeout"]
 [connection signal="timeout" from="Fast" to="." method="_on_Fast_timeout"]

@@ -46,6 +46,7 @@ func _unhandled_key_input(event:InputEventKey): #filter key presses
 			input_queue.push_back(event)
 #			print(alphabet[event.scancode])
 
+# warning-ignore:unused_argument
 func _process(delta):
 	if GM.current_state == GM.game_states.PAUSED: 
 		return 

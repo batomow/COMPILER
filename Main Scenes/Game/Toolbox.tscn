@@ -1,12 +1,15 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Scripts/Toolbox.tres.gd" type="Script" id=1]
 [ext_resource path="res://Art/tape.png" type="Texture" id=2]
-[ext_resource path="res://Art/cubeta.png" type="Texture" id=3]
-[ext_resource path="res://Art/martillo.png" type="Texture" id=4]
-[ext_resource path="res://Art/toolbox.png" type="Texture" id=5]
-[ext_resource path="res://Animations/tape_normal.tres" type="Animation" id=6]
-[ext_resource path="res://Animations/tape_runout.tres" type="Animation" id=7]
+[ext_resource path="res://Art/Tape Animation/2nda/tape_alt_13.png" type="Texture" id=3]
+[ext_resource path="res://Art/cubeta.png" type="Texture" id=4]
+[ext_resource path="res://Art/martillo.png" type="Texture" id=5]
+[ext_resource path="res://Art/toolbox.png" type="Texture" id=6]
+[ext_resource path="res://Animations/tape_normal.tres" type="Animation" id=7]
+[ext_resource path="res://Animations/tape_runout.tres" type="Animation" id=8]
+[ext_resource path="res://Animations/cubeta_normal.tres" type="Animation" id=9]
+[ext_resource path="res://Animations/martillo_normal.tres" type="Animation" id=10]
 
 [node name="Toolbox" type="Control"]
 anchor_right = 1.0
@@ -14,15 +17,16 @@ anchor_bottom = 1.0
 rect_scale = Vector2( 0.4, 0.4 )
 script = ExtResource( 1 )
 tape_original_sprite = ExtResource( 2 )
-cubeta_original_sprite = ExtResource( 3 )
-martillo_oritinal_sprite = ExtResource( 4 )
+tape_runout_sprite = ExtResource( 3 )
+cubeta_original_sprite = ExtResource( 4 )
+martillo_oritinal_sprite = ExtResource( 5 )
 
 [node name="Caja" type="TextureRect" parent="."]
 margin_left = 47.6132
 margin_top = 1329.77
 margin_right = 711.613
 margin_bottom = 1752.77
-texture = ExtResource( 5 )
+texture = ExtResource( 6 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 margin_left = 141.0
@@ -33,31 +37,33 @@ custom_constants/separation = 20
 
 [node name="Tape" type="TextureRect" parent="HBoxContainer"]
 margin_right = 169.0
-margin_bottom = 195.0
+margin_bottom = 260.0
 texture = ExtResource( 2 )
 stretch_mode = 3
 
 [node name="TapeAnim" type="AnimationPlayer" parent="HBoxContainer/Tape"]
-anims/tape_normal = ExtResource( 6 )
-anims/tape_runout = ExtResource( 7 )
+anims/tape_normal = ExtResource( 7 )
+anims/tape_runout = ExtResource( 8 )
 
 [node name="Cubeta" type="TextureRect" parent="HBoxContainer"]
 margin_left = 189.0
 margin_right = 339.0
-margin_bottom = 195.0
-texture = ExtResource( 3 )
+margin_bottom = 260.0
+texture = ExtResource( 4 )
 stretch_mode = 3
 
 [node name="CubetaAnim" type="AnimationPlayer" parent="HBoxContainer/Cubeta"]
+anims/cubeta_normal = ExtResource( 9 )
 
 [node name="Martillo" type="TextureRect" parent="HBoxContainer"]
 margin_left = 359.0
 margin_right = 487.0
-margin_bottom = 195.0
-texture = ExtResource( 4 )
+margin_bottom = 260.0
+texture = ExtResource( 5 )
 stretch_mode = 3
 
 [node name="MartilloAnim" type="AnimationPlayer" parent="HBoxContainer/Martillo"]
+anims/martillo_normal = ExtResource( 10 )
 
 [node name="MouseHolder" type="Control" parent="."]
 margin_right = 40.0

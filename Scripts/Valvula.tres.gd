@@ -5,6 +5,8 @@ class_name Valvula
 var dragging:bool = false
 onready var rosca = $Rosca/Sprite2D
 
+# warning-ignore:unused_argument
+# warning-ignore:unused_argument
 func _on_Rosca_input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton:
 		dragging = true

@@ -17,6 +17,7 @@ var small_buffer:bool = true
 var small_buffer2:bool = true
 
 export (Resource) var tape_original_sprite
+export (Resource) var tape_runout_sprite
 export (Resource) var cubeta_original_sprite 
 export (Resource) var martillo_oritinal_sprite
 
@@ -28,6 +29,7 @@ var _has_object := false
 func _ready(): 
 	GM.toolbox = self
 
+# warning-ignore:unused_argument
 func _process(delta):
 	if small_buffer2: 
 		if _tape_flag:
@@ -50,7 +52,10 @@ func _process(delta):
 			HBox.add_child(Tape)
 			_tape_flag = false
 			_has_object = false
-			Tape.texture = tape_original_sprite
+			if tape_uses > 0:
+				Tape.texture = tape_original_sprite
+			else: 
+				Tape.texture = tape_runout_sprite
 		elif _cubeta_flag:
 			Holder.remove_child(Cubeta)
 			HBox.add_child(Cubeta)
@@ -74,9 +79,9 @@ func _process(delta):
 				tape_anim.play("tape_normal")
 			tape_uses -= 1
 		elif _cubeta_flag and !small_buffer:
-			pass
+			cubeta_anim.play("cubeta_normal")
 		elif _martillo_flag and !small_buffer:
-			pass
+			martillo_anim.play('martillo_normal')
 		if !small_buffer: 
 			small_buffer2 = false
 		small_buffer = false 

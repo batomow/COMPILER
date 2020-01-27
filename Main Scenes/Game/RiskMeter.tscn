@@ -12,6 +12,7 @@ var risk_level:float = -90
 
 onready var pluma = $Pluma
 
+# warning-ignore:unused_argument
 func _process(delta):
 	pluma.rect_rotation = clamp(risk_level + 180*GM.flood_level, LOWERBOUND, UPPERBOUND)
 "

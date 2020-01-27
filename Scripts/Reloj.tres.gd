@@ -7,19 +7,23 @@ onready var fast_timer:Timer = $Fast
 onready var total_timer:Timer = $Total
 onready var anim:AnimationPlayer = $AnimationPlayer
 var total_time:float = 0
-onready var time_text:Label = $Panel/Label
+onready var progress_bar = $ProgressBar
 
 func _ready():
 	GM.reloj = self
 	if GM.DIFFICULTY == GM.difficulty.easy: 
+		progress_bar.max_value = 60
 		set_time(60)
 	elif GM.DIFFICULTY == GM.difficulty.normal: 
+		progress_bar.max_value = 120
 		set_time(120)
-	elif GM.DIFFICULTY == GM.difficulty.hard: 
+	elif GM.DIFFICULTY == GM.difficulty.hard:
+		progress_bar.max_value = 180 
 		set_time(180)
 
+# warning-ignore:unused_argument
 func _process(delta):
-	time_text.text = String(int(total_timer.time_left))
+	progress_bar.value = int(total_timer.time_left)
 
 func set_time(value:float)->void:
 	total_time = value

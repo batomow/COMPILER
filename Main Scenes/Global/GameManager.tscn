@@ -6,6 +6,7 @@ script/source = "extends Node
 class_name GameManager
 
 enum difficulty { easy = 3, normal = 6, hard = 9}
+# warning-ignore:unused_class_variable
 export (difficulty) var DIFFICULTY
 enum EFUGA {SPAWN = 0, HELD = 1, PATCH = 2}
 
@@ -34,6 +35,7 @@ func change_to_small_leak():
 
 func change_to_big_leak():
 	big_leaks += 1
+# warning-ignore:narrowing_conversion
 	small_leaks = clamp(small_leaks - 1, 0, INF)
 
 func delete_leak():
