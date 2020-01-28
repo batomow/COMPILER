@@ -1,97 +1,18 @@
 [gd_scene load_steps=11 format=2]
 
-[ext_resource path="res://Art/BG.jpg" type="Texture" id=1]
-[ext_resource path="res://Art/tuberia.png" type="Texture" id=2]
-[ext_resource path="res://Art/piso_agua.png" type="Texture" id=3]
-[ext_resource path="res://Main Scenes/Game/InGameMenu.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Main Scenes/Game/RiskMeter.tscn" type="PackedScene" id=5]
-[ext_resource path="res://Main Scenes/Game/Valvula.tscn" type="PackedScene" id=6]
-[ext_resource path="res://Main Scenes/Game/Toolbox.tscn" type="PackedScene" id=7]
-[ext_resource path="res://Main Scenes/Game/CharacterFace.tscn" type="PackedScene" id=8]
-[ext_resource path="res://Main Scenes/Game/Reloj.tscn" type="PackedScene" id=9]
-
-[sub_resource type="GDScript" id=1]
-script/source = "extends Node2D
-
-onready var early_timer = $EarlyGame
-onready var mid_timer = $MidGame
-onready var late_timer = $LateGame
-onready var leak_timer = $Leak
-
-onready var base_fuga = preload(\"res://Main Scenes/Game/Fuga.tscn\")
-
-onready var points = ($Pipe/Line).points
-onready var points_size:int = points.size()
-onready var fuga_container = $FugaContainer
-
-var alphabet:Dictionary = {
-	65:\"A\", 66:\"B\", 67:\"C\", 68:\"D\", 69:\"E\", 70:\"F\",
-	71:\"G\", 72:\"H\", 73:\"I\", 74:\"J\", 75:\"K\", 76:\"L\",
-	77:\"M\", 78:\"N\", 79:\"O\", 80:\"P\", 81:\"Q\", 82:\"R\",
-	83:\"S\", 84:\"T\", 85:\"U\", 86:\"V\", 87:\"W\", 88:\"X\",
-	89:\"Y\", 90:\"Z\"
-}
-
-onready var letter_stack:Array = range(65,91)
-onready var position_stack:Array = range(0, points_size)
-
-var fugas_counter:int = 0
-var keys_to_press:Dictionary = {}
-
-var input_queue:Array = []
-
-func _unhandled_key_input(event:InputEventKey): #filter key presses
-	if (event.scancode in keys_to_press.keys()):
-		if (!event.echo):
-			input_queue.push_back(event)
-#			print(alphabet[event.scancode])
-
-# warning-ignore:unused_argument
-func _process(delta):
-	if GM.current_state == GM.game_states.PAUSED: 
-		return 
-	if !input_queue.empty(): #process key press or release
-		var event:InputEventKey = input_queue.front()
-		if (event.pressed):
-			keys_to_press[event.scancode].state = ((keys_to_press[event.scancode].state + 1) % 2)
-		input_queue.pop_front()
-
-func _ready():
-	randomize()
-	letter_stack.shuffle()
-	position_stack.shuffle()
-	early_timer.start()
-	leak_timer.wait_time = ( 5 - GM.DIFFICULTY/3) #DIFICULTY (0, 1, 2) EASY, NORMAL, HARD
-	
-func _on_EarlyGame_timeout():
-	mid_timer.start()
-	_on_Leak_timeout()
-	leak_timer.start()
-
-func _on_MidGame_timeout():
-	late_timer.start()
-
-func _on_LateGame_timeout():
-	pass # Replace with function body.
-
-func _on_Leak_timeout():
-	if GM.current_state == GM.game_states.PAUSED: 
-		return
-	if letter_stack.empty() or position_stack.empty():
-		return
-	var new_fuga = base_fuga.instance()
-	fuga_container.add_child(new_fuga)
-	new_fuga.position = points[position_stack.front()]
-	position_stack.pop_front()
-	new_fuga.letter = alphabet[letter_stack.front()]
-	keys_to_press[letter_stack.front()] = new_fuga
-	letter_stack.pop_front()
-	new_fuga.state = GM.EFUGA.SPAWN
-	new_fuga.name = new_fuga.letter
-	fugas_counter += 1"
+[ext_resource path="res://Scripts/Game.tres.gd" type="Script" id=1]
+[ext_resource path="res://Art/BG.jpg" type="Texture" id=2]
+[ext_resource path="res://Art/tuberia.png" type="Texture" id=3]
+[ext_resource path="res://Art/piso_agua.png" type="Texture" id=4]
+[ext_resource path="res://Main Scenes/Game/InGameMenu.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Main Scenes/Game/RiskMeter.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Main Scenes/Game/Valvula.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Main Scenes/Game/Toolbox.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Main Scenes/Game/CharacterFace.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Main Scenes/Game/Reloj.tscn" type="PackedScene" id=10]
 
 [node name="Game" type="Node2D"]
-script = SubResource( 1 )
+script = ExtResource( 1 )
 
 [node name="Pipe" type="Node2D" parent="."]
 editor/display_folded = true
@@ -107,7 +28,7 @@ margin_right = 1920.0
 margin_bottom = 1080.0
 rect_scale = Vector2( 0.563, 0.667 )
 mouse_filter = 2
-texture = ExtResource( 1 )
+texture = ExtResource( 2 )
 
 [node name="Background2" type="TextureRect" parent="."]
 anchor_right = 1.0
@@ -117,7 +38,7 @@ margin_top = 89.5807
 margin_right = 1338.62
 margin_bottom = 765.581
 rect_scale = Vector2( 0.58, 0.6 )
-texture = ExtResource( 2 )
+texture = ExtResource( 3 )
 
 [node name="Midground" type="TextureRect" parent="."]
 anchor_right = 1.0
@@ -128,7 +49,7 @@ margin_right = 1985.58
 margin_bottom = 1078.71
 rect_scale = Vector2( 0.563, 0.667 )
 mouse_filter = 2
-texture = ExtResource( 3 )
+texture = ExtResource( 4 )
 
 [node name="EarlyGame" type="Timer" parent="."]
 wait_time = 3.0
@@ -144,33 +65,33 @@ one_shot = true
 
 [node name="Leak" type="Timer" parent="."]
 
-[node name="FugaContainer" type="Node2D" parent="."]
+[node name="InGameMenu" parent="." instance=ExtResource( 5 )]
 
-[node name="InGameMenu" parent="." instance=ExtResource( 4 )]
-
-[node name="RiskMeter" parent="." instance=ExtResource( 5 )]
+[node name="RiskMeter" parent="." instance=ExtResource( 6 )]
 margin_left = 755.06
 margin_top = 621.236
 margin_right = 755.06
 margin_bottom = 621.236
 rect_scale = Vector2( 0.25, 0.25 )
 
-[node name="Valvula" parent="." instance=ExtResource( 6 )]
+[node name="Valvula" parent="." instance=ExtResource( 7 )]
 position = Vector2( 937.08, 628.769 )
 
-[node name="Toolbox" parent="." instance=ExtResource( 7 )]
+[node name="Toolbox" parent="." instance=ExtResource( 8 )]
 
-[node name="CharacterFace" parent="." instance=ExtResource( 8 )]
+[node name="CharacterFace" parent="." instance=ExtResource( 9 )]
 margin_left = 640.0
 margin_top = 574.284
 margin_right = 640.0
 margin_bottom = 574.284
 
-[node name="Reloj" parent="." instance=ExtResource( 9 )]
+[node name="Reloj" parent="." instance=ExtResource( 10 )]
 margin_left = 104.132
 margin_top = -1.29236
 margin_right = 104.132
 margin_bottom = -1.29236
+
+[node name="FugaContainer" type="Node2D" parent="."]
 [connection signal="timeout" from="EarlyGame" to="." method="_on_EarlyGame_timeout"]
 [connection signal="timeout" from="MidGame" to="." method="_on_MidGame_timeout"]
 [connection signal="timeout" from="LateGame" to="." method="_on_LateGame_timeout"]

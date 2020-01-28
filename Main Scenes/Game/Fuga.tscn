@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://Scripts/Fuga.tres.gd" type="Script" id=1]
 [ext_resource path="res://Art/agua larga/agua_larga_1.png" type="Texture" id=2]
@@ -16,7 +16,7 @@
 [ext_resource path="res://Art/agua larga/agua_larga_13.png" type="Texture" id=14]
 [ext_resource path="res://Art/agua larga/agua_larga_14.png" type="Texture" id=15]
 
-[sub_resource type="SpriteFrames" id=2]
+[sub_resource type="SpriteFrames" id=1]
 animations = [ {
 "frames": [ ExtResource( 2 ), ExtResource( 3 ), ExtResource( 4 ), ExtResource( 5 ), ExtResource( 6 ), ExtResource( 7 ), ExtResource( 8 ), ExtResource( 9 ), ExtResource( 10 ), ExtResource( 11 ), ExtResource( 12 ), ExtResource( 13 ), ExtResource( 14 ), ExtResource( 15 ) ],
 "loop": true,
@@ -24,7 +24,7 @@ animations = [ {
 "speed": 12.0
 } ]
 
-[sub_resource type="SpriteFrames" id=3]
+[sub_resource type="SpriteFrames" id=2]
 animations = [ {
 "frames": [ ExtResource( 2 ), ExtResource( 3 ), ExtResource( 4 ) ],
 "loop": true,
@@ -32,7 +32,10 @@ animations = [ {
 "speed": 12.0
 } ]
 
-[node name="Node2D" type="Node2D"]
+[sub_resource type="CircleShape2D" id=3]
+radius = 15.372
+
+[node name="Node2D" type="Area2D"]
 script = ExtResource( 1 )
 
 [node name="Animations" type="Node2D" parent="."]
@@ -40,16 +43,15 @@ script = ExtResource( 1 )
 [node name="Animation1" type="AnimatedSprite" parent="Animations"]
 visible = false
 scale = Vector2( 0.16, 0.16 )
-frames = SubResource( 2 )
+frames = SubResource( 1 )
 animation = "agua"
-frame = 5
+frame = 9
 playing = true
 centered = false
 
 [node name="Animation2" type="AnimatedSprite" parent="Animations"]
 scale = Vector2( 0.2, 0.21 )
-frames = SubResource( 3 )
-frame = 2
+frames = SubResource( 2 )
 playing = true
 centered = false
 
@@ -69,3 +71,6 @@ margin_top = -7.0
 margin_right = 4.5
 margin_bottom = 7.0
 text = "A"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 3 )

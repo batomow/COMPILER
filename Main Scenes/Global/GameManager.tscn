@@ -25,6 +25,7 @@ const SMALL_LEAK := 0.01
 
 var reloj:Reloj
 var toolbox:ToolBox
+var game_root:Game_Root
 
 func _process(delta): 
 	flood_level = clamp(flood_level + (big_leaks * BIG_LEAK + small_leaks * SMALL_LEAK - emptying_velocity * EMPTYING_AMOUNT) * delta, 0, INF)
@@ -38,8 +39,9 @@ func change_to_big_leak():
 # warning-ignore:narrowing_conversion
 	small_leaks = clamp(small_leaks - 1, 0, INF)
 
-func delete_leak():
+func delete_leak(leak):
 	big_leaks -= 1
+	game_root.delete_fuga(leak)
 
 func _state_check(value): 
 	current_state = value
@@ -52,4 +54,4 @@ func _state_check(value):
 
 [node name="GameManager" type="Node"]
 script = SubResource( 1 )
-DIFFICULTY = 3
+DIFFICULTY = 9

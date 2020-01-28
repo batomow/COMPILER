@@ -25,6 +25,8 @@ var _tape_flag := false
 var _cubeta_flag := false
 var _martillo_flag := false
 var _has_object := false
+var _fuga_targeted := false
+var _fuga_target
 
 func _ready(): 
 	GM.toolbox = self
@@ -44,7 +46,7 @@ func _process(delta):
 		elif _cubeta_flag:
 			Cubeta.rect_position = (get_global_mouse_position() - Vector2(122, 97) * 0.4) * 2.5
 		elif _martillo_flag:
-			Martillo.rect_position = (get_global_mouse_position() - Vector2(122, 97) * 0.4) * 2.5
+			Martillo.rect_position = (get_global_mouse_position() - Vector2(150, 150) * 0.4) * 2.5
 	
 	if _has_object and Input.is_action_just_pressed("right_mouse_button"):
 		if _tape_flag:
@@ -107,3 +109,14 @@ func _on_Martillo_gui_input(event):
 		_martillo_flag = true
 		_has_object = true
 
+
+func _on_Area2D_area_entered(area): #hammer
+	_fuga_targeted = true
+	_fuga_target = area
+
+func _on_Area2D_area_exited(area): #hammer
+	_fuga_targeted = false
+
+func _on_MartilloAnim_animation_finished(anim_name):
+	if _fuga_targeted and _fuga_target.state == 0: 
+		_fuga_target.state = 2

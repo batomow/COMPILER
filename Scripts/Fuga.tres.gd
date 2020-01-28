@@ -8,6 +8,9 @@ var key:Label
 var letter:String setget _set_letter
 var state:int setget _set_anim
 
+var ascii_letter:int
+var pos_index:int
+
 func _ready():
 	anim = get_node("Animations").get_children()
 	key = get_node("Letter/Panel/Label")
@@ -27,5 +30,6 @@ func _set_anim(value):
 		anim[1].visible = true
 		GM.change_to_small_leak()
 	elif value == GM.EFUGA.PATCH:
-		GM.delete_leaK()
+		#play some animation
+		GM.delete_leak(self)
 

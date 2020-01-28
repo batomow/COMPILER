@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://Scripts/Toolbox.tres.gd" type="Script" id=1]
 [ext_resource path="res://Art/tape.png" type="Texture" id=2]
@@ -10,6 +10,15 @@
 [ext_resource path="res://Animations/tape_runout.tres" type="Animation" id=8]
 [ext_resource path="res://Animations/cubeta_normal.tres" type="Animation" id=9]
 [ext_resource path="res://Animations/martillo_normal.tres" type="Animation" id=10]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 56.3999
+
+[sub_resource type="CircleShape2D" id=2]
+radius = 61.4064
+
+[sub_resource type="CircleShape2D" id=3]
+radius = 63.5305
 
 [node name="Toolbox" type="Control"]
 anchor_right = 1.0
@@ -37,7 +46,7 @@ custom_constants/separation = 20
 
 [node name="Tape" type="TextureRect" parent="HBoxContainer"]
 margin_right = 169.0
-margin_bottom = 260.0
+margin_bottom = 195.0
 texture = ExtResource( 2 )
 stretch_mode = 3
 
@@ -45,25 +54,43 @@ stretch_mode = 3
 anims/tape_normal = ExtResource( 7 )
 anims/tape_runout = ExtResource( 8 )
 
+[node name="Area2D" type="Area2D" parent="HBoxContainer/Tape"]
+position = Vector2( 147.242, 92.9899 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HBoxContainer/Tape/Area2D"]
+shape = SubResource( 1 )
+
 [node name="Cubeta" type="TextureRect" parent="HBoxContainer"]
 margin_left = 189.0
 margin_right = 339.0
-margin_bottom = 260.0
+margin_bottom = 195.0
 texture = ExtResource( 4 )
 stretch_mode = 3
 
 [node name="CubetaAnim" type="AnimationPlayer" parent="HBoxContainer/Cubeta"]
 anims/cubeta_normal = ExtResource( 9 )
 
+[node name="AreaD2" type="Area2D" parent="HBoxContainer/Cubeta"]
+position = Vector2( 120.952, 121.271 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HBoxContainer/Cubeta/AreaD2"]
+shape = SubResource( 2 )
+
 [node name="Martillo" type="TextureRect" parent="HBoxContainer"]
 margin_left = 359.0
 margin_right = 487.0
-margin_bottom = 260.0
+margin_bottom = 195.0
 texture = ExtResource( 5 )
 stretch_mode = 3
 
 [node name="MartilloAnim" type="AnimationPlayer" parent="HBoxContainer/Martillo"]
 anims/martillo_normal = ExtResource( 10 )
+
+[node name="Area2D" type="Area2D" parent="HBoxContainer/Martillo"]
+position = Vector2( 171.795, 109.438 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HBoxContainer/Martillo/Area2D"]
+shape = SubResource( 3 )
 
 [node name="MouseHolder" type="Control" parent="."]
 margin_right = 40.0
@@ -71,3 +98,6 @@ margin_bottom = 40.0
 [connection signal="gui_input" from="HBoxContainer/Tape" to="." method="_on_Tape_gui_input"]
 [connection signal="gui_input" from="HBoxContainer/Cubeta" to="." method="_on_Cubeta_gui_input"]
 [connection signal="gui_input" from="HBoxContainer/Martillo" to="." method="_on_Martillo_gui_input"]
+[connection signal="animation_finished" from="HBoxContainer/Martillo/MartilloAnim" to="." method="_on_MartilloAnim_animation_finished"]
+[connection signal="area_entered" from="HBoxContainer/Martillo/Area2D" to="." method="_on_Area2D_area_entered"]
+[connection signal="area_exited" from="HBoxContainer/Martillo/Area2D" to="." method="_on_Area2D_area_exited"]
