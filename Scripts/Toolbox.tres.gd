@@ -12,7 +12,7 @@ onready var tape_anim:AnimationPlayer = $HBoxContainer/Tape/TapeAnim
 onready var cubeta_anim:AnimationPlayer = $HBoxContainer/Cubeta/CubetaAnim
 onready var martillo_anim:AnimationPlayer = $HBoxContainer/Martillo/MartilloAnim
 
-var tape_uses:int = 2
+var tape_uses:int = 10
 var small_buffer:bool = true
 var small_buffer2:bool = true
 
@@ -111,12 +111,14 @@ func _on_Martillo_gui_input(event):
 
 
 func _on_Area2D_area_entered(area): #hammer
-	_fuga_targeted = true
-	_fuga_target = area
+	if area is Fuga:
+		_fuga_targeted = true
+		_fuga_target = area
 
 func _on_Area2D_area_exited(area): #hammer
 	_fuga_targeted = false
 
-func _on_MartilloAnim_animation_finished(anim_name):
+func _on_TapeAnim_animation_finished(anim_name):
 	if _fuga_targeted and _fuga_target.state == 0: 
 		_fuga_target.state = 2
+		_fuga_target = null

@@ -45,13 +45,14 @@ visible = false
 scale = Vector2( 0.16, 0.16 )
 frames = SubResource( 1 )
 animation = "agua"
-frame = 9
+frame = 10
 playing = true
 centered = false
 
 [node name="Animation2" type="AnimatedSprite" parent="Animations"]
 scale = Vector2( 0.2, 0.21 )
 frames = SubResource( 2 )
+frame = 1
 playing = true
 centered = false
 

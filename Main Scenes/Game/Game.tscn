@@ -1,15 +1,49 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Scripts/Game.tres.gd" type="Script" id=1]
 [ext_resource path="res://Art/BG.jpg" type="Texture" id=2]
 [ext_resource path="res://Art/tuberia.png" type="Texture" id=3]
 [ext_resource path="res://Art/piso_agua.png" type="Texture" id=4]
-[ext_resource path="res://Main Scenes/Game/InGameMenu.tscn" type="PackedScene" id=5]
-[ext_resource path="res://Main Scenes/Game/RiskMeter.tscn" type="PackedScene" id=6]
-[ext_resource path="res://Main Scenes/Game/Valvula.tscn" type="PackedScene" id=7]
-[ext_resource path="res://Main Scenes/Game/Toolbox.tscn" type="PackedScene" id=8]
-[ext_resource path="res://Main Scenes/Game/CharacterFace.tscn" type="PackedScene" id=9]
-[ext_resource path="res://Main Scenes/Game/Reloj.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Main Scenes/Game/Valvula.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Main Scenes/Game/InGameMenu.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Main Scenes/Game/RiskMeter.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Main Scenes/Game/CharacterFace.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Main Scenes/Game/Reloj.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Main Scenes/Game/Toolbox.tscn" type="PackedScene" id=10]
+
+[sub_resource type="GDScript" id=1]
+resource_name = "Tabla Spawner"
+script/source = "extends Node
+
+var Tabla = preload(\"res://Main Scenes/Game/Tabla.tscn\")
+onready var spawns = self.get_children()
+onready var queue = range(0, spawns.size())
+onready var container = self.get_node(\"../Tablas Container\")
+onready var timer:Timer = self.get_node(\"../Tabla Timer\")
+
+func _init(): 
+	GM.connect(\"game_paused\", self, \"_on_paused\")
+	GM.connect(\"game_unpaused\", self, \"_on_unpaused\")
+
+func _ready():
+	queue.shuffle()
+
+func _on_Timer_timeout():
+	if not queue.empty(): 
+		var new_tabla = Tabla.instance()
+		new_tabla.position = spawns[queue.front()].position
+		container.add_child(new_tabla)
+		queue.pop_front()
+	else: 
+		queue = range(0, spawns.size())
+		queue.shuffle()
+
+func _on_unpaused(): 
+	timer.paused = false
+
+func _on_paused(): 
+	timer.paused = true
+"
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 1 )
@@ -33,20 +67,20 @@ texture = ExtResource( 2 )
 [node name="Background2" type="TextureRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 150.617
-margin_top = 89.5807
-margin_right = 1338.62
-margin_bottom = 765.581
+margin_left = 151.0
+margin_top = 90.0
+margin_right = 1339.0
+margin_bottom = 766.0
 rect_scale = Vector2( 0.58, 0.6 )
 texture = ExtResource( 3 )
 
 [node name="Midground" type="TextureRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 1.58472
-margin_top = -1.29236
-margin_right = 1985.58
-margin_bottom = 1078.71
+margin_left = 2.0
+margin_top = -1.0
+margin_right = 1986.0
+margin_bottom = 1079.0
 rect_scale = Vector2( 0.563, 0.667 )
 mouse_filter = 2
 texture = ExtResource( 4 )
@@ -65,34 +99,76 @@ one_shot = true
 
 [node name="Leak" type="Timer" parent="."]
 
-[node name="InGameMenu" parent="." instance=ExtResource( 5 )]
+[node name="FugaContainer" type="Node2D" parent="."]
+pause_mode = 1
 
-[node name="RiskMeter" parent="." instance=ExtResource( 6 )]
-margin_left = 755.06
-margin_top = 621.236
-margin_right = 755.06
-margin_bottom = 621.236
-rect_scale = Vector2( 0.25, 0.25 )
+[node name="Tablas Spawner" type="Node" parent="."]
+editor/display_folded = true
+script = SubResource( 1 )
 
-[node name="Valvula" parent="." instance=ExtResource( 7 )]
+[node name="Position2D" type="Position2D" parent="Tablas Spawner"]
+position = Vector2( 152.904, -65.0603 )
+
+[node name="Position2D2" type="Position2D" parent="Tablas Spawner"]
+position = Vector2( 291.889, -64.1578 )
+
+[node name="Position2D3" type="Position2D" parent="Tablas Spawner"]
+position = Vector2( 431.776, -65.9628 )
+
+[node name="Position2D4" type="Position2D" parent="Tablas Spawner"]
+position = Vector2( 568.054, -66.8653 )
+
+[node name="Position2D5" type="Position2D" parent="Tablas Spawner"]
+position = Vector2( 695.307, -70.4753 )
+
+[node name="Position2D6" type="Position2D" parent="Tablas Spawner"]
+position = Vector2( 813.534, -67.7678 )
+
+[node name="Position2D7" type="Position2D" parent="Tablas Spawner"]
+position = Vector2( 938.982, -69.5728 )
+
+[node name="Tablas Container" type="Node" parent="."]
+
+[node name="Tabla Timer" type="Timer" parent="."]
+wait_time = 2.0
+autostart = true
+
+[node name="Valvula" parent="." instance=ExtResource( 5 )]
 position = Vector2( 937.08, 628.769 )
 
-[node name="Toolbox" parent="." instance=ExtResource( 8 )]
+[node name="UI" type="CanvasLayer" parent="."]
+editor/display_folded = true
+layer = 2
 
-[node name="CharacterFace" parent="." instance=ExtResource( 9 )]
+[node name="InGameMenu" parent="UI" instance=ExtResource( 6 )]
+margin_right = -1080.0
+margin_bottom = -720.0
+
+[node name="RiskMeter" parent="UI" instance=ExtResource( 7 )]
+margin_left = 755.0
+margin_top = 621.0
+margin_right = -57.0
+margin_bottom = 231.0
+rect_scale = Vector2( 0.25, 0.25 )
+
+[node name="CharacterFace" parent="UI" instance=ExtResource( 8 )]
 margin_left = 640.0
 margin_top = 574.284
 margin_right = 640.0
 margin_bottom = 574.284
 
-[node name="Reloj" parent="." instance=ExtResource( 10 )]
+[node name="Reloj" parent="UI" instance=ExtResource( 9 )]
 margin_left = 104.132
 margin_top = -1.29236
 margin_right = 104.132
 margin_bottom = -1.29236
 
-[node name="FugaContainer" type="Node2D" parent="."]
+[node name="Toolbox" parent="UI" instance=ExtResource( 10 )]
+margin_left = 1.0
+margin_right = -1079.0
+margin_bottom = -720.0
 [connection signal="timeout" from="EarlyGame" to="." method="_on_EarlyGame_timeout"]
 [connection signal="timeout" from="MidGame" to="." method="_on_MidGame_timeout"]
 [connection signal="timeout" from="LateGame" to="." method="_on_LateGame_timeout"]
 [connection signal="timeout" from="Leak" to="." method="_on_Leak_timeout"]
+[connection signal="timeout" from="Tabla Timer" to="Tablas Spawner" method="_on_Timer_timeout"]

@@ -4,6 +4,8 @@
 script/source = "extends Node
 
 class_name GameManager
+signal game_paused
+signal game_unpaused
 
 enum difficulty { easy = 3, normal = 6, hard = 9}
 # warning-ignore:unused_class_variable
@@ -49,8 +51,10 @@ func _state_check(value):
 		print(\"Game Over\")
 	elif current_state == game_states.NOT_PAUSED: 
 		reloj.unpause_timers()
+		emit_signal(\"game_unpaused\")
 	elif current_state == game_states.PAUSED: 
-		reloj.pause_timers()"
+		reloj.pause_timers()
+		emit_signal(\"game_paused\")"
 
 [node name="GameManager" type="Node"]
 script = SubResource( 1 )

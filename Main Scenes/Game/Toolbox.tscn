@@ -96,8 +96,8 @@ shape = SubResource( 3 )
 margin_right = 40.0
 margin_bottom = 40.0
 [connection signal="gui_input" from="HBoxContainer/Tape" to="." method="_on_Tape_gui_input"]
+[connection signal="animation_finished" from="HBoxContainer/Tape/TapeAnim" to="." method="_on_TapeAnim_animation_finished"]
+[connection signal="area_entered" from="HBoxContainer/Tape/Area2D" to="." method="_on_Area2D_area_entered"]
+[connection signal="area_exited" from="HBoxContainer/Tape/Area2D" to="." method="_on_Area2D_area_exited"]
 [connection signal="gui_input" from="HBoxContainer/Cubeta" to="." method="_on_Cubeta_gui_input"]
 [connection signal="gui_input" from="HBoxContainer/Martillo" to="." method="_on_Martillo_gui_input"]
-[connection signal="animation_finished" from="HBoxContainer/Martillo/MartilloAnim" to="." method="_on_MartilloAnim_animation_finished"]
-[connection signal="area_entered" from="HBoxContainer/Martillo/Area2D" to="." method="_on_Area2D_area_entered"]
-[connection signal="area_exited" from="HBoxContainer/Martillo/Area2D" to="." method="_on_Area2D_area_exited"]
